@@ -172,7 +172,7 @@ const ReportCenter = () => {
   };
 
   const handleMRDSaveNewRack = async () => {
-  console.log("center",payload)
+ 
     if (
       !payload?.centerName ||
       !payload?.state ||
