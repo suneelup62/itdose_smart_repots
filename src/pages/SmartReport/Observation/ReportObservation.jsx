@@ -11,53 +11,11 @@ import { useTransition } from "react";
 
 
 
-const ReportObservation = () => {
+const ReportObservation = ({ tableData, onEdit }) => {
 //--------------------------------- Static Data Table Data ------------------
-  const dataTable = [
-    {
-      SNo: 1,
-      CenterName: "Room1",
-      State: "Maharashtra",
-      City: "Mumbai",
-      Address: "123 Main Street",
-      Status: "Active"
-    },
-    {
-      SNo: 2,
-      CenterName: "Sahil Testing",
-      State: "Delhi",
-      City: "New Delhi",
-      Address: "456 Test Avenue",
-      Status: "Inactive"
-    },
-    {
-      SNo: 3,
-      CenterName: "Test1",
-      State: "Karnataka",
-      City: "Bangalore",
-      Address: "789 Code Street",
-      Status: "Active"
-    },
-    {
-      SNo: 4,
-      CenterName: "Room999",
-      State: "Gujarat",
-      City: "Ahmedabad",
-      Address: "101 Dev Lane",
-      Status: "Inactive"
-    },
-    {
-      SNo: 5,
-      CenterName: "Anand's Room",
-      State: "Tamil Nadu",
-      City: "Chennai",
-      Address: "555 Anand Street",
-      Status: "Active"
-    }
-  ];
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
-  const [tableData, setTableData] = useState([]);
+ 
 
   const [payload, setPayload] = useState({
     roomName: "",
@@ -76,50 +34,18 @@ const ReportObservation = () => {
     t("Remove"),
   ];
   
-  const IS_ACTIVE_OPTION = [
-    {
-      label: "Yes",
-      value: "1",
-    },
-  
-    {
-      label: "No",
-      value: "0",
-    },
-  ];
-
-  const handleMRDBindRoom = async () => {
-    try {
-      const response = await MRDBindRoom();
-     // console.log('response',response.data);
-      
-       //setTableData(response?.data);
-       setTableData(dataTable);
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
-    }
-  };
-
-  const handleEdit = (row) => {
-    setPayload({
-      roomName: row?.NAME,
-      isActive: row?.IsActive,
-      roomID: row?.RMID,
-      savetype: "Update",
-    });
-  };
 
   const handleTableData = (tableData) => { 
     return tableData?.map((row, index) => {
-      const { CenterName, State, City, Address,Status } = row;
+      const { Centrename, InvName, Observname, observcode} = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
-        CenterName:CenterName,
-        State: State,
-        City: City,
-        Address: Address,
-        Edit: <i className="fa fa-edit" style={{ color: "#1873c9", }}onClick={() => handleEdit(row)}></i>,
-        Deletet: <i className="fa fa-trash text-danger" style={{ color: "#1873c9", }}onClick={() => handleEdit(row)}></i>,
+        CenterName:Centrename,
+        InvName: InvName,
+        Observname: Observname,
+        observcode:observcode,
+        Edit: <i className="fa fa-edit" style={{ color: "#1873c9", }}onClick={() => onEdit(row)}></i>,
+        Deletet: <i className="fa fa-trash text-danger" style={{ color: "#1873c9", }}onClick={() => onEdit(row)}></i>,
     //     Edit:  <button className="btn btn-sm btn-primary"
     //     onClick={() => handleEdit(row)}>{"Edit"}
     //   </button>,
@@ -127,42 +53,9 @@ const ReportObservation = () => {
     });
   };
 
-  const handleMRDSaveNewRoom = async () => {
-    try {
-      const response = await MRDSaveNewRoom({
-        ...payload,
-        ipAddress: String(ip),
-      });
-      // notify(response?.message, response?.success ? "success" : "error");
-      if (response?.success) {
-        handleMRDBindRoom();
-        setPayload({
-          roomName: "",
-          savetype: "Save",
-          isActive: "1",
-          roomID: "",
-        });
-      }
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
-    }
-  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPayload({ ...payload, [name]: value });
-  };
 
-  const handleReactChange = (name, e) => {
-    setPayload({
-      ...payload,
-      [name]: e?.value,
-    });
-  };
-  
-  useEffect(() => {
-    handleMRDBindRoom();
-  }, []);
+
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -193,19 +86,13 @@ const ReportObservation = () => {
               dynamicOptions={IS_ACTIVE_OPTION}
               value={payload?.isActive}
             /> */}
-
-            {/* <div className="col-xl-2 col-md-4 col-sm-6 col-12">
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={handleMRDSaveNewRoom}
-              >
-                {payload?.roomID ? t("Update"): t("Save")}
-              </button>
-            </div> */}
           </div>
           <div className="row p-2">
             <div className="col-12">
-              <Tables thead={THEAD} tbody={handleTableData(tableData?.length ? tableData : [])} />
+              <Tables 
+               isSearch={true}
+              thead={THEAD} 
+              tbody={handleTableData(tableData?.length ? tableData : [])} />
             </div>
           </div>
         </div>

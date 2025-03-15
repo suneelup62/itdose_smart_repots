@@ -2,212 +2,278 @@ import React, { useState } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
 import ReactSelect from "../../../components/formComponent/ReactSelect";
-import {
-  MRDBindMRDRack,
-  MRDBindRackDetail,
-  MRDBindRoom,
-  MRDSaveNewRack,
-} from "../../../networkServices/MRDApi";
 import { useEffect } from "react";
 import { handleReactSelectDropDownOptions, notify } from "../../../utils/utils";
 import Input from "../../../components/formComponent/Input";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import ReportCenterDetails from "./ReportCenterDetails";
-
-const StateName = [
-  { label: "Andhra Pradesh", value: "AP" },
-  { label: "Arunachal Pradesh", value: "AR" },
-  { label: "Assam", value: "AS" },
-  { label: "Bihar", value: "BR" },
-  { label: "Chhattisgarh", value: "CT" },
-  { label: "Goa", value: "GA" },
-  { label: "Gujarat", value: "GJ" },
-  { label: "Haryana", value: "HR" },
-  { label: "Himachal Pradesh", value: "HP" },
-  { label: "Jharkhand", value: "JH" },
-  { label: "Karnataka", value: "KA" },
-  { label: "Kerala", value: "KL" },
-  { label: "Madhya Pradesh", value: "MP" },
-  { label: "Maharashtra", value: "MH" },
-  { label: "Manipur", value: "MN" },
-  { label: "Meghalaya", value: "ML" },
-  { label: "Mizoram", value: "MZ" },
-  { label: "Nagaland", value: "NL" },
-  { label: "Odisha", value: "OD" },
-  { label: "Punjab", value: "PB" },
-  { label: "Rajasthan", value: "RJ" },
-  { label: "Sikkim", value: "SK" },
-  { label: "Tamil Nadu", value: "TN" },
-  { label: "Telangana", value: "TG" },
-  { label: "Tripura", value: "TR" },
-  { label: "Uttar Pradesh", value: "UP" },
-  { label: "Uttarakhand", value: "UK" },
-  { label: "West Bengal", value: "WB" },
-];
-
-const CityName = [
-  { label: "Mumbai", value: "MUM" },
-  { label: "Delhi", value: "DEL" },
-  { label: "Bangalore", value: "BLR" },
-  { label: "Hyderabad", value: "HYD" },
-  { label: "Ahmedabad", value: "AMD" },
-  { label: "Chennai", value: "MAA" },
-  { label: "Kolkata", value: "CCU" },
-  { label: "Surat", value: "STV" },
-  { label: "Pune", value: "PNQ" },
-  { label: "Jaipur", value: "JAI" },
-  { label: "Lucknow", value: "LKO" },
-  { label: "Kanpur", value: "KNU" },
-  { label: "Nagpur", value: "NAG" },
-  { label: "Indore", value: "IDR" },
-  { label: "Thane", value: "THA" },
-  { label: "Bhopal", value: "BHO" },
-  { label: "Visakhapatnam", value: "VTZ" },
-  { label: "Patna", value: "PAT" },
-  { label: "Vadodara", value: "BDQ" },
-  { label: "Ghaziabad", value: "GZB" },
-  { label: "Ludhiana", value: "LUH" },
-  { label: "Agra", value: "AGR" },
-  { label: "Nashik", value: "ISK" },
-  { label: "Faridabad", value: "FDB" },
-  { label: "Meerut", value: "MEER" },
-  { label: "Rajkot", value: "RAJ" },
-  { label: "Varanasi", value: "VNS" },
-  { label: "Srinagar", value: "SXR" },
-  { label: "Aurangabad", value: "IXU" },
-  { label: "Dhanbad", value: "DHN" },
-];
-
-const IS_ACTIVE_OPTION = [
-  {
-    label: "Active",
-    value: "1",
-  },
-
-  {
-    label: "Inactive",
-    value: "0",
-  },
-];
+import Tables from "../../../components/UI/customTable";
+import { Tabfunctionality } from "../../../utils/helpers";
+import {
+  bindState,
+  ReportCenterGetData,
+  smartReportBindCity,
+  smartReportNewAddCentre,
+  smartReportUpdateCentre,
+} from "../../../networkServices/smartReport";
 
 const ReportCenter = () => {
+  const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
+  // const [values, setValues] = useState({
+  //   centreName: "",
+  //   state: {},
+  //   city: {},
+  //   address: "",
+  //   isActive: {},
+  //   id: 0,
+  //   centreid:""
+  // });
+  const [values, setValues] = useState({
+    centreName: "",
+    state: null,   // Changed {} to null to avoid object validation issues
+    city: null,    // Same here
+    address: "",
+    isActive: null, // Same here
+    id: 0,
+    centreid: "",
+  });
   const [dropDownData, setDropDownState] = useState({
-    BindRoom: [],
-    BindRack: [],
+    GetBindState: [],
+    GetBindSCity: [],
   });
 
-  const [payload, setPayload] = useState({
-    centerName: "",
-    state: "",
-    city: "",
-    remarks: "",
-    isActive: "",
-  });
+  const IS_ACTIVE_OPTION = [
+    {
+      label: "Active",
+      value: "1",
+    },
 
-  const handleMRDBindRoom = async () => {
+    {
+      label: "InActive",
+      value: "0",
+    },
+  ];
+  const [isEdit, setIsEdit] = useState(false)
+  // const getReportCenterGetData = async () => {
+  //   try {
+  //     const response = await ReportCenterGetData();
+  //     setTableData(response?.data);
+  //   } catch (error) {
+  //     console.log(error, "SomeThing Went Wrong");
+  //   }
+  // };
+  const getReportCenterGetData = async () => {
     try {
-      const response = await MRDBindRoom();
-      return response?.data;
+      const response = await ReportCenterGetData();
+      setTableData(response?.data);
     } catch (error) {
-      console.log(error);
+      console.log(error, "Something Went Wrong");
     }
   };
-
-  const renderAPI = async () => {
+  const getState = async () => {
     try {
-      const [BindRoom] = await Promise.all([handleMRDBindRoom()]);
-      setDropDownState({
-        ...dropDownData,
-        BindRoom: handleReactSelectDropDownOptions(BindRoom, "NAME", "RMID"),
-      });
+      const response = await bindState();
+      if (response?.data) {
+        setDropDownState((preV) => ({
+          ...preV,
+          GetBindState: handleReactSelectDropDownOptions(
+            response?.data,
+            "State",
+            "ID"
+          ),
+        }));
+      }
     } catch (error) {
       console.log(error, "SomeThing Went Wrong");
     }
   };
+  const bindCity = async (stateID) => {
 
-  const handleMRDBindMRDRack = async (roomID) => {
-    try {
-      const response = await MRDBindMRDRack(roomID);
-      setDropDownState({
-        ...dropDownData,
-        BindRack: handleReactSelectDropDownOptions(
-          response?.data,
-          "Name",
-          "AlmID"
-        ),
-      });
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
+    // debugger
+    if (!stateID) {
+      // setValues((prev) => ({ ...prev, city: {} }));
+    
+      setDropDownState((prev) => ({ ...prev, GetBindSCity: [] }));
+      return [];
     }
-      };
-
-  const handleMRDBindRackDetail = async (RackID) => {
+  
     try {
-      const response = await MRDBindRackDetail(RackID);
-      return response?.data;
+      const response = await smartReportBindCity({ stateID: String(stateID) });
+      if (response?.data) {
+        const cityOptions = handleReactSelectDropDownOptions(
+          response.data,
+          "city",
+          "id"
+        );
+        setDropDownState((prev) => ({
+          ...prev,
+          GetBindSCity: cityOptions,
+        }));
+        return cityOptions; // Return the city options for immediate use
+      }
+      return [];
     } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
+      console.error("Error fetching cities:", error);
+      return [];
     }
   };
 
+  // useEffect(() => {
+  //   console.log("State changed:", values.state);
+  //   console.log("City updated:", values.city);
+  // }, [values.state, values.city]);
+
+  // const handleReactChange = (name, e, key) => {
+  //   setValues((val) => ({ ...val, [name]: e }));
+  // };
   const handleReactChange = (name, e) => {
-    const obj = { ...payload };
-
-    if (name === "rackID") {
-    }
-
-    obj[name] = e?.value;
-    setPayload(obj);
+    setValues((prev) => ({
+      ...prev,
+      [name]: e,
+      ...(name === "state" ? { city: {} } : {}), // Reset city when state changes
+    }));
   };
+
+  useEffect(() => {
+    bindCity(values?.state?.value || values?.state);
+  }, [values?.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPayload({
-      ...payload,
+    setValues({
+      ...values,
       [name]: value,
     });
   };
 
-  const handleMRDSaveNewRack = async () => {
- 
-    if (
-      !payload?.centerName ||
-      !payload?.state ||
-      !payload?.city ||
-      !payload?.remarks ||
-      !payload?.isActive
-    ) {
-      notify("Please fill all required fields.", "error");
-      return;
-    }
-    try {
-      const response = await MRDSaveNewRack({
-        ...payload,
-        ipAddress: String(ip),
-      });
-      notify(response?.message, response?.success ? "success" : "error");
 
-      if (response?.success)
-        setPayload({
-          roomID: "",
-          centerName: "",
-          address: "",
-          noOfShelf: "",
-          isActive: "1",
-          saveType: "Save",
-          noOfMaximumfile: "",
-          rackID: "",
-        });
+  const handleSubmit = async () => {
+    const requiredFields = [
+      { key: "centreName", message: "Centre Name is required" },
+      { key: "state", message: "State is required" },
+      { key: "city", message: "City is required" },
+      { key: "address", message: "Address is required" },
+      { key: "isActive", message: "Status is required" },
+    ];
+    for (let field of requiredFields) {
+      if (!values[field.key]) {
+        notify(field.message, "error");
+        return false;
+      }
+    }
+    const payload = {
+      txtcentrename: values?.centreName,
+      txtstate: String(values?.state?.value),
+      txtcity: String(values?.city?.value),
+      txtadddress: values?.address,
+      chkactive: values?.isActive?.value,
+    };
+    try {
+      const response = await smartReportNewAddCentre(payload);
+      if (response?.status) {
+        notify(response?.message, "success");
+        setIsEdit(false);
+        getReportCenterGetData();
+      }
     } catch (error) {
       console.log(error, "Some Thing Went Wrong");
     }
   };
+ 
+  console.log("Edit call set befor values",values)
+  // not update
+  const handleEdit = async (val) => {
+      console.log("this avalues ",val)
+      setIsEdit(true);
+    try {
+      setValues((prev) => ({
+        ...prev,
+        centreName: val?.CentreName,
+        state: val?.stateid, 
+        city: val?.cityid, 
+        address: val.Address,
+        isActive:
+          val.Isactive === "Active"
+            ? IS_ACTIVE_OPTION[0]
+            : IS_ACTIVE_OPTION[1],
+        id: 1,
+        centreid:val?.Centreid
+      }));
+    } catch (error) {
+      console.error("Error during edit:", error);
+    }
+  };
 
+  /// update 
+// const handleEdit = async (val) => {
+//   console.log("Editing values:", val);
+//   setIsEdit(true);
+  
+//   setValues((prev) => ({
+//     ...prev,
+//     centreName: val?.CentreName || "",
+//     state: val?.stateid ? { value: val?.stateid, label: val?.StateName } : null,
+//     city: val?.cityid ? { value: val?.cityid, label: val?.CityName } : null,
+//     address: val?.Address || "",
+//     isActive: val?.Isactive === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
+//     id: 1,
+//     centreid: val?.Centreid || "",
+//   }));
+// };
+
+  const handleUpdate = async () => {
+    const requiredFields = [
+      { key: "centreName", message: "Centre Name is required" },
+      { key: "state", message: "State is required" },
+      { key: "city", message: "City is required" },
+      { key: "address", message: "Address is required" },
+      { key: "isActive", message: "Status is required" },
+    ];
+    for (let field of requiredFields) {
+      if (!values[field.key]) {
+        notify(field.message, "error");
+        return false;
+      }
+    } 
+    const payload = {
+      centreid:String(values?.centreid,),
+      txtcentrename: values?.centreName,
+      txtstate: String(values?.state?.value),
+      txtcity: String(values?.city?.value),
+      txtadddress: values?.address,
+      chkactive: String(values?.isActive?.value,)
+    };
+    try {
+      const response = await smartReportUpdateCentre(payload);
+      if (response?.message) {
+        notify(response?.message, "success");
+        setIsEdit(false);
+        getReportCenterGetData();
+      }
+      else{
+        notify(response?.message,"error")
+      }
+    } catch (error) {
+      console.log(error, "Some Thing Went Wrong");
+    }
+  };
+  const handleCencel = () => {
+    
+    setValues((prev) => ({ ...prev, centreName: "",
+      centreName: "",
+      state: {},
+      city: {},
+      address: "",
+      isActive: {}, 
+    }));
+      setIsEdit(false);
+  };
   useEffect(() => {
-    renderAPI();
+    getState();
+    getReportCenterGetData();
   }, []);
 
   return (
@@ -218,29 +284,42 @@ const ReportCenter = () => {
           <div className="row p-2">
             <Input
               type="text"
-              className="form-control"
-              id="centerName"
-              lable={t("Center Name")}
+              className="form-control required-fields"
+              id="centreName"
+              lable={t("Centre Name")}
               placeholder=" "
               required={true}
-              value={payload?.centerName}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              name="centerName"
+              value={values?.centreName}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              name="centreName"
               onChange={handleChange}
             />
             <ReactSelect
               placeholderName={t("State")}
               searchable={true}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"state"}
               name={"state"}
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={StateName}
-              // requiredClassName="required-fields"
-              value={payload?.state}
+              dynamicOptions={dropDownData?.GetBindState}
+              requiredClassName="required-fields"
+              value={values?.state}
             />
             <ReactSelect
+              placeholderName={t("City")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"city"}
+              name={"city"}
+              removeIsClearable={true}
+              handleChange={(name, e) => handleReactChange(name, e)}
+              dynamicOptions={dropDownData?.GetBindSCity} 
+              requiredClassName="required-fields"
+              value={values?.city} // ✅ Should be an object, not just a value
+            />
+
+            {/* <ReactSelect
               placeholderName={t("City")}
               searchable={true}
               respclass="col-xl-2 col-md-4 col-sm-6 col-12"
@@ -248,87 +327,107 @@ const ReportCenter = () => {
               name={"city"}
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={CityName}
-              // requiredClassName="required-fields"
-              value={payload?.city}
-              disabled={!payload?.city}
-            />
-            {/* <ReactSelect
-              placeholderName={t("MRD Room")}
-              searchable={true}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              id={"roomID"}
-              name={"roomID"}
-              removeIsClearable={true}
-              handleChange={(name, e) =>
-                handleReactChange(name, e, handleMRDBindMRDRack(e?.value))
-              }
-              dynamicOptions={dropDownData?.BindRoom}
-              value={payload?.roomID}
+              dynamicOptions={dropDownData?.GetBindSCity}
+              requiredClassName="required-fields"
+              value={values?.city}
             /> */}
 
-            {/* <ReactSelect
-              placeholderName={t("MRD Rack")}
-              searchable={true}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              id={"rackID"}
-              name={"rackID"}
-              removeIsClearable={true}
-              handleChange={(name, e) =>
-                handleReactChange(name, e, handleMRDBindRackDetail(e?.value))
-              }
-              dynamicOptions={dropDownData?.BindRack}
-              value={payload?.rackID}
-              isDisabled={payload?.saveType === "Save" ? true : false}
-            /> */}
-            {/* <Input
-              type="text"
-              className="form-control required-fields"
-              id="noOfShelf"
-              lable={t("No Of Shelf")}
-              placeholder=" "
-              required={true}
-              value={payload?.noOfShelf}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              name="noOfShelf"
-              onChange={handleChange}
-            /> */}
+            {/* {console.log(" values?.city ", values?.city)} */}
             <TextAreaInput
               type="text"
-              name="remarks"
+              name="address"
               rows={2}
-              value={payload?.remarks}
+              value={values?.address}
               onChange={handleChange}
               lable={t("Address")}
               placeholder=" "
-              respclass=" col-sm-2 col-12"
-              // className="form-control required-fields"
-              className="form-control"
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              className="form-control required-fields"
             />
             <ReactSelect
               placeholderName={t("Status")}
               searchable={true}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"isActive"}
               name={"isActive"}
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={IS_ACTIVE_OPTION}
-              value={payload?.isActive}
+              value={values?.isActive?.value}
+              requiredClassName="required-fields"
             />
-
-            <div className="col-xl-2 col-md-4 col-sm-6 col-12">
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={handleMRDSaveNewRack}
-              >
-                {payload?.rackID ? t("Update") : t("Submit")}
+               {/* <div className="d-flex">
+                <Input
+                  type="checkbox"
+                  placeholder=" "
+                  className="mt-2"
+                  name="OnlyPanelPatient"
+                  onChange={handleChange}
+                  checked={values?.OnlyPanelPatient === true ? "1" : "0"}
+                  onKeyDown={Tabfunctionality}
+                  respclass="col-md-1 col-1"
+                />
+                <label className="mt-2 ml-3">{t("IsActive")}</label>
+              </div> */}
+            {/* <div className="col-xl-2 col-md-4 col-sm-6 col-12">
+              <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
+                {values?.id === 1 ? t("Update") : t("Submit")}
               </button>
-            </div>
+            </div> */}
+             {/* <div className="col-xl-2 col-md-3 col-sm-6 col-12">
+              {isEdit ? (
+                <>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={handleUpdate}
+                  >
+                    {t("Update")}
+                  </button>
+                  <button
+                    className="btn btn-sm btn-primary ml-2"
+                    onClick={handleCencel}
+                  >
+                    {t("Cancel")}
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={handleSubmit}
+                >
+                  {t("Save")}
+                </button>
+              )}
+            </div> */}
           </div>
+          <div className="button-container-center">
+              {isEdit ? (
+                <>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={handleUpdate}
+                  >
+                    {t("Update")}
+                  </button>
+                  <button
+                    className="btn btn-sm btn-primary ml-2"
+                    onClick={handleCencel}
+                  >
+                    {t("Cancel")}
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={handleSubmit}
+                >
+                  {t("Submit")}
+                </button>
+              )}
+            </div>
         </div>
       </div>
-      <ReportCenterDetails />
+      <ReportCenterDetails tableData={tableData} onEdit={handleEdit} />
     </>
   );
 };

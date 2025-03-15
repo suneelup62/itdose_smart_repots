@@ -8,56 +8,17 @@ import Input from "../../../components/formComponent/Input";
 import { notify } from "../../../utils/utils";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { useTransition } from "react";
+import { InvestigationMasterBindTestgrid } from "../../../networkServices/smartReport";
+import Modal from "../../../components/modalComponent/Modal";
+import Observation from "../Observation/Observation";
 
-const InvestigationDetails = () => {
-  //--------------------------------- Static Data Table Data ------------------
-  const dataTable = [
-    {
-      SNo: 1,
-      CenterName: "Room1",
-      State: "Maharashtra",
-      City: "Mumbai",
-      Address: "123 Main Street",
-      Status: "Active",
-    },
-    {
-      SNo: 2,
-      CenterName: "Sahil Testing",
-      State: "Delhi",
-      City: "New Delhi",
-      Address: "456 Test Avenue",
-      Status: "Inactive",
-    },
-    {
-      SNo: 3,
-      CenterName: "Test1",
-      State: "Karnataka",
-      City: "Bangalore",
-      Address: "789 Code Street",
-      Status: "Active",
-    },
-    {
-      SNo: 4,
-      CenterName: "Room999",
-      State: "Gujarat",
-      City: "Ahmedabad",
-      Address: "101 Dev Lane",
-      Status: "Inactive",
-    },
-    {
-      SNo: 5,
-      CenterName: "Anand's Room",
-      State: "Tamil Nadu",
-      City: "Chennai",
-      Address: "555 Anand Street",
-      Status: "Active",
-    },
-  ];
+const InvestigationDetails = ({ tableData, onEdit }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
-  const [tableData, setTableData] = useState([]);
 
-  const [payload, setPayload] = useState({
+  const [handleModelData, setHandleModelData] = useState({});
+
+  const [tableVluses, setTableVluses] = useState({
     roomName: "",
     savetype: "Save",
     isActive: "1",
@@ -75,134 +36,129 @@ const InvestigationDetails = () => {
     t("Acction"),
   ];
 
-  const IS_ACTIVE_OPTION = [
-    {
-      label: "Yes",
-      value: "1",
-    },
+  // const BindTestgrid = async () => {
+  //   const tableVluses ={
+  //     clientid:String(1)
+  //   }
+  //   try {
+  //     const response = await InvestigationMasterBindTestgrid(tableVluses);
+  //     console.log('response',response.data);
 
-    {
-      label: "No",
-      value: "0",
-    },
-  ];
+  //     setTableData(response?.data);
+  //     // setTableData(dataTable);
+  //   } catch (error) {
+  //     console.log(error, "SomeThing Went Wrong");
+  //   }
+  // };
 
-  const handleMRDBindRoom = async () => {
-    try {
-      const response = await MRDBindRoom();
-      // console.log('response',response.data);
+  // const handleEdit = (row) => {
+  //   settableVluses({
+  //     roomName: row?.NAME,
+  //     isActive: row?.IsActive,
+  //     roomID: row?.RMID,
+  //     savetype: "Update",
+  //   });
+  // };
 
-      //setTableData(response?.data);
-      setTableData(dataTable);
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
-    }
+  const handleClose = () => {
+    setHandleModelData((val) => ({ ...val, isOpen: false }));
   };
 
-  const handleEdit = (row) => {
-    setPayload({
-      roomName: row?.NAME,
-      isActive: row?.IsActive,
-      roomID: row?.RMID,
-      savetype: "Update",
+  const handleObservation = () => {
+    setHandleModelData({
+      isOpen: true,
+      width: "40vw",
+      label: "Observation Master",
+      Component: <Observation />,
+      // RejectPurchaseRequest: RejectPurchaseRequest
     });
   };
+  function handleInterpretation(row) {
+    console.log(row);
+  }
 
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { CenterName, State, City, Address, Status } = row;
+      const { centre, TestName, Testcode, Department, status } = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
-        CenterName: CenterName,
-        State: State,
-        City: City,
-        Address: Address,
-        Status: (
+        centre: centre,
+        TestName: TestName,
+        Testcode: Testcode,
+        Department: Department,
+        status: (
           <span
             style={{
-              color: Status === "Active" ? "green" : "red",
+              color: status === "Active" ? "green" : "red",
               fontWeight: "bold",
             }}
           >
-            {Status}
+            {status}
           </span>
         ),
         Modify: (
           <i
             className="fa fa-edit"
             style={{ color: "#1873c9" }}
-            onClick={() => handleEdit(row)}
+            onClick={() => onEdit(row)}
           ></i>
         ),
+        // Action: (
+        //   <button
+        //     className="btn btn-sm btn-primary"
+        //     onClick={() => handleEdit(row)}
+        //   >
+        //     {"Observetion"}
+        //   </button>,
+        //   <button
+        //     className="btn btn-sm btn-primary"
+        //     onClick={() => handleEdit(row)}
+        //   >
+        //     {"Interpretation"}
+        //   </button>
+        // ),
+
         Action: (
-          <button
-            className="btn btn-sm btn-primary"
-            onClick={() => handleEdit(row)}
-          >
-            {"Observetion"}
-          </button>
+          <div>
+            <button
+              className="btn btn-sm btn-primary me-2"
+              onClick={() => handleObservation(row)}
+              style={{ margin: "2px" }}
+            >
+              Observation
+            </button>
+            <button
+              className="btn btn-sm btn-secondary"
+              onClick={() => handleInterpretation(row)}
+            >
+              Interpretation
+            </button>
+          </div>
         ),
       };
     });
   };
 
-  const handleMRDSaveNewRoom = async () => {
-    try {
-      const response = await MRDSaveNewRoom({
-        ...payload,
-        ipAddress: String(ip),
-      });
-      notify(response?.message, response?.success ? "success" : "error");
-      if (response?.success) {
-        handleMRDBindRoom();
-        setPayload({
-          roomName: "",
-          savetype: "Save",
-          isActive: "1",
-          roomID: "",
-        });
-      }
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
-    }
-  };
-
-  const handleChange = (e) => {
+  const handleChangeTable = (e) => {
     const { name, value } = e.target;
-    setPayload({ ...payload, [name]: value });
+    setTableVluses({ ...tableVluses, [name]: value });
   };
 
-  const handleReactChange = (name, e) => {
-    setPayload({
-      ...payload,
-      [name]: e?.value,
-    });
-  };
+  // const handleReactChange = (name, e) => {
+  //   settableVluses({
+  //     ...tableVluses,
+  //     [name]: e?.value,
+  //   });
+  // };
 
-  useEffect(() => {
-    handleMRDBindRoom();
-  }, []);
   return (
     <>
       <div className="mt-2 spatient_registration_card">
         <div className="patient_registration card">
           <Heading title={t("Records")} isBreadcrumb={false} />
           <div className="row p-2">
-            {/* <Input
-              type="text"
-              className="form-control"
-              id="roomName"
-              lable={t("Search Entity")}
-              placeholder=" "
-              required={true}
-              value={payload?.roomName}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              name="roomName"
-              onChange={handleChange}
-            /> */}
-
             {/* <ReactSelect
-              placeholderName={t("IsActive")}
+              placeholderName={t("Search By")}
               searchable={true}
               respclass="col-xl-2 col-md-4 col-sm-6 col-12"
               id={"isActive"}
@@ -210,27 +166,59 @@ const InvestigationDetails = () => {
               removeIsClearable={true}
               handleChange={handleReactChange}
               dynamicOptions={IS_ACTIVE_OPTION}
-              value={payload?.isActive}
+              value={tableVluses?.isActive}
             /> */}
-
-            {/* <div className="col-xl-2 col-md-4 col-sm-6 col-12">
+            {/* <Input
+              type="text"
+              className="form-control"
+              id="roomName"
+              lable={t(" Search")}
+              placeholder=" "
+              required={true}
+              value={tableVluses?.roomName}
+              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
+              name="roomName"
+              onChange={handleChangeTable}
+            /> */}
+            {/* 
+            <div className="col-xl-2 col-md-4 col-sm-6 col-12">
               <button
                 className="btn btn-sm btn-primary"
                 onClick={handleMRDSaveNewRoom}
               >
-                {payload?.roomID ? t("Update"): t("Save")}
+                {tableVluses?.roomID ? t("Update"): t("Save")}
               </button>
             </div> */}
           </div>
           <div className="row p-2">
             <div className="col-12">
               <Tables
+                isSearch={true}
                 thead={THEAD}
                 tbody={handleTableData(tableData?.length ? tableData : [])}
+                style={{ maxHeight: "60vh" }}
               />
             </div>
           </div>
         </div>
+
+        {handleModelData?.isOpen && (
+          <Modal
+            visible={handleModelData?.isOpen}
+            setVisible={handleClose}
+            modalWidth={handleModelData?.width}
+            Header={t(handleModelData?.label)}
+            buttonType={"button"}
+            // modalData={handleModelData?.modalData}
+            // buttons={handleModelData?.extrabutton}
+            // buttonName={handleModelData?.buttonName}
+
+            footer={<></>}
+            // handleAPI={handleModelData?.RejectPurchaseRequest}
+          >
+            {handleModelData?.Component}
+          </Modal>
+        )}
       </div>
     </>
   );

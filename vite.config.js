@@ -23,8 +23,8 @@ export default ({ mode }) => {
 
     server: {
       proxy: {
-        "/api": {
-          target: apiUrl,
+        "/api/v1/": {
+          target: process.env.VITE_APP_REACT_APP_BASE_URL,
           changeOrigin: true,
         },
       },

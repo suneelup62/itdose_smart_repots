@@ -12,21 +12,21 @@ const initialState = {
       menuIcon: "fas fa-tachometer-alt",
       children: [
         {
-          childrenName: "Report Center",
+          childrenName: "Report Centre",
           childrenOrder: "1",
-          breadcrumb: "Smart Report/Report Center",
+          breadcrumb: "Smart Report/Centre Master",
           url: "/report-center",
         },
         {
           childrenName: "Investigation",
           childrenOrder: "2",
-          breadcrumb: "Smart Report/Investigation",
+          breadcrumb: "Smart Report/Investigation Master",
           url: "/investigation",
         },
         {
           childrenName: "Observation",
           childrenOrder: "2",
-          breadcrumb: "Smart Report/Observation",
+          breadcrumb: "Smart Report/Observation Master",
           url: "/observation",
         },
       ],

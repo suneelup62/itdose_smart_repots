@@ -62,7 +62,7 @@ const Login = () => {
 
         try {
           axios
-            .post(apiUrls?.login, requestbody)
+            .post(apiUrls?.loginApi, requestbody)
             .then((response) => {
               navigate("/dashboard");
               Cookies.set("", response?.data?.token?.split(";")[0]);
