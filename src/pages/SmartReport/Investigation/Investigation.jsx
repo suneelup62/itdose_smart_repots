@@ -46,23 +46,7 @@ const Investigation = () => {
   });
 
   const [isEdit, setIsEdit] = useState(false);
-  // const GetCentreName = async () => {
-  //   try {
-  //     const response = await ReportCenterGetData();
-  //     if (response?.data) {
-  //       setDropDownData((preV) => ({
-  //         ...preV,
-  //         GetBindCentreName: handleReactSelectDropDownOptions(
-  //           response?.data,
-  //           "CentreName",
-  //           "Centreid"
-  //         ),
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "SomeThing Went Wrong");
-  //   }
-  // };
+
 
   const GetCentreName = async () => {
     try {
@@ -110,57 +94,6 @@ const Investigation = () => {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
   };
-  //  const handleSubmit = async () => {
-  //   debugger
-  //   if (!values?.centreName) {
-  //     notify("Centre name is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.testName) {
-  //     notify("Test name is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.testCode) {
-  //     notify("Test code is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.department) {
-  //     notify("Department is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.isActive) {
-  //     notify("Status code is Required", "error");
-  //     return;
-  //   }
-  //   const payload = {
-  //     Centreid: String(values?.centreName?.Centreid),
-  //     TestName: values?.testName,
-  //     Testcode: values?.testCode,
-  //     Department: values?.department,
-  //     chkactive: String(values?.isActive.value),
-  //     departcode: values?.departmentCode,
-  //   };
-  //   try {
-  //     const response = await addInvestigationSubmit(payload);
-  //     if (response?.status) {
-  //       notify(response?.message, "success");
-  //       setIsEdit(false);
-  //       BindTestgrid(payload.Centreid)
-  //       handleCencel()
-
-  //   // try {
-  //   //   const response = await InvestigationMasterBindTestgrid(payload);
-
-  //   //   setTableData(response?.data);
-  //   //   // setTableData(dataTable);
-  //   // } catch (error) {
-  //   //   console.log(error, "SomeThing Went Wrong");
-  //   // }
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "Some Thing Went Wrong");
-  //   }
-  // };
 
   const handleSubmit = async () => {
     const requiredFields = {
@@ -194,12 +127,12 @@ const Investigation = () => {
         notify(response.message, "success");
         setIsEdit(false);
         await fetchTestGrid(payload.Centreid);
+        handleCencel()
       } else {
         notify(response.message || "Submission failed", "error");
       }
     } catch (error) {
       console.error("Something went wrong:", error);
-      notify("An error occurred while submitting. Please try again.", "error");
     }
   };
 
@@ -218,66 +151,6 @@ const Investigation = () => {
         val.status === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
     });
   };
-
-  // const handleUpdate = async () => {
-  //   debugger
-  //   if (!values?.centreName) {
-  //     notify("Centre name is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.testName) {
-  //     notify("Test name is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.testCode) {
-  //     notify("Test code is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.department) {
-  //     notify("Department is Required", "error");
-  //     return;
-  //   }
-  //   if (!values?.isActive) {
-  //     notify("Status code is Required", "error");
-  //     return;
-  //   }
-  //   // console.log("smartReportUpdateCentre", values);
-  //   const payload = {
-  //     idd: String(values?.tableRowId),
-  //     Centreid: String(values?.centreName),
-  //     TestName: String(values?.testName),
-  //     Testcode: String(values?.testCode),
-  //     Department: values?.department,
-  //     departcode: values?.departmentCode,
-  //     chkactive: String(values?.isActive?.value),
-  //   };
-  //   try {
-  //     const response = await InvestigationMasterUpdatetest(payload);
-  //     if (response?.status) {
-  //       notify(response?.message, "success");
-  //       // setIsEdit(false);
-  //       // BindTestgrid(payload.Centreid)
-  //       // handleCencel()
-  //       setIsEdit(false);
-  //         const payload = {
-  //     clientid: String(values?.centreName),
-  //   };
-
-  //   try {
-  //     const response = await InvestigationMasterBindTestgrid(payload);
-  //     setTableData(response?.data);
-  //     handleCencel()
-  //     // setTableData(dataTable);
-  //   } catch (error) {
-  //     console.log(error, "SomeThing Went Wrong");
-  //   }
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "Some Thing Went Wrong");
-  //   }
-  // };
-
-  // console.log("tablerowid", values);
 
   const handleUpdate = async () => {
     const requiredFields = {
@@ -311,6 +184,7 @@ const Investigation = () => {
         notify(response?.message, "success");
         setIsEdit(false);
         await fetchTestGrid(values.centreName);
+        handleCencel()
       }
       else{
         notify(response.message || "Updation failed", "error");
@@ -429,37 +303,6 @@ const Investigation = () => {
               requiredClassName="required-fields"
             />
 
-            {/* <div className="col-xl-2 col-md-4 col-sm-6 col-12">
-              <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
-                {values?.rackID ? t("Update") : t("Submit")}
-              </button>
-            </div> */}
-
-            {/* <div className="col-xl-2 col-md-3 col-sm-6 col-12">
-              {isEdit ? (
-                <>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={handleUpdate}
-                  >
-                    {t("Update")}
-                  </button>
-                  <button
-                    className="btn btn-sm btn-primary ml-2"
-                    onClick={handleCencel}
-                  >
-                    {t("Cancel")}
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="btn btn-sm btn-primary"
-                  onClick={handleSubmit}
-                >
-                  {t("Save")}
-                </button>
-              )}
-            </div> */}
           </div>
           <div className="button-container-center">
             {isEdit ? (

@@ -328,9 +328,9 @@ const allRoutes = {
     // Smart Report
     {
       layout: Layout,
-      path: "/report-Center",
+      path: "/report-Centre",
       component: lazy(
-        () => import("@app/pages/SmartReport/ReportCenter/ReportCenter.jsx")
+        () => import("@app/pages/SmartReport/ReportCentre/ReportCentre.jsx")
       ),
       exact: true,
     },

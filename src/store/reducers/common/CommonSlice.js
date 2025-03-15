@@ -15,7 +15,7 @@ const initialState = {
           childrenName: "Report Centre",
           childrenOrder: "1",
           breadcrumb: "Smart Report/Centre Master",
-          url: "/report-center",
+          url: "/report-centre",
         },
         {
           childrenName: "Investigation",

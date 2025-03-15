@@ -7,7 +7,7 @@ import { handleReactSelectDropDownOptions, notify } from "../../../utils/utils";
 import Input from "../../../components/formComponent/Input";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
-import ReportCenterDetails from "./ReportCenterDetails";
+import ReportCentreDetails from "./ReportCentreDetails";
 import Tables from "../../../components/UI/customTable";
 import { Tabfunctionality } from "../../../utils/helpers";
 import {
@@ -92,7 +92,6 @@ const ReportCenter = () => {
   };
   const bindCity = async (stateID) => {
 
-    // debugger
     if (!stateID) {
       // setValues((prev) => ({ ...prev, city: {} }));
     
@@ -121,14 +120,7 @@ const ReportCenter = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("State changed:", values.state);
-  //   console.log("City updated:", values.city);
-  // }, [values.state, values.city]);
-
-  // const handleReactChange = (name, e, key) => {
-  //   setValues((val) => ({ ...val, [name]: e }));
-  // };
+ 
   const handleReactChange = (name, e) => {
     setValues((prev) => ({
       ...prev,
@@ -151,6 +143,7 @@ const ReportCenter = () => {
 
 
   const handleSubmit = async () => {
+   
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "state", message: "State is required" },
@@ -179,13 +172,14 @@ const ReportCenter = () => {
         getReportCenterGetData();
         handleCencel()
       }
+      else{
+        notify(response?.message,"error")
+      }
     } catch (error) {
       console.log(error, "Some Thing Went Wrong");
     }
   };
  
-  console.log("Edit call set befor values",values)
-  // not update
   const handleEdit = async (val) => {
       console.log("this avalues ",val)
       setIsEdit(true);
@@ -208,23 +202,6 @@ const ReportCenter = () => {
     }
   };
 
-  /// update 
-// const handleEdit = async (val) => {
-//   console.log("Editing values:", val);
-//   setIsEdit(true);
-  
-//   setValues((prev) => ({
-//     ...prev,
-//     centreName: val?.CentreName || "",
-//     state: val?.stateid ? { value: val?.stateid, label: val?.StateName } : null,
-//     city: val?.cityid ? { value: val?.cityid, label: val?.CityName } : null,
-//     address: val?.Address || "",
-//     isActive: val?.Isactive === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
-//     id: 1,
-//     centreid: val?.Centreid || "",
-//   }));
-// };
-
   const handleUpdate = async () => {
     debugger
     const requiredFields = [
@@ -240,15 +217,25 @@ const ReportCenter = () => {
         return false;
       }
     } 
-   // Ensure state and city have proper structure
+
+  //  const payload = {
+  //   centreid: String(values?.centreid || ""),
+  //   txtcentrename: values?.centreName || "",
+  //   txtstate: values?.state.value===undefined ? String(values?.state) : String(values?.state?.value),
+  //   txtcity: values?.city.value===undefined ? String(values?.city) : String(values?.city?.value),
+  //   txtadddress: values?.address || "",
+  //   chkactive: values?.isActive ? String(values?.isActive?.value) : "0",
+  // };
+
   const payload = {
     centreid: String(values?.centreid || ""),
     txtcentrename: values?.centreName || "",
-    txtstate: values?.state ? String(values?.state) : "",
-    txtcity: values?.city ? String(values?.city) : "",
+    txtstate: values?.state && typeof values.state === "object" ? String(values?.state?.value) : String(values?.state || ""),
+    txtcity: values?.city && typeof values.city === "object" ? String(values?.city?.value) : String(values?.city || ""),
     txtadddress: values?.address || "",
     chkactive: values?.isActive ? String(values?.isActive?.value) : "0",
   };
+  
     try {
       const response = await smartReportUpdateCentre(payload);
       if (response?.message) {
@@ -268,10 +255,10 @@ const ReportCenter = () => {
     
     setValues((prev) => ({ ...prev, centreName: "",
       centreName: "",
-      state: {},
-      city: {},
+      state: null,
+      city: null,
       address: "",
-      isActive: {}, 
+      isActive: null, 
     }));
       setIsEdit(false);
   };
@@ -320,23 +307,8 @@ const ReportCenter = () => {
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={dropDownData?.GetBindSCity} 
               requiredClassName="required-fields"
-              value={values?.city} // ✅ Should be an object, not just a value
+              value={values?.city} 
             />
-
-            {/* <ReactSelect
-              placeholderName={t("City")}
-              searchable={true}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              id={"city"}
-              name={"city"}
-              removeIsClearable={true}
-              handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={dropDownData?.GetBindSCity}
-              requiredClassName="required-fields"
-              value={values?.city}
-            /> */}
-
-            {/* {console.log(" values?.city ", values?.city)} */}
             <TextAreaInput
               type="text"
               name="address"
@@ -431,7 +403,7 @@ const ReportCenter = () => {
             </div>
         </div>
       </div>
-      <ReportCenterDetails tableData={tableData} onEdit={handleEdit} />
+      <ReportCentreDetails tableData={tableData} onEdit={handleEdit} />
     </>
   );
 };
