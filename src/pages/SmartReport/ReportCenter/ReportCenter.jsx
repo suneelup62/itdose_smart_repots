@@ -177,6 +177,7 @@ const ReportCenter = () => {
         notify(response?.message, "success");
         setIsEdit(false);
         getReportCenterGetData();
+        handleCencel()
       }
     } catch (error) {
       console.log(error, "Some Thing Went Wrong");
@@ -225,6 +226,7 @@ const ReportCenter = () => {
 // };
 
   const handleUpdate = async () => {
+    debugger
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "state", message: "State is required" },
@@ -238,20 +240,22 @@ const ReportCenter = () => {
         return false;
       }
     } 
-    const payload = {
-      centreid:String(values?.centreid,),
-      txtcentrename: values?.centreName,
-      txtstate: String(values?.state?.value),
-      txtcity: String(values?.city?.value),
-      txtadddress: values?.address,
-      chkactive: String(values?.isActive?.value,)
-    };
+   // Ensure state and city have proper structure
+  const payload = {
+    centreid: String(values?.centreid || ""),
+    txtcentrename: values?.centreName || "",
+    txtstate: values?.state ? String(values?.state) : "",
+    txtcity: values?.city ? String(values?.city) : "",
+    txtadddress: values?.address || "",
+    chkactive: values?.isActive ? String(values?.isActive?.value) : "0",
+  };
     try {
       const response = await smartReportUpdateCentre(payload);
       if (response?.message) {
         notify(response?.message, "success");
         setIsEdit(false);
         getReportCenterGetData();
+        handleCencel()
       }
       else{
         notify(response?.message,"error")
