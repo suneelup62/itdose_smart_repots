@@ -13,7 +13,7 @@ import {
   bindState,
   InvestigationMasterBindTestgrid,
   InvestigationMasterUpdatetest,
-  ReportCenterGetData,
+  ReportCentreGetData,
 } from "../../../networkServices/smartReport";
 
 const Investigation = () => {
@@ -50,8 +50,8 @@ const Investigation = () => {
 
   const GetCentreName = async () => {
     try {
-      const response = await ReportCenterGetData();
-      if (response?.data) {
+      const response = await ReportCentreGetData();
+      if (response?.staus) {
         setDropDownData((prev) => ({
           ...prev,
           GetBindCentreName: handleReactSelectDropDownOptions(

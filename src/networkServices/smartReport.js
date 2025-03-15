@@ -5,7 +5,9 @@ import store from "../store/store";
 import { apiUrls } from "./apiEndpoints";
 import makeApiRequest from "./axiosInstance";
 
-//Smart Report Center
+//Smart Report Centre
+
+// Get State
 export const bindState = async () => {
   store.dispatch(setLoading(true));
   try {
@@ -74,13 +76,13 @@ export const smartReportUpdateCentre = async (payload) => {
 };
 
 // Smart Report Center GetData
-  export const ReportCenterGetData = async () => {
+  export const ReportCentreGetData = async () => {
     store.dispatch(setLoading(true));
     try {
       const options = {
           method: "get", 
       };
-      const data = await makeApiRequest(`${apiUrls.CenterGetData}`, options);
+      const data = await makeApiRequest(`${apiUrls.CentreGetData}`, options);
       store.dispatch(setLoading(false));
       return data;
     } catch (error) {

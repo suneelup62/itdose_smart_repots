@@ -9,13 +9,10 @@ import { notify } from "../../../utils/utils";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { useTransition } from "react";
 
-
-
 const ReportObservation = ({ tableData, onEdit }) => {
 //--------------------------------- Static Data Table Data ------------------
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
- 
 
   const [payload, setPayload] = useState({
     roomName: "",
@@ -33,28 +30,36 @@ const ReportObservation = ({ tableData, onEdit }) => {
     t("Modify"),
     t("Remove"),
   ];
-  
 
-  const handleTableData = (tableData) => { 
+  const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { Centrename, InvName, Observname, observcode} = row;
+      const { Centrename, InvName, Observname, observcode } = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
-        CenterName:Centrename,
+        CenterName: Centrename,
         InvName: InvName,
         Observname: Observname,
-        observcode:observcode,
-        Edit: <i className="fa fa-edit" style={{ color: "#1873c9", }}onClick={() => onEdit(row)}></i>,
-        Deletet: <i className="fa fa-trash text-danger" style={{ color: "#1873c9", }}onClick={() => onEdit(row)}></i>,
-    //     Edit:  <button className="btn btn-sm btn-primary"
-    //     onClick={() => handleEdit(row)}>{"Edit"}
-    //   </button>,
+        observcode: observcode,
+        Edit: (
+          <i
+            className="fa fa-edit"
+            style={{ color: "#1873c9" }}
+            onClick={() => onEdit(row)}
+          ></i>
+        ),
+        Deletet: (
+          <i
+            className="fa fa-trash text-danger"
+            style={{ color: "#1873c9" }}
+            onClick={() => onEdit(row)}
+          ></i>
+        ),
+        //     Edit:  <button className="btn btn-sm btn-primary"
+        //     onClick={() => handleEdit(row)}>{"Edit"}
+        //   </button>,
       };
     });
   };
-
-
-
 
   return (
     <>
@@ -89,10 +94,11 @@ const ReportObservation = ({ tableData, onEdit }) => {
           </div>
           <div className="row p-2">
             <div className="col-12">
-              <Tables 
-               isSearch={true}
-              thead={THEAD} 
-              tbody={handleTableData(tableData?.length ? tableData : [])} />
+              <Tables
+                isSearch={true}
+                thead={THEAD}
+                tbody={handleTableData(tableData?.length ? tableData : [])}
+              />
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ import Tables from "../../../components/UI/customTable";
 import { Tabfunctionality } from "../../../utils/helpers";
 import {
   bindState,
-  ReportCenterGetData,
+  ReportCentreGetData,
   smartReportBindCity,
   smartReportNewAddCentre,
   smartReportUpdateCentre,
@@ -57,18 +57,20 @@ const ReportCenter = () => {
     },
   ];
   const [isEdit, setIsEdit] = useState(false)
-  // const getReportCenterGetData = async () => {
+  // const getReportCentreGetData = async () => {
   //   try {
-  //     const response = await ReportCenterGetData();
+  //     const response = await ReportCentreGetData();
   //     setTableData(response?.data);
   //   } catch (error) {
   //     console.log(error, "SomeThing Went Wrong");
   //   }
   // };
-  const getReportCenterGetData = async () => {
+  const getReportCentreGetData = async () => {
     try {
-      const response = await ReportCenterGetData();
+      const response = await ReportCentreGetData();
+     if(response?.staus){
       setTableData(response?.data);
+     }
     } catch (error) {
       console.log(error, "Something Went Wrong");
     }
@@ -91,7 +93,7 @@ const ReportCenter = () => {
     }
   };
   const bindCity = async (stateID) => {
-
+     debugger
     if (!stateID) {
       // setValues((prev) => ({ ...prev, city: {} }));
     
@@ -129,10 +131,6 @@ const ReportCenter = () => {
     }));
   };
 
-  useEffect(() => {
-    bindCity(values?.state?.value || values?.state);
-  }, [values?.state]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues({
@@ -169,7 +167,7 @@ const ReportCenter = () => {
       if (response?.status) {
         notify(response?.message, "success");
         setIsEdit(false);
-        getReportCenterGetData();
+        getReportCentreGetData();
         handleCencel()
       }
       else{
@@ -241,7 +239,7 @@ const ReportCenter = () => {
       if (response?.message) {
         notify(response?.message, "success");
         setIsEdit(false);
-        getReportCenterGetData();
+        getReportCentreGetData();
         handleCencel()
       }
       else{
@@ -263,8 +261,12 @@ const ReportCenter = () => {
       setIsEdit(false);
   };
   useEffect(() => {
+    bindCity(values?.state?.value || values?.state);
+  }, [values?.state]);
+
+  useEffect(() => {
     getState();
-    getReportCenterGetData();
+    getReportCentreGetData();
   }, []);
 
   return (

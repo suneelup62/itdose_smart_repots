@@ -15,8 +15,8 @@ export const apiUrls = {
   // Update Centre
   updateCentre: `/api/v1/CentreMaster/UpdateCentre`,
   
-  // Smart Report Center GetData
-  CenterGetData: `/api/v1/CentreMaster/GetData`,
+  // Smart Report Centre GetData
+  CentreGetData: `/api/v1/CentreMaster/GetData`,
 
   // Add Investigation
   addInvestigation: `/api/v1/InvestigationMaster/AddTest`,
