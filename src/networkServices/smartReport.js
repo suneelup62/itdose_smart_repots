@@ -90,6 +90,21 @@ export const smartReportUpdateCentre = async (payload) => {
       console.error("Error Found", error); 
     }
   };
+// Smart Report Center Master bindclient
+  export const CenterMasterBindclient = async () => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+          method: "get", 
+      };
+      const data = await makeApiRequest(`${apiUrls.bindclient}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
 // Add Investigation Submit
   export const addInvestigationSubmit = async (payload) => {
     store.dispatch(setLoading(true));
@@ -99,6 +114,22 @@ export const smartReportUpdateCentre = async (payload) => {
         data: payload,
       };
       const data = await makeApiRequest(`${apiUrls.addInvestigation}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+// /InvestigationMaster Bindsearchgrid
+  export const InvestigationMasterBindsearchgrid = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.Bindsearchgrid}`, options);
       store.dispatch(setLoading(false));
       return data;
     } catch (error) {
@@ -139,17 +170,55 @@ export const smartReportUpdateCentre = async (payload) => {
     }
   };
   
-
-
-
-
-
-
-
-
-
-
-
+// ObservationMaster Add Observation
+  export const ObservationMasterAddObservation = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.AddObservation}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+// ObservationMaster Update Observation
+  export const ObservationMasterUpdateObservation = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.UpdateObservation}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+//  ObservationMaster Remove Observation
+  export const ObservationMasterRemoveObservation = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.RemoveObserv}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+  
   
  // ObservationMaster BindObservgrid
   export const ObservationMasterBindObservgrid = async (payload) => {

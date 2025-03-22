@@ -1,75 +1,61 @@
 import React, { useEffect, useState } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
-import { MRDBindRoom, MRDSaveNewRoom } from "../../../networkServices/MRDApi";
+
 import Tables from "../../../components/UI/customTable";
 import ReactSelect from "../../../components/formComponent/ReactSelect";
 import Input from "../../../components/formComponent/Input";
 import { notify } from "../../../utils/utils";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { useTransition } from "react";
-import { InvestigationMasterBindTestgrid } from "../../../networkServices/smartReport";
+import {
+  InvestigationMasterBindsearchgrid,
+  InvestigationMasterBindTestgrid,
+} from "../../../networkServices/smartReport";
 import Modal from "../../../components/modalComponent/Modal";
 import Observation from "../Observation/Observation";
 
-const InvestigationDetails = ({ tableData, onEdit }) => {
+const InvestigationDetails = ({ tableData, onEdit}) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
   const [handleModelData, setHandleModelData] = useState({});
-
-  const [tableVluses, setTableVluses] = useState({
-    roomName: "",
-    savetype: "Save",
-    isActive: "1",
-    roomID: "",
+  const [serchVluses, setSerchVluses] = useState({
+    searchtype: "",
+    txtsearchInv: "",
+    clientid: "",
   });
 
+  const [searchTableData, setSearchByTableData] = useState([]);
+  const [isSearchActive, setIsSearchActive] = useState(false); // Track if search is active
+  const serchBydropDownData = [
+    { value: "TestName", label: "Test Name" },
+    { value: "Testcode", label: "Test Code" },
+    { value: "Department", label: "Department" },
+    { value: "Departcode", label: "Department Code" },
+  ];
   const THEAD = [
     t("S.No"),
     t("Center Name"),
     t("Test Name"),
     t("Test Code"),
     t("Department"),
+    t("Department Code"),
     t("Status"),
     t("Modify"),
     t("Acction"),
   ];
 
-  // const BindTestgrid = async () => {
-  //   const tableVluses ={
-  //     clientid:String(1)
-  //   }
-  //   try {
-  //     const response = await InvestigationMasterBindTestgrid(tableVluses);
-  //     console.log('response',response.data);
-
-  //     setTableData(response?.data);
-  //     // setTableData(dataTable);
-  //   } catch (error) {
-  //     console.log(error, "SomeThing Went Wrong");
-  //   }
-  // };
-
-  // const handleEdit = (row) => {
-  //   settableVluses({
-  //     roomName: row?.NAME,
-  //     isActive: row?.IsActive,
-  //     roomID: row?.RMID,
-  //     savetype: "Update",
-  //   });
-  // };
-
   const handleClose = () => {
     setHandleModelData((val) => ({ ...val, isOpen: false }));
   };
 
-  const handleObservation = () => {
+  const handleObservation = (row) => {
     setHandleModelData({
       isOpen: true,
-      width: "40vw",
+      width: "60vw",
       label: "Observation Master",
-      Component: <Observation />,
+      Component: <Observation ObservationRow={row} />,
       // RejectPurchaseRequest: RejectPurchaseRequest
     });
   };
@@ -77,15 +63,19 @@ const InvestigationDetails = ({ tableData, onEdit }) => {
     console.log(row);
   }
 
+
+  
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { centre, TestName, Testcode, Department, status } = row;
+      const { centre, TestName, Testcode, Department, Departcode, status } =
+        row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: centre,
         TestName: TestName,
         Testcode: Testcode,
         Department: Department,
+        DepartmentCode: Departcode,
         status: (
           <span
             style={{
@@ -96,28 +86,16 @@ const InvestigationDetails = ({ tableData, onEdit }) => {
             {status}
           </span>
         ),
-        Modify: (
-          <i
-            className="fa fa-edit"
-            style={{ color: "#1873c9" }}
-            onClick={() => onEdit(row)}
-          ></i>
-        ),
-        // Action: (
-        //   <button
-        //     className="btn btn-sm btn-primary"
-        //     onClick={() => handleEdit(row)}
-        //   >
-        //     {"Observetion"}
-        //   </button>,
-        //   <button
-        //     className="btn btn-sm btn-primary"
-        //     onClick={() => handleEdit(row)}
-        //   >
-        //     {"Interpretation"}
-        //   </button>
+        // Modify: (
+        //   <i
+        //     className="fa fa-edit"
+        //     style={{ color: "#1873c9" }}
+        //     onClick={() => onEdit(row)}
+        //   ></i>
         // ),
-
+        Modify: (
+          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
+        ),
         Action: (
           <div>
             <button
@@ -139,17 +117,75 @@ const InvestigationDetails = ({ tableData, onEdit }) => {
     });
   };
 
+  // Handle input change and update state
   const handleChangeTable = (e) => {
     const { name, value } = e.target;
-    setTableVluses({ ...tableVluses, [name]: value });
+    setSerchVluses((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleReactChange = (name, e) => {
-  //   settableVluses({
-  //     ...tableVluses,
-  //     [name]: e?.value,
-  //   });
-  // };
+  const handleReactChange = (name, e) => {
+    setSerchVluses({
+      ...serchVluses,
+      [name]: e?.value,
+      clientid: tableData[0]?.Centreid,
+    });
+  };
+
+  const hendelClear = () => {
+    setSerchVluses({
+      searchtype: "",
+      txtsearchInv: "",
+    });
+  };
+
+  // Function to fetch data based on search criteria
+   async  function Bindsearchgrid   ()  {
+    console.log("datatable",tableData)
+    debugger;
+    const payload = {
+      searchtype: serchVluses?.searchtype,
+      txtsearchInv: serchVluses?.txtsearchInv,
+      clientid: String(serchVluses?.clientid),
+    };
+    try {
+      const response = await InvestigationMasterBindsearchgrid(payload);
+      if (response?.data?.length) {
+        setSearchByTableData(response?.data || []); // Set search results
+        // hendelClear(); // Clear search input
+        setIsSearchActive(true); // Mark search as active
+      } else {
+        notify("No data found", "error"); // Notify if no data found
+        setSearchByTableData([]); // Reset search results if empty
+        setIsSearchActive(false);
+      }
+    } catch (error) {
+      console.error("Something went wrong", error);
+    }
+  };
+
+  // Debounce API call
+  useEffect(() => {
+    const debounceFetch = setTimeout(() => {
+      if (serchVluses.txtsearchInv) {
+        Bindsearchgrid();
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceFetch);
+  }, [serchVluses.txtsearchInv]);
+
+// Function to handle editing and updating searchTableData
+  const handleEdit = (row) => {
+    onEdit(row); // Call parent function if needed
+    // Update searchTableData with the edited row
+    setSearchByTableData((prevData) =>
+      prevData.map((item) => (item.Testcode === row.Testcode ? row : item))
+    );
+  };
+
+  const tableDisplayData = isSearchActive ? searchTableData : tableData;
+
+  // const tableDisplayData = isSearchActive ? searchTableData : tableData;
 
   return (
     <>
@@ -157,45 +193,36 @@ const InvestigationDetails = ({ tableData, onEdit }) => {
         <div className="patient_registration card">
           <Heading title={t("Records")} isBreadcrumb={false} />
           <div className="row p-2">
-            {/* <ReactSelect
-              placeholderName={t("Search By")}
+            <ReactSelect
+              placeholderName={t("Serch By")}
               searchable={true}
-              respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              id={"isActive"}
-              name={"isActive"}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"searchtype"}
+              name={"searchtype"}
               removeIsClearable={true}
               handleChange={handleReactChange}
-              dynamicOptions={IS_ACTIVE_OPTION}
-              value={tableVluses?.isActive}
-            /> */}
-            {/* <Input
+              dynamicOptions={serchBydropDownData}
+              // requiredClassName="required-fields"
+              value={serchVluses?.searchtype}
+            />
+            <Input
               type="text"
               className="form-control"
-              id="roomName"
-              lable={t(" Search")}
+              id="txtsearchInv"
+              lable={t("Type To Search")}
               placeholder=" "
               required={true}
-              value={tableVluses?.roomName}
+              value={serchVluses?.txtsearchInv}
               respclass="col-xl-2 col-md-4 col-sm-6 col-12"
-              name="roomName"
+              name="txtsearchInv"
               onChange={handleChangeTable}
-            /> */}
-            {/* 
-            <div className="col-xl-2 col-md-4 col-sm-6 col-12">
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={handleMRDSaveNewRoom}
-              >
-                {tableVluses?.roomID ? t("Update"): t("Save")}
-              </button>
-            </div> */}
+            />
           </div>
           <div className="row p-2">
             <div className="col-12">
               <Tables
-                isSearch={true}
                 thead={THEAD}
-                tbody={handleTableData(tableData?.length ? tableData : [])}
+                tbody={handleTableData(tableDisplayData)}
                 style={{ maxHeight: "60vh" }}
               />
             </div>

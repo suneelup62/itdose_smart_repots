@@ -23,12 +23,12 @@ const initialState = {
           breadcrumb: "Smart Report/Investigation Master",
           url: "/investigation",
         },
-        {
-          childrenName: "Observation",
-          childrenOrder: "2",
-          breadcrumb: "Smart Report/Observation Master",
-          url: "/observation",
-        },
+        // {
+        //   childrenName: "Observation",
+        //   childrenOrder: "2",
+        //   breadcrumb: "Smart Report/Observation Master",
+        //   url: "/observation",
+        // },
       ],
     },
     // {

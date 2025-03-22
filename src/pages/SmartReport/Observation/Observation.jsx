@@ -9,12 +9,16 @@ import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import ReportObservation from "./ReportObservation";
 import {
-  InvestigationMasterBindTestgrid,
+  ObservationMasterUpdateObservation,
   ObservationMasterBindObservgrid,
   ReportCentreGetData,
+  ObservationMasterAddObservation,
+  ObservationMasterRemoveObservation,
 } from "../../../networkServices/smartReport";
+import { useLayoutEffect } from "react";
 
-const Observation = () => {
+const Observation = ({ ObservationRow }) => {
+
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
   const [isEdit, setIsEdit] = useState(false);
@@ -25,98 +29,21 @@ const Observation = () => {
   });
 
   const [values, setValues] = useState({
-    centreName: {},
-    investigationName: "",
+    centreName: null,
     observationName: "",
     observationCode: "",
-    invid: {},
-    centreid: {},
+    invid: null,
+    ObservId: "",
   });
 
-  console.log("values", values);
-  console.log("Getinvid",dropDownData.Getinvid)
-  const GetCentreName = async () => {
-    try {
-      const response = await ReportCentreGetData();
-      if (response?.data) {
-        setDropDownData((preV) => ({
-          ...preV,
-          GetBindCentreName: handleReactSelectDropDownOptions(
-            response?.data,
-            "CentreName",
-            "Centreid"
-          ),
-        }));
-      }
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
-    }
-  };
-  // BindTestgrid
-  console.log("valuse", values);
-  const BindTestgrid = async (centreId) => {
-    if (!centreId) return; // Ensure we don't send an empty request
-
-    const payload = {
-      clientid: String(centreId),
-    };
-    try {
-      const response = await InvestigationMasterBindTestgrid(payload);
-           console.log("data",response.data)
-
-      if (Array.isArray(response?.data) && response.data.length > 0) {
-        const invidList = response.data.map((item) => item.id);
-        const centreidList = response.data.map((item) => item.Centreid);
-        setValues((val) => ({
-          ...val,
-          invid: invidList, // Store an array of all `id`s
-          centreid: centreidList, // Store an array of all `Centreid`s
-        }));
-      }
-
-      if (response?.data) {
-            const invidOptions = handleReactSelectDropDownOptions(
-              response.data,
-              "id",
-              "Centreid",
-
-            );
-            setDropDownData((prev) => ({
-              ...prev,
-              Getinvid: invidOptions,
-            }));
-            return invidOptions;
-          }
-          return [];
-    } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
-      return [];
-    }
-  };
-
-  // BindTestgrid call selectedOption Centreid
-  const handleReactChange = (name, selectedOption) => {
-    console.log("Selected Centre ID:", selectedOption?.Centreid);
-    setValues((prev) => ({ ...prev, [name]: selectedOption }));
-
-    if (name === "centreName" && selectedOption?.Centreid) {
-      BindTestgrid(selectedOption.Centreid);
-    }
-  };
-
-  // ObservationMaster BindObservgrid
-  const BindObservgrid = async () => {
-    const payload = {
-      centreid: String() || "",
-      invid: String() || "",
-    };
-
+  const BindObservgrid = async (payload) => {
     try {
       const response = await ObservationMasterBindObservgrid(payload);
-      setTableData(response?.data);
-      // setTableData(dataTable);
+      if (response?.status) {
+        setTableData(response?.data);
+      }
     } catch (error) {
-      console.log(error, "SomeThing Went Wrong");
+      console.error("Error in BindObservgrid:", error);
     }
   };
 
@@ -130,8 +57,6 @@ const Observation = () => {
 
   const handleSubmit = async () => {
     const requiredFields = {
-      centreName: "Centre name is required",
-      investigationName: "Investigation Name is required",
       observationName: "Observation Name is required",
       observationCode: "Observation Code is required",
     };
@@ -142,103 +67,137 @@ const Observation = () => {
       }
     }
     const payload = {
-      Centreid: String(values?.centreName),
-      TestName: values?.testName,
-      Testcode: values?.testCode,
-      Department: values?.department,
-      chkactive: values?.isActive,
-      departcode: values?.departmentCode,
+      centreid: String(values?.centreName?.Centreid),
+      invid: String(values?.invid?.id),
+      ObserName: values?.observationName,
+      Obsercode: values?.observationCode,
     };
-    console.log("payload", payload);
     try {
-      const response = await addInvestigationSubmit(payload);
-      if (response?.success) {
+      const response = await ObservationMasterAddObservation(payload);
+      if (response?.status) {
         notify(response?.message, "success");
-        // getReportCentreGetData();
+        BindObservgrid(payload);
+        handleCancel();
       } else {
         notify(response?.message, "error");
       }
     } catch (error) {
-      console.log(error, "Some Thing Went Wrong");
+      console.error(error, "Some Thing Went Wrong");
     }
   };
 
   const handleEdit = (val) => {
-    console.log("handleEdit", val);
     setIsEdit(true);
-    setValues({
-      // ...prev,
-      tableRowId: val?.id,
-      centreName: val?.Centreid,
-      testName: val?.TestName,
-      testCode: val?.Testcode,
-      department: val?.Department,
-      departmentCode: val?.Departcode,
-    });
+    setValues((prev) => ({
+      ...prev,
+      ObservId: val?.ObservId,
+      observationName: val?.Observname,
+      observationCode: val?.observcode,
+    }));
   };
+
   const handleUpdate = async () => {
-    debugger;
     const requiredFields = {
-      centreName: "Centre name is required",
-      investigationName: "Investigation Name is required",
       observationName: "Observation Name is required",
       observationCode: "Observation Code is required",
     };
+
     for (const field in requiredFields) {
       if (!values?.[field]) {
         notify(requiredFields[field], "error");
         return;
       }
     }
-    // console.log("smartReportUpdateCentre", values);
+
     const payload = {
-      idd: String(values?.tableRowId),
-      Centreid: String(values?.centreName),
-      TestName: String(values?.testName),
-      Testcode: String(values?.testCode),
-      Department: values?.department,
-      departcode: values?.departmentCode,
-      chkactive: String(values?.isActive?.value),
+      centreid: values?.centreName?.Centreid
+        ? String(values?.centreName?.Centreid)
+        : "",
+      idd: String(values?.ObservId),
+      ObserName: String(values?.observationName),
+      Obsercode: String(values?.observationCode),
     };
-    // try {
-    //   const response = await InvestigationMasterUpdatetest(payload);
-    //   if (response?.status) {
-    //     notify(response?.message, "success");
-    //     setIsEdit(false);
-    //       const payload = {
-    //   clientid: String(values?.centreName),
-    // };
 
-    // try {
-    //   const response = await InvestigationMasterBindTestgrid(payload);
+    try {
+      const response = await ObservationMasterUpdateObservation(payload);
+      if (response?.status) {
+        notify(response?.message, "success");
+        setIsEdit(false);
 
-    //   setTableData(response?.data);
-    //   // setTableData(dataTable);
-    // } catch (error) {
-    //   console.log(error, "SomeThing Went Wrong");
-    // }
-    //   }
-    // } catch (error) {
-    //   console.log(error, "Some Thing Went Wrong");
-    // }
+        // Ensure payload is passed correctly for refreshing the grid
+        const gridPayload = {
+          centreid: values?.centreName?.Centreid
+            ? String(values?.centreName?.Centreid)
+            : "",
+          invid: values?.invid?.id ? String(values?.invid?.id) : "",
+        };
+
+        await BindObservgrid(gridPayload);
+        handleCancel();
+      } else {
+        notify(response?.message, "error");
+      }
+    } catch (error) {
+      console.error("Error in handleUpdate:", error);
+    }
   };
 
-  const handleCencel = () => {
+  const handleDelete = async (val) => {
+    const payload = {
+      idd: String(val.ObservId),
+    };
+
+    try {
+      const response = await ObservationMasterRemoveObservation(payload);
+      if (response?.status) {
+        notify(response?.message, "success");
+        const gridPayload = {
+          centreid: values?.centreName?.Centreid
+            ? String(values?.centreName?.Centreid)
+            : "",
+          invid: values?.invid?.id ? String(values?.invid?.id) : "",
+        };
+
+        await BindObservgrid(gridPayload);
+      } else {
+        notify(response.message, "error");
+      }
+    } catch (error) {
+      console.error("Error in handleDelete:", error);
+    }
+  };
+  const handleCancel = () => {
     setValues((prev) => ({
       ...prev,
-      testName: "",
-      testCode: "",
-      department: "",
-      departmentCode: "",
-      isActive: {},
+      observationName: "",
+      observationCode: "",
     }));
     setIsEdit(false);
   };
 
   useEffect(() => {
-    GetCentreName();
-    // BindObservgrid();
-  }, []);
+    if (ObservationRow) {
+      const payload = {
+        centreid: ObservationRow?.Centreid
+          ? String(ObservationRow?.Centreid)
+          : "",
+        invid: ObservationRow?.id ? String(ObservationRow?.id) : "",
+      };
+
+      BindObservgrid(payload);
+      setValues((prev) => ({
+        ...prev,
+        centreName: {
+          Centreid: ObservationRow?.Centreid || "",
+          centre: ObservationRow?.centre || "",
+        },
+        invid: {
+          id: ObservationRow?.id || "",
+          TestName: ObservationRow?.TestName || "",
+        },
+      }));
+    }
+  }, [ObservationRow]);
 
   return (
     <>
@@ -246,33 +205,49 @@ const Observation = () => {
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            <ReactSelect
-              placeholderName={t("Centre Name")}
+            {/* <ReactSelect
+              placeholderName={values?.centreName?.centre}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"centreName"}
               name={"centreName"}
+              isDisabled={true}
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={dropDownData?.GetBindCentreName}
               requiredClassName="required-fields"
               value={values?.centreName}
-            />
-            <ReactSelect
-              placeholderName={t("Investigation")}
-              searchable={true}
+            /> */}
+            <Input
+              type="text"
+              className="form-control"
+              id="centreName"
+              lable={"Centre Name"}
+              placeholder=" "
+              required={true}
+              disabled={true}
+              value={values?.centreName?.centre}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              id={"investigationName"}
-              name={"investigationName"}
-              removeIsClearable={true}
-              handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={dropDownData?.Getinvid}
-              requiredClassName="required-fields"
-              value={values?.investigationName}
+              name="centreName"
+              onChange={handleChange}
             />
             <Input
               type="text"
-              className="form-control required-fields"
+              className="form-control"
+              id="investigationName"
+              lable={"investigation Name"}
+              placeholder=" "
+              required={true}
+              disabled={true}
+              value={values?.invid?.TestName}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              name="investigationName"
+              onChange={handleChange}
+            />
+
+            <Input
+              type="text"
+              className="form-control"
               id="observationName"
               lable={t("Observation Name")}
               placeholder=" "
@@ -284,7 +259,7 @@ const Observation = () => {
             />
             <Input
               type="text"
-              className="form-control required-fields"
+              className="form-control"
               id="observationCode"
               lable={t("Observation Code")}
               placeholder=" "
@@ -294,11 +269,6 @@ const Observation = () => {
               name="observationCode"
               onChange={handleChange}
             />
-            {/* <div className="col-xl-2 col-md-4 col-sm-6 col-12">
-              <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
-                {values?.rackID ? t("Update") : t("Submit")}
-              </button>
-            </div> */}
           </div>
           <div className="button-container-center">
             {isEdit ? (
@@ -311,7 +281,7 @@ const Observation = () => {
                 </button>
                 <button
                   className="btn btn-sm btn-primary ml-2"
-                  onClick={handleCencel}
+                  onClick={handleCancel}
                 >
                   {t("Cancel")}
                 </button>
@@ -324,7 +294,11 @@ const Observation = () => {
           </div>
         </div>
       </div>
-      <ReportObservation tableData={tableData} onEdit={handleEdit} />
+      <ReportObservation
+        tableData={tableData}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </>
   );
 };

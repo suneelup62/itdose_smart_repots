@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
-import { MRDBindRoom, MRDSaveNewRoom } from "../../../networkServices/MRDApi";
 import Tables from "../../../components/UI/customTable";
 import ReactSelect from "../../../components/formComponent/ReactSelect";
 import Input from "../../../components/formComponent/Input";
@@ -9,8 +8,7 @@ import { notify } from "../../../utils/utils";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { useTransition } from "react";
 
-const ReportObservation = ({ tableData, onEdit }) => {
-//--------------------------------- Static Data Table Data ------------------
+const ReportObservation = ({ tableData, onEdit, onDelete }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
@@ -51,12 +49,9 @@ const ReportObservation = ({ tableData, onEdit }) => {
           <i
             className="fa fa-trash text-danger"
             style={{ color: "#1873c9" }}
-            onClick={() => onEdit(row)}
+            onClick={() => onDelete(row)}
           ></i>
         ),
-        //     Edit:  <button className="btn btn-sm btn-primary"
-        //     onClick={() => handleEdit(row)}>{"Edit"}
-        //   </button>,
       };
     });
   };
