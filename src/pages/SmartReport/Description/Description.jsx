@@ -7,48 +7,41 @@ import { handleReactSelectDropDownOptions, notify } from "../../../utils/utils";
 import Input from "../../../components/formComponent/Input";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
-import InvestigationDetails from "./InvestigationDetails";
+import FullTextEditor from "../Description/TextEditor";
+// import InvestigationDetails from "./InvestigationDetails";
 import {
   addInvestigationSubmit,
+  BindInvestigationTestCode,
   bindState,
   CenterMasterBindclient,
   InvestigationMasterBindTestgrid,
   InvestigationMasterUpdatetest,
+  MasterInvestigationDescription,
   ReportCentreGetData,
 } from "../../../networkServices/smartReport";
+import Editor from "quill/core/editor";
+import { TextEditor } from "rc-easyui";
 
-const Investigation = () => {
+const Description = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
   const [dropDownData, setDropDownData] = useState({
-    GetBindCentreName: [],
+    getBindCentreName: [],
+    getBindTestCode: [],
   });
 
-  const IS_ACTIVE_OPTION = [
-    {
-      label: "Active",
-      value: "1",
-    },
-
-    {
-      label: "InActive",
-      value: "0",
-    },
-  ];
-
-  const [values, setValues] = useState({
-    tableRowId: "",
-    centreName: {},
-    testName: "",
-    testCode: "",
-    department: "",
-    departmentCode: "",
-    isActive: {},
-  });
+  const [Editor, setEditor] = useState("");
 
   const [isEdit, setIsEdit] = useState(false);
-const [setChildData,setSetChildData]=useState({})
+  const [setChildData, setSetChildData] = useState({});
 
+  const [values, setValues] = useState({
+    centreName: null,
+    testCode: null,
+    Template: "",
+  });
+
+  const [Editable, setEditable] = useState(false);
 
   const GetCentreName = async () => {
     try {
@@ -56,11 +49,10 @@ const [setChildData,setSetChildData]=useState({})
       if (response?.status) {
         setDropDownData((prev) => ({
           ...prev,
-          GetBindCentreName: handleReactSelectDropDownOptions(
+          getBindCentreName: handleReactSelectDropDownOptions(
             response?.data,
             "CentreName",
-            "Centreid",
-           
+            "Centreid"
           ),
         }));
       }
@@ -68,69 +60,69 @@ const [setChildData,setSetChildData]=useState({})
       console.log(error, "Something went wrong");
     }
   };
-  const BindTestgrid = async (centreId) => {
-    if (!centreId) return; // Ensure we don't send an empty request
-
-    const payload = {
-      clientid: String(centreId),
-    };
+  const BindTestCode = async (stateID) => {
+    if (!stateID) {
+      setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
+      return [];
+    }
 
     try {
-      const response = await InvestigationMasterBindTestgrid(payload);
-      setTableData(response?.data);
+      const response = await BindInvestigationTestCode({
+        clientid: String(stateID),
+      });
+      if (response?.data) {
+        const testCodeOptions = handleReactSelectDropDownOptions(
+          response.data,
+          "TestName",
+          "TestCode"
+        );
+        setDropDownData((prev) => ({
+          ...prev,
+          getBindTestCode: testCodeOptions,
+        }));
+        return testCodeOptions; // Return the city options for immediate use
+      }
+      return [];
     } catch (error) {
-      console.log(error, "Something went wrong");
+      console.error("Error fetching cities:", error);
+      return [];
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues({
+      ...values,
+      [name]: value,
+    });
   };
 
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
-
-    if (name === "centreName" && selectedOption?.Centreid) {
-      BindTestgrid(selectedOption.Centreid);
-    }
   };
- 
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async () => {
-    const requiredFields = {
-      centreName: "Centre name is Required",
-      testName: "Test name is Required",
-      testCode: "Test code is Required",
-      department: "Department is Required",
-      departmentCode: "Department code is Required",
-      isActive: "Status code is Required",
-    };
-
-    for (const field in requiredFields) {
-      if (!values?.[field]) {
-        notify(requiredFields[field], "error");
-        return;
+    debugger;
+    const requiredFields = [
+      { key: "centreName", message: "Centre Name is required" },
+      { key: "testCode", message: "Test Code is required" },
+    ];
+    for (let field of requiredFields) {
+      if (!values[field.key]) {
+        notify(field.message, "error");
+        return false;
       }
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid || ""),
-      TestName: values.testName,
-      Testcode: values.testCode,
-      Department: values.department,
-      chkactive: String(values.isActive?.value || ""),
-      departcode: values.departmentCode,
+      Centreid: String(values?.centreName?.Centreid),
+      Testcode: values?.testCode?.value,
+      Template: values?.Template,
     };
-
     try {
-      const response = await addInvestigationSubmit(payload);
-
+      const response = await MasterInvestigationDescription(payload);
       if (response?.status) {
         notify(response.message, "success");
-        setIsEdit(false);
-        await fetchTestGrid(payload.Centreid);
-        handleCencel()
+        //  handleCencel()
       } else {
         notify(response.message || "Submission failed", "error");
       }
@@ -138,110 +130,34 @@ const [setChildData,setSetChildData]=useState({})
       console.error("Something went wrong:", error);
     }
   };
-
-  const handleEdit = (val) => {
-    console.log("Edit",val)
-    setIsEdit(true);
-    setValues({
-      tableRowId: val?.id,
-      centreName: val?.Centreid,
-      testName: val?.TestName,
-      testCode: val?.Testcode,
-      department: val?.Department,
-      departmentCode: val?.Departcode,
-      isActive:
-        val.status === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
-    });
-  };
-
-  const handleUpdate = async (val) => {
- debugger
-    const requiredFields = {
-      centreName: "Centre name is Required",
-      testName: "Test name is Required",
-      testCode: "Test code is Required",
-      department: "Department is Required",
-      departmentCode: "Department code is Required",
-      isActive: "Status code is Required",
-    };
-
-    for (const field in requiredFields) {
-      if (!values?.[field]) {
-        notify(requiredFields[field], "error");
-        return;
-      }
-    }
-
-    const payload = {
-      idd: String(values.tableRowId),
-      Centreid: String(values.centreName),
-      TestName: String(values.testName),
-      Testcode: String(values.testCode),
-      Department: values.department,
-      departcode: values.departmentCode,
-      chkactive: String(values.isActive?.value),
-    };
-
-    try {
-      const response = await InvestigationMasterUpdatetest(payload);
-      if (response?.status) {
-        notify(response?.message, "success");
-        setIsEdit(false);
-        await fetchTestGrid(values.centreName);
-        if(setChildData.isSearchActive){
-          const payload1={
-          searchtype: setChildData?.serchVluses?.searchtype,
-      txtsearchInv: setChildData?.serchVluses?.txtsearchInv,
-      clientid: String(setChildData?.serchVluses?.clientid),
-          }
-        await setChildData.Bindsearchgrid(payload1)
-        }
-        handleCencel()
-      }
-      
-      else{
-        notify(response.message || "Updation failed", "error");
-      }
-    } catch (error) {
-      console.error("Something went wrong:", error);
-    }
-  };
-
-  // Separate function to fetch and update test grid data
-  const fetchTestGrid = async (id) => {
-    try {
-      const response = await InvestigationMasterBindTestgrid({
-        clientid: String(id),
-      });
-      setTableData(response?.data);
-      val.BindTestgrid()
-      handleCencel();
-    } catch (error) {
-      console.error("Something went wrong:", error);
-    }
-  };
-
-  function handleCencel() {
+  const handleCencel = () => {
     setValues((prev) => ({
       ...prev,
-      testName: "",
-      testCode: "",
-      department: "",
-      departmentCode: "",
-      isActive: {},
+      centreName: "",
+      testCode: null,
+      Template: "",
     }));
     setIsEdit(false);
-  }
+  };
 
   useEffect(() => {
     GetCentreName();
   }, []);
 
-  const receiveChildObject = (obj) => {
-    setSetChildData(obj); // Store child object in state
+  useEffect(() => {
+    if (values?.centreName?.Centreid) {
+      BindTestCode(values?.centreName?.Centreid);
+    }
+  }, [values?.centreName]);
+
+  useEffect(() => {
+    setValues({ ...values, Template: Editor });
+  }, [Editor]);
+
+  const handelTesting = () => {
+    setEditable(true);
+    console.log("Testing");
   };
-
-
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -249,6 +165,30 @@ const [setChildData,setSetChildData]=useState({})
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
             <ReactSelect
+              placeholderName={t("Select Centre Name")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"centreName"}
+              name={"centreName"}
+              removeIsClearable={true}
+              handleChange={handleReactChange}
+              dynamicOptions={dropDownData?.getBindCentreName}
+              // requiredClassName="required-fields"
+              value={values?.centreName}
+            />
+            <ReactSelect
+              placeholderName={t("Select Test Code")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"testCode"}
+              name={"testCode"}
+              removeIsClearable={true}
+              handleChange={(name, e) => handleReactChange(name, e)}
+              dynamicOptions={dropDownData?.getBindTestCode}
+              // requiredClassName="required-fields"
+              value={values?.testCode}
+            />
+            {/* <ReactSelect
               placeholderName={t("Centre Name")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -256,7 +196,7 @@ const [setChildData,setSetChildData]=useState({})
               name={"centreName"}
               removeIsClearable={true}
               handleChange={handleReactChange}
-              dynamicOptions={dropDownData?.GetBindCentreName}
+              dynamicOptions={dropDownData?.getBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
             />
@@ -320,8 +260,15 @@ const [setChildData,setSetChildData]=useState({})
               dynamicOptions={IS_ACTIVE_OPTION}
               value={values?.isActive?.value}
               // requiredClassName="required-fields"
+            /> */}
+          </div>
+          <div className="FullTextEditor">
+            <FullTextEditor
+              value={values?.Template}
+              setValue={setEditor}
+              editable={Editable}
+              setEditTable={setEditable}
             />
-
           </div>
           <div className="button-container-center">
             {isEdit ? (
@@ -347,9 +294,9 @@ const [setChildData,setSetChildData]=useState({})
           </div>
         </div>
       </div>
-      <InvestigationDetails tableData={tableData} onEdit={handleEdit} fetchDataAfterEdit={handleUpdate} sendDataToParent={receiveChildObject} setParentData={setChildData} />
+      {/* <InvestigationDetails tableData={tableData} onEdit={handleEdit} fetchDataAfterEdit={handleUpdate} sendDataToParent={receiveChildObject} setParentData={setChildData} /> */}
     </>
   );
 };
 
-export default Investigation;
+export default Description;

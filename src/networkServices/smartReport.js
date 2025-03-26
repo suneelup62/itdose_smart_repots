@@ -219,7 +219,6 @@ export const smartReportUpdateCentre = async (payload) => {
     }
   };
   
-  
  // ObservationMaster BindObservgrid
   export const ObservationMasterBindObservgrid = async (payload) => {
     store.dispatch(setLoading(true));
@@ -229,6 +228,56 @@ export const smartReportUpdateCentre = async (payload) => {
         data: payload,
       };
       const data = await makeApiRequest(`${apiUrls.BindObservgrid}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+  
+// SmartReportMaster InvestigationMaster BindInvestigation
+export const BindInvestigationTestCode = async (payload) => {
+  store.dispatch(setLoading(true));
+  try {
+    const options = {
+      method: "Post",
+      data: payload,
+    };
+    const data = await makeApiRequest(`${apiUrls.InvestigationBindInvestigation}`, options);
+    store.dispatch(setLoading(false));
+    return data;
+  } catch (error) {
+    store.dispatch(setLoading(false));
+    console.error("Error Found", error); 
+  }
+};
+  // SmartReportMaster Investigation Description
+  export const MasterInvestigationDescription = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.InvestigationDescription}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+
+  // SmartReportMaster Investigation Riskfactor
+  export const MasterInvestigationRiskfactor = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.InvestigationRiskfactor}`, options);
       store.dispatch(setLoading(false));
       return data;
     } catch (error) {

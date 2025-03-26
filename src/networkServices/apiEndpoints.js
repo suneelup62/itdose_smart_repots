@@ -50,6 +50,16 @@ export const apiUrls = {
 
    // ObservationMaster BindObservgrid
    BindObservgrid: `/api/v1/ObservationMaster/BindObservgrid`,
+    
+   // InvestigationMaster BindInvestigation
+     InvestigationBindInvestigation: `/api/v1/InvestigationMaster/BindInvestigation`,
+   
+   // CentreMaster Investigation Description
+   InvestigationDescription: `/api/v1/SmartReportMaster/Investigation_Description`,
+   
+   // CentreMaster Investigation Description
+   InvestigationRiskfactor: `/api/v1/SmartReportMaster/Investigation_Riskfactor`,
+ 
    
 
 };

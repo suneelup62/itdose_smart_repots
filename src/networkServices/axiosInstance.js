@@ -40,8 +40,8 @@ const logOut = () => {
 };
 
 const makeApiRequest = async (url, options, header='') => {
-  const localData = useLocalStorage("token", "get");
-  const validUser = useLocalStorage("userData", "get");
+  const localData = useLocalStorage("authToken", "get");
+  const validUser = useLocalStorage("authToken", "get");
   const { method, data } = options;
   const lowerCaseMethod = method.toLowerCase();
 
@@ -55,10 +55,14 @@ const makeApiRequest = async (url, options, header='') => {
     return symbol;
   };
 
-  const finalUrl = validUser
-    ? `${url}${parameterChecker()}userValidateID=${validUser?.userValidateID}`
-    : url;
+  // Pass url token
+  // const finalUrl = validUser
+  //   ? `${url}${parameterChecker()}userValidateID=${validUser}`
+  //   : url;
 
+  const finalUrl = validUser
+  ? `${url}${parameterChecker()}`
+  : url;
   try {
     const response = await axiosInstance({
       method: lowerCaseMethod,

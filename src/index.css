@@ -4818,3 +4818,9 @@ button.btn-success:hover {
   align-items: center; /* Centers vertically (if needed) */
   height: 50px; /* Adjust as needed */
 }
+
+
+/* cke_notification_warning  */
+.cke_notification_warning {
+  display: none !important;
+}

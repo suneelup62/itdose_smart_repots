@@ -350,5 +350,21 @@ const allRoutes = {
       ),
       exact: true,
     },
+    {
+      layout: Layout,
+      path: "/description",
+      component: lazy(
+        () => import("@app/pages/SmartReport/Description/Description.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/riskfactor",
+      component: lazy(
+        () => import("@app/pages/SmartReport/Riskfactor/Riskfactor.jsx")
+      ),
+      exact: true,
+    },
   ],
 };

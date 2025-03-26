@@ -15,7 +15,7 @@ import {
 import Modal from "../../../components/modalComponent/Modal";
 import Observation from "../Observation/Observation";
 
-const InvestigationDetails = ({ tableData, onEdit}) => {
+const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
@@ -140,7 +140,6 @@ const InvestigationDetails = ({ tableData, onEdit}) => {
 
   // Function to fetch data based on search criteria
    async  function Bindsearchgrid   ()  {
-    console.log("datatable",tableData)
     debugger;
     const payload = {
       searchtype: serchVluses?.searchtype,
@@ -177,11 +176,29 @@ const InvestigationDetails = ({ tableData, onEdit}) => {
 // Function to handle editing and updating searchTableData
   const handleEdit = (row) => {
     onEdit(row); // Call parent function if needed
-    // Update searchTableData with the edited row
+
     setSearchByTableData((prevData) =>
       prevData.map((item) => (item.Testcode === row.Testcode ? row : item))
     );
   };
+
+useEffect(()=>{
+if(serchVluses.txtsearchInv===""){
+  setIsSearchActive(false)
+}
+},[serchVluses?.txtsearchInv])
+
+
+useEffect(() => {
+  // Create the object
+  const passfun = {
+    isSearchActive: isSearchActive,
+    Bindsearchgrid: Bindsearchgrid,
+    serchVluses:serchVluses
+  };
+
+  sendDataToParent(passfun); // Send object to parent
+}, [isSearchActive]); // Triggers when `isSearchActive` changes
 
   const tableDisplayData = isSearchActive ? searchTableData : tableData;
 

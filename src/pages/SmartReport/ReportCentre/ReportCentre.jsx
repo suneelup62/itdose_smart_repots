@@ -254,7 +254,7 @@ const ReportCenter = () => {
               type="text"
               className="form-control"
               id="centreName"
-              lable={t("Centre Name")}
+              lable={t("Select Centre Name")}
               placeholder=" "
               required={true}
               value={values?.centreName}
@@ -263,7 +263,7 @@ const ReportCenter = () => {
               onChange={handleChange}
             />
             <ReactSelect
-              placeholderName={t("State")}
+              placeholderName={t("Select State")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"state"}
@@ -275,7 +275,7 @@ const ReportCenter = () => {
               value={values?.state}
             />
             <ReactSelect
-              placeholderName={t("City")}
+              placeholderName={t("Select City")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"city"}
