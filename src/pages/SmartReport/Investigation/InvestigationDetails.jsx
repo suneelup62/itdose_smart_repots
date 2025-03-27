@@ -140,7 +140,7 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
 
   // Function to fetch data based on search criteria
    async  function Bindsearchgrid   ()  {
-    debugger;
+
     const payload = {
       searchtype: serchVluses?.searchtype,
       txtsearchInv: serchVluses?.txtsearchInv,

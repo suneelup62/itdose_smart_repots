@@ -94,7 +94,7 @@ const Description = () => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
   };
   const handleSubmit = async () => {
-    debugger;
+
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
