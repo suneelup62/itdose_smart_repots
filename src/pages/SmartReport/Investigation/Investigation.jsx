@@ -249,7 +249,7 @@ const [setChildData,setSetChildData]=useState({})
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
             <ReactSelect
-              placeholderName={t("Centre Name")}
+              placeholderName={t("Select centre name")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"centreName"}
@@ -264,7 +264,7 @@ const [setChildData,setSetChildData]=useState({})
               type="text"
               className="form-control"
               id="testName"
-              lable={t("Test Name")}
+              lable={t("Test name")}
               placeholder=" "
               required={true}
               value={values?.testName}

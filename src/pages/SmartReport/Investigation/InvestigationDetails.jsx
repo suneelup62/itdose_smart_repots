@@ -211,7 +211,7 @@ useEffect(() => {
           <Heading title={t("Records")} isBreadcrumb={false} />
           <div className="row p-2">
             <ReactSelect
-              placeholderName={t("Serch By")}
+              placeholderName={t("Serch by")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"searchtype"}
@@ -226,7 +226,7 @@ useEffect(() => {
               type="text"
               className="form-control"
               id="txtsearchInv"
-              lable={t("Type To Search")}
+              lable={t("Type to search")}
               placeholder=" "
               required={true}
               value={serchVluses?.txtsearchInv}

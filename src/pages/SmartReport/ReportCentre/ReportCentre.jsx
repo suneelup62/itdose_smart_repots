@@ -128,6 +128,7 @@ const ReportCenter = () => {
     }));
   };
   const handleSubmit = async () => {
+
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "state", message: "State is required" },
@@ -145,7 +146,7 @@ const ReportCenter = () => {
       txtstate: String(values?.state?.value),
       txtcity: String(values?.city?.value),
       txtadddress: values?.address,
-      chkactive: values?.isActive,
+      chkactive: String(values?.isActive),
     };
     console.log("payload", payload);
     try {
@@ -254,7 +255,7 @@ const ReportCenter = () => {
               type="text"
               className="form-control"
               id="centreName"
-              lable={t("Select Centre Name")}
+              lable={t("Select centre name")}
               placeholder=" "
               required={true}
               value={values?.centreName}
@@ -263,7 +264,7 @@ const ReportCenter = () => {
               onChange={handleChange}
             />
             <ReactSelect
-              placeholderName={t("Select State")}
+              placeholderName={t("Select state")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"state"}
@@ -275,7 +276,7 @@ const ReportCenter = () => {
               value={values?.state}
             />
             <ReactSelect
-              placeholderName={t("Select City")}
+              placeholderName={t("Select city")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"city"}

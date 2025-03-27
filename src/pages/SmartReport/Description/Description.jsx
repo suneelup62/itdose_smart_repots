@@ -165,7 +165,7 @@ const Description = () => {
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
             <ReactSelect
-              placeholderName={t("Select Centre Name")}
+              placeholderName={t("Select centre name")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"centreName"}
@@ -177,7 +177,7 @@ const Description = () => {
               value={values?.centreName}
             />
             <ReactSelect
-              placeholderName={t("Select Test Code")}
+              placeholderName={t("Select test code")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"testCode"}
