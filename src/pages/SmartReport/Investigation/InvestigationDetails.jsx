@@ -11,11 +11,18 @@ import { useTransition } from "react";
 import {
   InvestigationMasterBindsearchgrid,
   InvestigationMasterBindTestgrid,
+  InvestigationMasterDownloadToExcel,
 } from "../../../networkServices/smartReport";
 import Modal from "../../../components/modalComponent/Modal";
 import Observation from "../Observation/Observation";
-
-const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
+import UploadToExcel from "./UploadToExcel";
+import DownloadToExcel from "./UploadToExcel";
+import { parseString } from "xml2js";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import makeApiRequest from "../../../networkServices/axiosInstance";
+import axios from "axios";
+const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
@@ -43,9 +50,13 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
     t("Department Code"),
     t("Status"),
     t("Modify"),
-    t("Acction"),
+    // t("Acction"),
   ];
-
+  const [uploadFileData, setUploadFileData] = useState({
+    uploadFile: "",
+    previewUrl: "",
+  });
+  console.log(uploadFileData);
   const handleClose = () => {
     setHandleModelData((val) => ({ ...val, isOpen: false }));
   };
@@ -63,8 +74,6 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
     console.log(row);
   }
 
-
-  
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
       const { centre, TestName, Testcode, Department, Departcode, status } =
@@ -94,25 +103,29 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
         //   ></i>
         // ),
         Modify: (
-          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
+          <i
+            className="fa fa-edit"
+            style={{ color: "#1873c9", cursor: "pointer" }}
+            onClick={() => handleEdit(row)}
+          ></i>
         ),
-        Action: (
-          <div>
-            <button
-              className="btn btn-sm btn-primary me-2"
-              onClick={() => handleObservation(row)}
-              style={{ margin: "2px" }}
-            >
-              Observation
-            </button>
-            <button
-              className="btn btn-sm btn-secondary"
-              onClick={() => handleInterpretation(row)}
-            >
-              Interpretation
-            </button>
-          </div>
-        ),
+        // Action: (
+        //   <div>
+        //     <button
+        //       className="btn btn-sm btn-primary me-2"
+        //       onClick={() => handleObservation(row)}
+        //       style={{ margin: "2px" }}
+        //     >
+        //       Observation
+        //     </button>
+        //     <button
+        //       className="btn btn-sm btn-secondary"
+        //       onClick={() => handleInterpretation(row)}
+        //     >
+        //       Interpretation
+        //     </button>
+        //   </div>
+        // ),
       };
     });
   };
@@ -139,8 +152,7 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
   };
 
   // Function to fetch data based on search criteria
-   async  function Bindsearchgrid   ()  {
-
+  async function Bindsearchgrid() {
     const payload = {
       searchtype: serchVluses?.searchtype,
       txtsearchInv: serchVluses?.txtsearchInv,
@@ -160,7 +172,7 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
     } catch (error) {
       console.error("Something went wrong", error);
     }
-  };
+  }
 
   // Debounce API call
   useEffect(() => {
@@ -173,7 +185,7 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
     return () => clearTimeout(debounceFetch);
   }, [serchVluses.txtsearchInv]);
 
-// Function to handle editing and updating searchTableData
+  // Function to handle editing and updating searchTableData
   const handleEdit = (row) => {
     onEdit(row); // Call parent function if needed
 
@@ -182,28 +194,98 @@ const InvestigationDetails = ({ tableData, onEdit ,sendDataToParent }) => {
     );
   };
 
-useEffect(()=>{
-if(serchVluses.txtsearchInv===""){
-  setIsSearchActive(false)
-}
-},[serchVluses?.txtsearchInv])
+  useEffect(() => {
+    if (serchVluses.txtsearchInv === "") {
+      setIsSearchActive(false);
+    }
+  }, [serchVluses?.txtsearchInv]);
 
+  useEffect(() => {
+    // Create the object
+    const passfun = {
+      isSearchActive: isSearchActive,
+      Bindsearchgrid: Bindsearchgrid,
+      serchVluses: serchVluses,
+    };
 
-useEffect(() => {
-  // Create the object
-  const passfun = {
-    isSearchActive: isSearchActive,
-    Bindsearchgrid: Bindsearchgrid,
-    serchVluses:serchVluses
-  };
-
-  sendDataToParent(passfun); // Send object to parent
-}, [isSearchActive]); // Triggers when `isSearchActive` changes
+    sendDataToParent(passfun); // Send object to parent
+  }, [isSearchActive]); // Triggers when `isSearchActive` changes
 
   const tableDisplayData = isSearchActive ? searchTableData : tableData;
 
   // const tableDisplayData = isSearchActive ? searchTableData : tableData;
 
+  // const handelUploadToExcel = () => {
+  //   return setHandleModelData({
+  //     isOpen: true,
+  //     width: "40vw",
+  //     label: "Upload To Excel File",
+  //     Component: <UploadToExcel />,
+  //     // RejectPurchaseRequest: RejectPurchaseRequest
+  //   });
+  // };
+
+  const handleDownloadToExcel = async () => {
+    const localData = useLocalStorage("authToken", "get");
+    const headers = {
+      "Content-Type": "",
+      Authorization: localData && `Bearer ${localData}`,
+    };
+
+    try {
+      axios
+        .get("http://13.232.136.32/api/v1/InvestigationMaster/download", {
+          method: "GET",
+          responseType: "blob",
+          headers: headers,
+        })
+        .then((res) => {
+          console.log(res);
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `File.xlsx`);
+          document.body.appendChild(link);
+          link.click();
+        });
+    } catch (error) {
+      console.error("Error downloading Excel file:", error);
+    }
+  };
+
+  const handelUploadToExcel = async () => {
+    let formData = new FormData();
+    formData.append("file", uploadFileData.uploadFile);
+    console.log(formData);
+    try {
+      const options = {
+        method: "Post",
+        data: formData,
+      };
+      const data = await makeApiRequest(
+        "/api/v1/InvestigationMaster/save",
+        options,
+        "multipart/form-data"
+      );
+      console.log(data);
+    } catch (error) {
+      console.error("Error Found", error);
+    }
+  };
+
+  const uploadFile = (e) => {
+    const uploadFile = e.target.files[0];
+    const previewUrl = URL.createObjectURL(uploadFile);
+    if (
+      uploadFile &&
+      (uploadFile.name.endsWith(".xlsx") || uploadFile.name.endsWith(".xls"))
+    ) {
+      setUploadFileData({
+        uploadFile: uploadFile,
+        previewUrl: previewUrl,
+      });
+    }
+  };
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -234,6 +316,23 @@ useEffect(() => {
               name="txtsearchInv"
               onChange={handleChangeTable}
             />
+            <div>
+              <button
+                className="btn btn-sm btn-secondary"
+                onClick={() => handleDownloadToExcel()}
+              >
+                Download Excel File
+              </button>
+
+              <input type="file" onChange={uploadFile} id="file" />
+              <button
+                className="btn btn-sm btn-primary me-2"
+                onClick={() => handelUploadToExcel()}
+                style={{ margin: "2px" }}
+              >
+                Upload Excel File
+              </button>
+            </div>
           </div>
           <div className="row p-2">
             <div className="col-12">

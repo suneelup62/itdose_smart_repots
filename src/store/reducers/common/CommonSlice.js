@@ -35,6 +35,24 @@ const initialState = {
           breadcrumb: "Smart Report/Investigation Riskfactor",
           url: "/riskfactor",
         },
+        {
+          childrenName: "QRcode",
+          childrenOrder: "5",
+          breadcrumb: "Smart Report/QRcode",
+          url: "/QRcode",
+        },
+        {
+          childrenName: "Doctor signature",
+          childrenOrder: "6",
+          breadcrumb: "Smart Report/Doctor signature",
+          url: "/doctor_signature",
+        },
+        {
+          childrenName: "Report header",
+          childrenOrder: "7",
+          breadcrumb: "Smart Report/Report header",
+          url: "/reportHeader",
+        },
         // {
         //   childrenName: "Observation",
         //   childrenOrder: "2",

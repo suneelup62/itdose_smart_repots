@@ -286,3 +286,84 @@ export const BindInvestigationTestCode = async (payload) => {
     }
   };
   
+  // SmartReportMaster Centre QRCode
+  export const CentreQRCode = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.QRCode}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+  // SmartReportMaster Centre_DoctorSignature
+  export const CentreDoctorSignature = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.DoctorSignature}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+ // SmartReportMaster Investigation Format
+  export const Investigation_Format = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.InvFormat}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+ // SmartReportMaster Investigation Format
+  export const InvestigationMasterDownloadToExcel = async () => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "get",
+        responseType: "blob" 
+      };
+      const data = await makeApiRequest(`${apiUrls.DownloadToExcel}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+
+  // SmartReportMaster Investigation Format
+  export const InvestigationMasterUploadToExcel = async () => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+      };
+      const data = await makeApiRequest(`${apiUrls.UploadToExcel}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+  

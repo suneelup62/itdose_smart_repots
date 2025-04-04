@@ -10,13 +10,13 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   const THEAD = [
     t("S.No"),
     t("Center Name"),
-    t("LoginId"),
-    t("Password"),
-    t("State"),
-    t("City"),
-    t("Addres"),
+    t("Test Name"),
+    t("Test Code"),
+    t("Department"),
+    t("Department Code"),
     t("Status"),
-    t("Acction"),
+    t("Modify"),
+    // t("Acction"),
   ];
 
   const handleEdit = (val) => {
@@ -24,32 +24,52 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   };
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { CentreName, LoginId,Password,State, city, Address, Isactive } = row;
+      const { centre, TestName, Testcode, Department, Departcode, status } =
+        row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
-        CentreName: CentreName,
-        LoginId:LoginId,
-        Password:Password,
-        State: State,
-        city: city,
-        Address: Address,
-        Isactive: (
+        centre: centre,
+        TestName: TestName,
+        Testcode: Testcode,
+        Department: Department,
+        DepartmentCode: Departcode,
+        status: (
           <span
             style={{
-              color: Isactive === "Active" ? "green" : "red",
+              color: status === "Active" ? "green" : "red",
               fontWeight: "bold",
             }}
           >
-            {Isactive}
+            {status}
           </span>
         ),
-        Edit: (
-          <i
-            className="fa fa-edit"
-            style={{ color: "#1873c9" }}
-            onClick={() => handleEdit(row)}
-          ></i>
+        // Modify: (
+        //   <i
+        //     className="fa fa-edit"
+        //     style={{ color: "#1873c9" }}
+        //     onClick={() => onEdit(row)}
+        //   ></i>
+        // ),
+        Modify: (
+          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
         ),
+        // Action: (
+        //   <div>
+        //     <button
+        //       className="btn btn-sm btn-primary me-2"
+        //       onClick={() => handleObservation(row)}
+        //       style={{ margin: "2px" }}
+        //     >
+        //       Observation
+        //     </button>
+        //     <button
+        //       className="btn btn-sm btn-secondary"
+        //       onClick={() => handleInterpretation(row)}
+        //     >
+        //       Interpretation
+        //     </button>
+        //   </div>
+        // ),
       };
     });
   };

@@ -8,7 +8,7 @@ import Input from "../../../components/formComponent/Input";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import FullTextEditor from "../Description/TextEditor";
-// import InvestigationDetails from "./InvestigationDetails";
+import DescriptionDetails from "./DescriptionDetails"
 import {
   addInvestigationSubmit,
   BindInvestigationTestCode,
@@ -34,11 +34,13 @@ const Description = () => {
 
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
-
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [values, setValues] = useState({
-    centreName: null,
+    centreName: {},
     testCode: null,
     Template: "",
+    Description: "",
   });
 
   const [Editable, setEditable] = useState(false);
@@ -61,6 +63,7 @@ const Description = () => {
     }
   };
   const BindTestCode = async (stateID) => {
+    debugger
     if (!stateID) {
       setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
       return [];
@@ -88,7 +91,32 @@ const Description = () => {
       return [];
     }
   };
+  const getReportCentreGetData = async () => {
+    try {
+      const response = await ReportCentreGetData();
+      if (response?.status) {
+        setTableData(response?.data);
+      }
 
+    } catch (error) {
+      console.log(error, "Something Went Wrong");
+    }
+  };
+   // Separate function to fetch and update test grid data
+    const fetchTestGrid = async (id) => {
+      try {
+        const response = await InvestigationMasterBindTestgrid({
+          clientid: String(id),
+        });
+        if (response?.status) {
+          setTableData(response?.data);
+          val.BindTestgrid();
+          handleCencel();
+        }
+      } catch (error) {
+        console.error("Something went wrong:", error);
+      }
+    };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues({
@@ -115,10 +143,12 @@ const Description = () => {
     const payload = {
       Centreid: String(values?.centreName?.Centreid),
       Testcode: values?.testCode?.value,
-      Template: values?.Template,
+      Template: values?.Description,
+      image1:image
     };
+    console.log("Description", payload);
     try {
-      const response = await MasterInvestigationDescription(payload);
+      const response = await MasterInvestigationDescription();
       if (response?.status) {
         notify(response.message, "success");
         //  handleCencel()
@@ -146,6 +176,7 @@ const Description = () => {
   useEffect(() => {
     if (values?.centreName?.Centreid) {
       BindTestCode(values?.centreName?.Centreid);
+      fetchTestGrid(values?.centreName?.Centreid)
     }
   }, [values?.centreName]);
 
@@ -156,6 +187,35 @@ const Description = () => {
   const handelTesting = () => {
     setEditable(true);
     console.log("Testing");
+  };
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file && file.type.startsWith("image/")) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result); // Create image preview
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Please select a valid image file!");
+    }
+  };
+
+  const handleEdit = (val) => {
+    setIsEdit(true);
+    setValues({
+      tableRowId: val?.id,
+      centreName: val?.Centreid,
+      testName: val?.TestName,
+      testCode: val?.Testcode,
+      department: val?.Department,
+      departmentCode: val?.Departcode,
+      isActive:
+        val.status === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
+    });
   };
   return (
     <>
@@ -187,6 +247,33 @@ const Description = () => {
               // requiredClassName="required-fields"
               value={values?.testCode}
             />
+            <TextAreaInput
+              type="text"
+              name="Description"
+              rows={2}
+              value={values?.Description}
+              onChange={handleChange}
+              lable={t("Description")}
+              placeholder=" "
+              respclass="col-xl-6 col-md-4 col-sm-6 col-12"
+              className="form-control"
+            />
+          
+            {/* <div>
+              <h3>Upload Image</h3>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+
+              {preview && (
+                <div>
+                  <h4>Image Preview:</h4>
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    style={{ width: "200px", marginTop: "10px" }}
+                  />
+                </div>
+              )}
+            </div> */}
             {/* <ReactSelect
               placeholderName={t("Centre Name")}
               searchable={true}
@@ -261,13 +348,32 @@ const Description = () => {
               // requiredClassName="required-fields"
             /> */}
           </div>
+          <div className="row p-2">
+            <div className="d-flex" style={{}}>
+            <label className="mt-2 ml-3">{"Upload Image"}</label>
+              <input type="file" 
+              accept="image/*"
+              className="mt-2 ml-3"
+               onChange={handleFileChange} />
+              {preview && (
+                <div>
+                  <h4>Image Preview:</h4>
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    style={{ width: "50px"}}
+                  />
+                </div>
+              )}
+            </div>
+            </div>
           <div className="FullTextEditor">
-            <FullTextEditor
+            {/* <FullTextEditor
               value={values?.Template}
               setValue={setEditor}
               editable={Editable}
               setEditTable={setEditable}
-            />
+            /> */}
           </div>
           <div className="button-container-center">
             {isEdit ? (
@@ -293,7 +399,8 @@ const Description = () => {
           </div>
         </div>
       </div>
-      {/* <InvestigationDetails tableData={tableData} onEdit={handleEdit} fetchDataAfterEdit={handleUpdate} sendDataToParent={receiveChildObject} setParentData={setChildData} /> */}
+      <DescriptionDetails tableData={tableData}
+        onEdit={handleEdit}/>
     </>
   );
 };

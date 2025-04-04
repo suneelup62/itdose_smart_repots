@@ -57,8 +57,20 @@ export const apiUrls = {
    // CentreMaster Investigation Description
    InvestigationDescription: `/api/v1/SmartReportMaster/Investigation_Description`,
    
-   // CentreMaster Investigation Description
-   InvestigationRiskfactor: `/api/v1/SmartReportMaster/Investigation_Riskfactor`,
+  // SmartReportMaster Centre QRCode
+     QRCode: `/api/v1/SmartReportMaster/Centre_QRCode`,
+
+  // SmartReportMaster Centre_DoctorSignature
+     DoctorSignature: `/api/v1/SmartReportMaster/Centre_DoctorSignature`,
+
+  // SmartReportMaster Investigation_Format
+     InvFormat: `/api/v1/SmartReportMaster/Investigation_Format`,
+  
+  // InvestigationMaster download
+  DownloadToExcel: `/api/v1/InvestigationMaster/download`,
+
+  // InvestigationMaster download
+  UploadToExcel: `/api/v1/InvestigationMaster/save`,
  
    
 

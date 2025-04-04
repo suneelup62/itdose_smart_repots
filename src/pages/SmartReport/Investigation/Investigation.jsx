@@ -20,9 +20,10 @@ import {
 const Investigation = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  const [dropDownData, setDropDownData] = useState({
-    GetBindCentreName: [],
-  });
+  // const [dropDownData, setDropDownData] = useState({
+  //   GetBindCentreName: [],
+  // });
+  const [dropDownData, setDropDownData] = useState({ GetBindCentreName: [] });
 
   const IS_ACTIVE_OPTION = [
     {
@@ -44,23 +45,60 @@ const Investigation = () => {
     department: "",
     departmentCode: "",
     isActive: {},
+    format:null
   });
+  const format_OPTION = [
+    {
+      label: "Format 1",
+      value: "1",
+    },
 
+    {
+      label: "Format 2",
+      value: "2",
+    },
+    {
+      label: "Format 3",
+      value: "3",
+    },
+    {
+      label: "Format 4",
+      value: "4",
+    },
+  ];
   const [isEdit, setIsEdit] = useState(false);
-const [setChildData,setSetChildData]=useState({})
+  const [setChildData, setSetChildData] = useState({});
 
-
+  // const GetCentreName = async () => {
+  //   try {
+  //     const response = await CenterMasterBindclient();
+  //     if (response?.status) {
+  //       setDropDownData((prev) => ({
+  //         ...prev,
+  //         GetBindCentreName: handleReactSelectDropDownOptions(
+  //           response?.data,
+  //           "CentreName",
+  //           "Centreid"
+  //         ),
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error, "Something went wrong");
+  //   }
+  // };
   const GetCentreName = async () => {
     try {
       const response = await CenterMasterBindclient();
+      
       if (response?.status) {
+        const dataArray = Array.isArray(response?.data) ? response.data : []; // Ensure an array
+        
         setDropDownData((prev) => ({
           ...prev,
           GetBindCentreName: handleReactSelectDropDownOptions(
-            response?.data,
+            dataArray,
             "CentreName",
-            "Centreid",
-           
+            "Centreid"
           ),
         }));
       }
@@ -68,6 +106,7 @@ const [setChildData,setSetChildData]=useState({})
       console.log(error, "Something went wrong");
     }
   };
+  
   const BindTestgrid = async (centreId) => {
     if (!centreId) return; // Ensure we don't send an empty request
 
@@ -77,7 +116,12 @@ const [setChildData,setSetChildData]=useState({})
 
     try {
       const response = await InvestigationMasterBindTestgrid(payload);
-      setTableData(response?.data);
+      if (response?.status) {
+        setTableData(response?.data);
+      }
+      if (response?.data.length === 0) {
+        notify(" Not Data Found", "error");
+      }
     } catch (error) {
       console.log(error, "Something went wrong");
     }
@@ -90,7 +134,6 @@ const [setChildData,setSetChildData]=useState({})
       BindTestgrid(selectedOption.Centreid);
     }
   };
- 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,21 +159,21 @@ const [setChildData,setSetChildData]=useState({})
 
     const payload = {
       Centreid: String(values?.centreName?.Centreid || ""),
-      TestName: values.testName,
-      Testcode: values.testCode,
-      Department: values.department,
-      chkactive: String(values.isActive?.value || ""),
-      departcode: values.departmentCode,
+      TestName: values?.testName,
+      Testcode: values?.testCode,
+      Department: values?.department,
+      chkactive: String(values?.isActive?.value || ""),
+      departcode: values?.departmentCode,
+      format:values?.format?.label
     };
-
     try {
-      const response = await addInvestigationSubmit(payload);
+      const response = await addInvestigationSubmit();
 
       if (response?.status) {
         notify(response.message, "success");
         setIsEdit(false);
         await fetchTestGrid(payload.Centreid);
-        handleCencel()
+        handleCencel();
       } else {
         notify(response.message || "Submission failed", "error");
       }
@@ -140,7 +183,6 @@ const [setChildData,setSetChildData]=useState({})
   };
 
   const handleEdit = (val) => {
-    console.log("Edit",val)
     setIsEdit(true);
     setValues({
       tableRowId: val?.id,
@@ -155,7 +197,6 @@ const [setChildData,setSetChildData]=useState({})
   };
 
   const handleUpdate = async (val) => {
-
     const requiredFields = {
       centreName: "Centre name is Required",
       testName: "Test name is Required",
@@ -188,18 +229,16 @@ const [setChildData,setSetChildData]=useState({})
         notify(response?.message, "success");
         setIsEdit(false);
         await fetchTestGrid(values.centreName);
-        if(setChildData.isSearchActive){
-          const payload1={
-          searchtype: setChildData?.serchVluses?.searchtype,
-      txtsearchInv: setChildData?.serchVluses?.txtsearchInv,
-      clientid: String(setChildData?.serchVluses?.clientid),
-          }
-        await setChildData.Bindsearchgrid(payload1)
+        if (setChildData.isSearchActive) {
+          const payload1 = {
+            searchtype: setChildData?.serchVluses?.searchtype,
+            txtsearchInv: setChildData?.serchVluses?.txtsearchInv,
+            clientid: String(setChildData?.serchVluses?.clientid),
+          };
+          await setChildData.Bindsearchgrid(payload1);
         }
-        handleCencel()
-      }
-      
-      else{
+        handleCencel();
+      } else {
         notify(response.message || "Updation failed", "error");
       }
     } catch (error) {
@@ -213,9 +252,11 @@ const [setChildData,setSetChildData]=useState({})
       const response = await InvestigationMasterBindTestgrid({
         clientid: String(id),
       });
-      setTableData(response?.data);
-      val.BindTestgrid()
-      handleCencel();
+      if (response?.status) {
+        setTableData(response?.data);
+        val.BindTestgrid();
+        handleCencel();
+      }
     } catch (error) {
       console.error("Something went wrong:", error);
     }
@@ -240,7 +281,6 @@ const [setChildData,setSetChildData]=useState({})
   const receiveChildObject = (obj) => {
     setSetChildData(obj); // Store child object in state
   };
-
 
   return (
     <>
@@ -321,7 +361,18 @@ const [setChildData,setSetChildData]=useState({})
               value={values?.isActive?.value}
               // requiredClassName="required-fields"
             />
-
+            <ReactSelect
+              placeholderName={t("Report type")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"format"}
+              name={"format"}
+              removeIsClearable={true}
+              handleChange={(name, e) => handleReactChange(name, e)}
+              dynamicOptions={format_OPTION}
+              value={values?.format?.value}
+              // requiredClassName="required-fields"
+            />
           </div>
           <div className="button-container-center">
             {isEdit ? (
@@ -347,7 +398,13 @@ const [setChildData,setSetChildData]=useState({})
           </div>
         </div>
       </div>
-      <InvestigationDetails tableData={tableData} onEdit={handleEdit} fetchDataAfterEdit={handleUpdate} sendDataToParent={receiveChildObject} setParentData={setChildData} />
+      <InvestigationDetails
+        tableData={tableData}
+        onEdit={handleEdit}
+        fetchDataAfterEdit={handleUpdate}
+        sendDataToParent={receiveChildObject}
+        setParentData={setChildData}
+      />
     </>
   );
 };

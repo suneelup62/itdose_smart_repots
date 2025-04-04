@@ -366,5 +366,29 @@ const allRoutes = {
       ),
       exact: true,
     },
+    {
+      layout: Layout,
+      path: "/QRcode",
+      component: lazy(
+        () => import("@app/pages/SmartReport/QRcode/QRcode.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/doctor_signature",
+      component: lazy(
+        () => import("@app/pages/SmartReport/doctorSignature/doctorSignature.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/reportHeader",
+      component: lazy(
+        () => import("@app/pages/SmartReport/ReportHeader/ReportHeader.jsx")
+      ),
+      exact: true,
+    },
   ],
 };
