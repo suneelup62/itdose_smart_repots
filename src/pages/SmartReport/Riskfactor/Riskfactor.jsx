@@ -33,8 +33,26 @@ const Description = () => {
     centreName: null,
     testCode: null,
     Template: "",
+//     Template1: `<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+// 	<tbody>
+// 		<tr>
+// 			<td>1</td>
+// 			<td>suneel kumar</td>
+// 		</tr>
+// 		<tr>
+// 			<td>2</td>
+// 			<td>itDose Noida</td>
+// 		</tr>
+// 		<tr>
+// 			<td>3</td>
+// 			<td>Inctive</td>
+// 		</tr>
+// 	</tbody>
+// </table>`
+
   });
 
+  console.log("data",values)
   const [Editable, setEditable] = useState(false);
   const GetCentreName = async () => {
     try {
@@ -94,7 +112,8 @@ const Description = () => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
   };
   const handleSubmit = async () => {
-
+    debugger
+      console.log("datadddd",values)
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
@@ -180,12 +199,19 @@ const Description = () => {
             />
           </div>
           <div className="FullTextEditor">
-            <FullTextEditor
+            {/* <FullTextEditor
               value={values?.Template}
               setValue={setEditor}
               editable={Editable}
               setEditTable={setEditable}
-            />
+            /> */}
+            <FullTextEditor
+  value={values?.Template1}  // Use Template1 instead of Template
+  setValue={setEditor}
+  editable={Editable}
+  setEditTable={setEditable}
+/>
+
           </div>
           <div className="button-container-center">
             {isEdit ? (
@@ -211,7 +237,6 @@ const Description = () => {
           </div>
         </div>
       </div>
-      {/* <InvestigationDetails tableData={tableData} onEdit={handleEdit} fetchDataAfterEdit={handleUpdate} sendDataToParent={receiveChildObject} setParentData={setChildData} /> */}
     </>
   );
 };

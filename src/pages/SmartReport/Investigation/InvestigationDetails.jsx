@@ -22,6 +22,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import makeApiRequest from "../../../networkServices/axiosInstance";
 import axios from "axios";
+import { axiosInstance } from "../../../utils/helpers";
 const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
@@ -56,7 +57,6 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     uploadFile: "",
     previewUrl: "",
   });
-  console.log(uploadFileData);
   const handleClose = () => {
     setHandleModelData((val) => ({ ...val, isOpen: false }));
   };
@@ -233,8 +233,8 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     };
 
     try {
-      axios
-        .get("http://13.232.136.32/api/v1/InvestigationMaster/download", {
+      axiosInstance
+        .get("/api/v1/InvestigationMaster/download", {
           method: "GET",
           responseType: "blob",
           headers: headers,
@@ -254,9 +254,12 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   };
 
   const handelUploadToExcel = async () => {
+  if(uploadFileData.uploadFile===""){
+    notify("Please upload a file","error")
+  }
     let formData = new FormData();
     formData.append("file", uploadFileData.uploadFile);
-    console.log(formData);
+
     try {
       const options = {
         method: "Post",
@@ -267,24 +270,40 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
         options,
         "multipart/form-data"
       );
-      console.log(data);
+      if(data?.success){
+        notify(data?.message,"success")
+        handleCencel()
+      }else{
+        notify(data?.data,"error")
+      }
     } catch (error) {
       console.error("Error Found", error);
     }
   };
 
   const uploadFile = (e) => {
-    const uploadFile = e.target.files[0];
-    const previewUrl = URL.createObjectURL(uploadFile);
+    const uploadFile = e?.target.files[0];
+    const previewUrl = URL?.createObjectURL(uploadFile);
     if (
       uploadFile &&
-      (uploadFile.name.endsWith(".xlsx") || uploadFile.name.endsWith(".xls"))
+      (uploadFile?.name.endsWith(".xlsx") || uploadFile?.name.endsWith(".xls"))
     ) {
       setUploadFileData({
         uploadFile: uploadFile,
         previewUrl: previewUrl,
       });
+    }else{
+      notify("Please upload a valid Excel file", "error");
     }
+  };
+
+  const handleCencel = () => {
+    setUploadFileData((prev) => ({
+      ...prev,
+        uploadFile: "",
+        previewUrl: "",
+    }));
+    setIsEdit(false);
   };
   return (
     <>
@@ -324,7 +343,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
                 Download Excel File
               </button>
 
-              <input type="file" onChange={uploadFile} id="file" />
+              <input type="file" onChange={uploadFile} id="file"  style={{marginLeft:"30px"}}/>
               <button
                 className="btn btn-sm btn-primary me-2"
                 onClick={() => handelUploadToExcel()}

@@ -4824,3 +4824,14 @@ button.btn-success:hover {
 .cke_notification_warning {
   display: none !important;
 }
+
+.zoomUploadImage {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.zoomUploadImage:hover {
+  transform: scale(2); /* Adjust the zoom level */
+  z-index: 10;
+  position: relative;
+}

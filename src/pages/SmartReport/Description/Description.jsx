@@ -358,7 +358,7 @@ const Description = () => {
               {preview && (
                 <div>
                   <h4>Image Preview:</h4>
-                  <img
+                  <img className="zoomUploadImage"
                     src={preview}
                     alt="Preview"
                     style={{ width: "50px"}}
