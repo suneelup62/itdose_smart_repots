@@ -12,13 +12,10 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   const THEAD = [
     t("S.No"),
     t("Center Name"),
-    t("Test Name"),
     t("Test Code"),
-    t("Department"),
-    t("Department Code"),
-    t("Status"),
-    t("Modify"),
-    // t("Acction"),
+    t("Image"),
+    t("Desription"),
+    t("Acction"),
   ];
  const [uploadFileData, setUploadFileData] = useState({
     uploadFile: "",
@@ -29,25 +26,24 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   };
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { centre, TestName, Testcode, Department, Departcode, status } =
+      const { Centre, TestCode, Image, Desription} =
         row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
-        centre: centre,
-        TestName: TestName,
-        Testcode: Testcode,
-        Department: Department,
-        DepartmentCode: Departcode,
-        status: (
-          <span
-            style={{
-              color: status === "Active" ? "green" : "red",
-              fontWeight: "bold",
-            }}
-          >
-            {status}
-          </span>
-        ),
+        centre: Centre,
+        Testcode: TestCode,
+        Department: Image,
+        DepartmentCode: Desription,
+        // status: (
+        //   <span
+        //     style={{
+        //       color: status === "Active" ? "green" : "red",
+        //       fontWeight: "bold",
+        //     }}
+        //   >
+        //     {status}
+        //   </span>
+        // ),
         // Modify: (
         //   <i
         //     className="fa fa-edit"
@@ -80,7 +76,6 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   };
 
  const handleDownloadToExcel = async () => {
-
     const localData = useLocalStorage("authToken", "get");
     const headers = {
       "Content-Type": "",
@@ -89,7 +84,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
 
     try {
       axiosInstance
-        .get("/api/v1/InvestigationMaster/download", {
+        .get("/api/v1/SmartReportMaster/downloadDescriptionExcel", {
           method: "GET",
           responseType: "blob",
           headers: headers,
@@ -129,7 +124,8 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         <div className="patient_registration card">
           <Heading title={t("Records")} isBreadcrumb={false} />
           <div className="row p-2">
-          <div>
+           <div className="col-12">
+           <div>
               <button
                 className="btn btn-sm btn-secondary"
                 onClick={() => handleDownloadToExcel()}
@@ -146,6 +142,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
                 Upload Excel File
               </button>
             </div>
+           </div>
           </div>
           <div className="row p-2">
             <div className="col-12">

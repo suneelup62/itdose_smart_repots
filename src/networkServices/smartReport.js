@@ -105,6 +105,22 @@ export const smartReportUpdateCentre = async (payload) => {
       console.error("Error Found", error); 
     }
   };
+
+  // Smart Report Bind Report Drop
+  export const BindReportDrop = async () => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+          method: "get", 
+      };
+      const data = await makeApiRequest(`${apiUrls.ReportDrop}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
 // Add Investigation Submit
   export const addInvestigationSubmit = async (payload) => {
     store.dispatch(setLoading(true));
@@ -367,3 +383,20 @@ export const BindInvestigationTestCode = async (payload) => {
     }
   };
   
+
+  // Investigation Master Get Description
+  export const BindGetDescription = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.GetDescription}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };

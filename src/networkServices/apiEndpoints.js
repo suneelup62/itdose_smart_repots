@@ -21,6 +21,9 @@ export const apiUrls = {
   // Centre Master bindclient
   bindclient: `/api/v1/CentreMaster/bindclient`,
 
+  // Centre Master Bind ReportDrop
+  ReportDrop: `/api/v1/CentreMaster/BindReportDrop`,
+
   // Add Investigation
   addInvestigation: `/api/v1/InvestigationMaster/AddTest`,
   
@@ -72,6 +75,8 @@ export const apiUrls = {
   // InvestigationMaster download
   UploadToExcel: `/api/v1/InvestigationMaster/save`,
  
-   
+   // InvestigationMaster BindGetDescription
+  
+   GetDescription: `/api/v1/SmartReportMaster/GetDescription`,
 
 };

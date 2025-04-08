@@ -49,6 +49,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     t("Test Code"),
     t("Department"),
     t("Department Code"),
+    t("Report type"),
     t("Status"),
     t("Modify"),
     // t("Acction"),
@@ -76,7 +77,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
 
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { centre, TestName, Testcode, Department, Departcode, status } =
+      const { centre, TestName, Testcode, Department, Departcode,FormatName, status,ReportFormat } =
         row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
@@ -85,6 +86,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
         Testcode: Testcode,
         Department: Department,
         DepartmentCode: Departcode,
+        ReportFormat:FormatName,
         status: (
           <span
             style={{
@@ -144,13 +146,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     });
   };
 
-  const hendelClear = () => {
-    setSerchVluses({
-      searchtype: "",
-      txtsearchInv: "",
-    });
-  };
-
+ 
   // Function to fetch data based on search criteria
   async function Bindsearchgrid() {
     const payload = {
@@ -254,6 +250,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   };
 
   const handelUploadToExcel = async () => {
+    debugger
   if(uploadFileData.uploadFile===""){
     notify("Please upload a file","error")
   }
@@ -304,6 +301,12 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
         previewUrl: "",
     }));
     setIsEdit(false);
+  };
+  const hendelClear = () => {
+    setSerchVluses({
+      searchtype: "",
+      txtsearchInv: "",
+    });
   };
   return (
     <>

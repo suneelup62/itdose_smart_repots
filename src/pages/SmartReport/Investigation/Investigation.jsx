@@ -10,6 +10,7 @@ import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import InvestigationDetails from "./InvestigationDetails";
 import {
   addInvestigationSubmit,
+  BindReportDrop,
   bindState,
   CenterMasterBindclient,
   InvestigationMasterBindTestgrid,
@@ -23,7 +24,10 @@ const Investigation = () => {
   // const [dropDownData, setDropDownData] = useState({
   //   GetBindCentreName: [],
   // });
-  const [dropDownData, setDropDownData] = useState({ GetBindCentreName: [] });
+  const [dropDownData, setDropDownData] = useState({
+    GetBindCentreName: [],
+    GetFormatOption: [],
+  });
 
   const IS_ACTIVE_OPTION = [
     {
@@ -45,27 +49,12 @@ const Investigation = () => {
     department: "",
     departmentCode: "",
     isActive: {},
-    format:null
+    ReportType: {
+      label:"",
+      value:''
+    },
   });
-  const format_OPTION = [
-    {
-      label: "Format 1",
-      value: "1",
-    },
 
-    {
-      label: "Format 2",
-      value: "2",
-    },
-    {
-      label: "Format 3",
-      value: "3",
-    },
-    {
-      label: "Format 4",
-      value: "4",
-    },
-  ];
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
 
@@ -89,10 +78,10 @@ const Investigation = () => {
   const GetCentreName = async () => {
     try {
       const response = await CenterMasterBindclient();
-      
+
       if (response?.status) {
         const dataArray = Array.isArray(response?.data) ? response.data : []; // Ensure an array
-        
+
         setDropDownData((prev) => ({
           ...prev,
           GetBindCentreName: handleReactSelectDropDownOptions(
@@ -106,7 +95,30 @@ const Investigation = () => {
       console.log(error, "Something went wrong");
     }
   };
-  
+
+  const GetFormatOption = async () => {
+    try {
+      const response = await BindReportDrop();
+
+      if (response?.status) {
+        const dataArray = Array.isArray(response?.data)
+          ? response.data
+          : []; // Ensure an array
+
+        setDropDownData((prev) => ({
+          ...prev,
+          GetFormatOption: handleReactSelectDropDownOptions(
+            dataArray,
+            "FORMAT",
+            "Id"
+          ),
+        }));
+      }
+    } catch (error) {
+      console.log(error, "Something went wrong");
+    }
+  };
+
   const BindTestgrid = async (centreId) => {
     if (!centreId) return; // Ensure we don't send an empty request
 
@@ -141,6 +153,7 @@ const Investigation = () => {
   };
 
   const handleSubmit = async () => {
+    debugger
     const requiredFields = {
       centreName: "Centre name is Required",
       testName: "Test name is Required",
@@ -156,7 +169,7 @@ const Investigation = () => {
         return;
       }
     }
-
+    
     const payload = {
       Centreid: String(values?.centreName?.Centreid || ""),
       TestName: values?.testName,
@@ -164,10 +177,10 @@ const Investigation = () => {
       Department: values?.department,
       chkactive: String(values?.isActive?.value || ""),
       departcode: values?.departmentCode,
-      format:values?.format?.label
+      ReportFormat: String(values?.ReportType?.value)
     };
     try {
-      const response = await addInvestigationSubmit();
+      const response = await addInvestigationSubmit(payload);
 
       if (response?.status) {
         notify(response.message, "success");
@@ -183,6 +196,7 @@ const Investigation = () => {
   };
 
   const handleEdit = (val) => {
+    console.log("Edit", val);
     setIsEdit(true);
     setValues({
       tableRowId: val?.id,
@@ -191,12 +205,13 @@ const Investigation = () => {
       testCode: val?.Testcode,
       department: val?.Department,
       departmentCode: val?.Departcode,
+      ReportType: val?.ReportFormat,
       isActive:
         val.status === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
     });
   };
-
   const handleUpdate = async (val) => {
+    debugger
     const requiredFields = {
       centreName: "Centre name is Required",
       testName: "Test name is Required",
@@ -218,11 +233,12 @@ const Investigation = () => {
       Centreid: String(values.centreName),
       TestName: String(values.testName),
       Testcode: String(values.testCode),
-      Department: values.department,
-      departcode: values.departmentCode,
+      Department: values?.department,
+      departcode: values?.departmentCode,
+      ReportFormat: String(values?.ReportType?.value||values?.ReportType),
       chkactive: String(values.isActive?.value),
     };
-
+    console.log("InvestigationMasterUpdatetest",payload)
     try {
       const response = await InvestigationMasterUpdatetest(payload);
       if (response?.status) {
@@ -269,6 +285,7 @@ const Investigation = () => {
       testCode: "",
       department: "",
       departmentCode: "",
+      ReportType: null,
       isActive: {},
     }));
     setIsEdit(false);
@@ -276,6 +293,7 @@ const Investigation = () => {
 
   useEffect(() => {
     GetCentreName();
+    GetFormatOption();
   }, []);
 
   const receiveChildObject = (obj) => {
@@ -348,7 +366,18 @@ const Investigation = () => {
               name="departmentCode"
               onChange={handleChange}
             />
-
+            <ReactSelect
+              placeholderName={t("Report type")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"ReportType"}
+              name={"ReportType"}
+              removeIsClearable={true}
+              handleChange={(name, e) => handleReactChange(name, e)}
+              dynamicOptions={dropDownData?.GetFormatOption}
+              value={values?.ReportType}
+              // requiredClassName="required-fields"
+            />
             <ReactSelect
               placeholderName={t("Status")}
               searchable={true}
@@ -359,18 +388,6 @@ const Investigation = () => {
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={IS_ACTIVE_OPTION}
               value={values?.isActive?.value}
-              // requiredClassName="required-fields"
-            />
-            <ReactSelect
-              placeholderName={t("Report type")}
-              searchable={true}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              id={"format"}
-              name={"format"}
-              removeIsClearable={true}
-              handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={format_OPTION}
-              value={values?.format?.value}
               // requiredClassName="required-fields"
             />
           </div>

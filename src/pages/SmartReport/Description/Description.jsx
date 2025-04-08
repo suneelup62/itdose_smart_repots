@@ -19,6 +19,7 @@ import getCroppedImg from "../../../utils/cropImage/cropImage"; // helper to cro
 import imageCompression from "browser-image-compression";
 import {
   addInvestigationSubmit,
+  BindGetDescription,
   BindInvestigationTestCode,
   bindState,
   CenterMasterBindclient,
@@ -79,7 +80,7 @@ const Description = () => {
     }
   };
   const BindTestCode = async (stateID) => {
-    debugger;
+  
     if (!stateID) {
       setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
       return [];
@@ -92,8 +93,8 @@ const Description = () => {
       if (response?.data) {
         const testCodeOptions = handleReactSelectDropDownOptions(
           response.data,
-          "TestName",
-          "TestCode"
+          "TestCode",
+          "TestName"
         );
         setDropDownData((prev) => ({
           ...prev,
@@ -120,8 +121,8 @@ const Description = () => {
   // Separate function to fetch and update test grid data
   const fetchTestGrid = async (id) => {
     try {
-      const response = await InvestigationMasterBindTestgrid({
-        clientid: String(id),
+      const response = await BindGetDescription({
+        centreid: String(id),
       });
       if (response?.status) {
         setTableData(response?.data);
@@ -143,7 +144,9 @@ const Description = () => {
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
   };
+
   const handleSubmit = async () => {
+    debugger
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
@@ -157,18 +160,18 @@ const Description = () => {
 
     const payload = {
       Centreid: String(values?.centreName?.Centreid),
-      Testcode: values?.testCode?.value,
-      Template: values?.Description,
-      image1: image,
+      Testcode: values?.testCode?.label,
+      Description: values?.Description,
+      Image: preview,
     };
     console.log("Description", payload);
     try {
-      const response = await MasterInvestigationDescription();
+      const response = await MasterInvestigationDescription(payload);
       if (response?.status) {
         notify(response.message, "success");
         //  handleCencel()
       } else {
-        notify(response.message || "Submission failed", "error");
+        notify(response.message, "error");
       }
     } catch (error) {
       console.error("Something went wrong:", error);
@@ -264,12 +267,65 @@ const Description = () => {
   //   }
   // }, [image, croppedAreaPixels]);
 
+  // const handleFileChange = async (e) => {
+  //   const file = e.target.files[0];
+  //   setError(null);
+
+  //   if (!file || !file.type.startsWith("image/")) {
+  //     // setError("Please upload a valid image file.");
+  //     notify("Please upload a valid image file.", "error");
+  //     return;
+  //   }
+
+  //   const imageBitmap = await createImageBitmap(file);
+  //   const size = Math.min(imageBitmap.width, imageBitmap.height);
+
+  //   // Create a canvas for cropping the center square
+  //   const canvas = document.createElement("canvas");
+  //   canvas.width = size;
+  //   canvas.height = size;
+  //   const ctx = canvas.getContext("2d");
+
+  //   ctx.drawImage(
+  //     imageBitmap,
+  //     (imageBitmap.width - size) / 2,
+  //     (imageBitmap.height - size) / 2,
+  //     size,
+  //     size,
+  //     0,
+  //     0,
+  //     size,
+  //     size
+  //   );
+
+  //   // Convert canvas to blob
+  //   const croppedBlob = await new Promise((resolve) =>
+  //     canvas.toBlob(resolve, "image/jpeg")
+  //   );
+
+  //   // Compress to under 50 KB
+  //   const compressedBlob = await imageCompression(croppedBlob, {
+  //     maxSizeMB: 0.05, // 50 KB
+  //     maxWidthOrHeight: 300,
+  //     useWebWorker: true,
+  //   });
+
+  //   // Optional: Validate quality (very rough check)
+  //   if (compressedBlob.size > 51200) {
+  //     setError("Compressed image is too large. Try a smaller image.");
+  //     return;
+  //   }
+
+  //   // Preview
+  //   const compressedUrl = URL.createObjectURL(compressedBlob);
+  //   setPreview(compressedUrl);
+  // };
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     setError(null);
 
     if (!file || !file.type.startsWith("image/")) {
-      // setError("Please upload a valid image file.");
       notify("Please upload a valid image file.", "error");
       return;
     }
@@ -277,7 +333,6 @@ const Description = () => {
     const imageBitmap = await createImageBitmap(file);
     const size = Math.min(imageBitmap.width, imageBitmap.height);
 
-    // Create a canvas for cropping the center square
     const canvas = document.createElement("canvas");
     canvas.width = size;
     canvas.height = size;
@@ -295,27 +350,27 @@ const Description = () => {
       size
     );
 
-    // Convert canvas to blob
     const croppedBlob = await new Promise((resolve) =>
       canvas.toBlob(resolve, "image/jpeg")
     );
 
-    // Compress to under 50 KB
     const compressedBlob = await imageCompression(croppedBlob, {
-      maxSizeMB: 0.05, // 50 KB
+      maxSizeMB: 0.05,
       maxWidthOrHeight: 300,
       useWebWorker: true,
     });
 
-    // Optional: Validate quality (very rough check)
     if (compressedBlob.size > 51200) {
-      setError("Compressed image is too large. Try a smaller image.");
+      notify("Compressed image is too large. Try a smaller image.","error");
       return;
     }
 
-    // Preview
-    const compressedUrl = URL.createObjectURL(compressedBlob);
-    setPreview(compressedUrl);
+    // Convert compressed blob to Base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result); // Base64 string
+    };
+    reader.readAsDataURL(compressedBlob);
   };
 
   return (
@@ -506,7 +561,7 @@ const Description = () => {
 
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            {preview && (
+            {/* {preview && (
               <div>
                 <h4>Auto-Cropped Preview (≤ 50KB):</h4>
                 <img
@@ -522,6 +577,14 @@ const Description = () => {
                   }}
                 />
               </div>
+            )} */}
+            {preview && (
+              <img
+                className="zoomUploadImage"
+                src={preview}
+                alt="Preview"
+                style={{ width: 50, height: 50, objectFit: "cover" }}
+              />
             )}
           </div>
           <div className="FullTextEditor">

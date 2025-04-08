@@ -9,6 +9,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
 
   const THEAD = [
     t("S.No"),
+    t("Center ID"),
     t("Center Name"),
     t("LoginId"),
     t("Password"),
@@ -24,9 +25,10 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   };
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { CentreName, LoginId,Password,State, city, Address, Isactive } = row;
+      const { Centreid,CentreName, LoginId,Password,State, city, Address, Isactive } = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
+        Centreid:Centreid,
         CentreName: CentreName,
         LoginId:LoginId,
         Password:Password,
