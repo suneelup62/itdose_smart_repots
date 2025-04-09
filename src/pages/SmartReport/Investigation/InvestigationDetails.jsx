@@ -76,6 +76,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   }
 
   const handleTableData = (tableData) => {
+    console.log("handleTableData",tableData)
     return tableData?.map((row, index) => {
       const { centre, TestName, Testcode, Department, Departcode,FormatName, status,ReportFormat } =
         row;

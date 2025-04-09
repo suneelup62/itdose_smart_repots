@@ -400,3 +400,20 @@ export const BindInvestigationTestCode = async (payload) => {
       console.error("Error Found", error); 
     }
   };
+
+  // SmartReportMaster GetRiskFactor 
+  export const BindGetRiskFactor = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.GetRiskFactor}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };

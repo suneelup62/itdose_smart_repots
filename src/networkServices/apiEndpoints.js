@@ -59,6 +59,9 @@ export const apiUrls = {
    
    // CentreMaster Investigation Description
    InvestigationDescription: `/api/v1/SmartReportMaster/Investigation_Description`,
+
+    // CentreMaster Investigation Description
+    InvestigationRiskfactor: `/api/v1/SmartReportMaster/Investigation_Riskfactor`,
    
   // SmartReportMaster Centre QRCode
      QRCode: `/api/v1/SmartReportMaster/Centre_QRCode`,
@@ -78,5 +81,8 @@ export const apiUrls = {
    // InvestigationMaster BindGetDescription
   
    GetDescription: `/api/v1/SmartReportMaster/GetDescription`,
+   // InvestigationMaster BindGetDescription
+  
+   GetRiskFactor: `/api/v1/SmartReportMaster/GetRiskFactor`,
 
 };

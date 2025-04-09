@@ -8,16 +8,16 @@ import Input from "../../../components/formComponent/Input";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import FullTextEditor from "../Description/TextEditor";
+import Tables from "../../../components/UI/customTable";
 // import InvestigationDetails from "./InvestigationDetails";
 import {
+  BindGetRiskFactor,
   BindInvestigationTestCode,
   CenterMasterBindclient,
   MasterInvestigationRiskfactor,
 } from "../../../networkServices/smartReport";
-import Editor from "quill/core/editor";
-import { TextEditor } from "rc-easyui";
 
-const Description = () => {
+const Riskfactor = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
   const [dropDownData, setDropDownData] = useState({
@@ -25,34 +25,18 @@ const Description = () => {
     getBindTestCode: [],
   });
 
-  const [Editor, setEditor] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
 
   const [values, setValues] = useState({
     centreName: null,
     testCode: null,
-    Template: "",
-//     Template1: `<table border="1" cellpadding="1" cellspacing="1" style="width:500px">
-// 	<tbody>
-// 		<tr>
-// 			<td>1</td>
-// 			<td>suneel kumar</td>
-// 		</tr>
-// 		<tr>
-// 			<td>2</td>
-// 			<td>itDose Noida</td>
-// 		</tr>
-// 		<tr>
-// 			<td>3</td>
-// 			<td>Inctive</td>
-// 		</tr>
-// 	</tbody>
-// </table>`
-
   });
+  const [editorText, setEditorText] = useState("");
+  const handleChangeEditor = (data) => {
+    setEditorText(data);
+  };
 
-  console.log("data",values)
   const [Editable, setEditable] = useState(false);
   const GetCentreName = async () => {
     try {
@@ -84,8 +68,8 @@ const Description = () => {
       if (response?.data) {
         const testCodeOptions = handleReactSelectDropDownOptions(
           response.data,
-          "TestName",
-          "TestCode"
+          "TestCode",
+          "ID"
         );
         setDropDownData((prev) => ({
           ...prev,
@@ -111,9 +95,9 @@ const Description = () => {
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
   };
+
+  console.log("values", values);
   const handleSubmit = async () => {
-    debugger
-      console.log("datadddd",values)
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
@@ -127,14 +111,18 @@ const Description = () => {
 
     const payload = {
       Centreid: String(values?.centreName?.Centreid),
-      Testcode: values?.testCode?.value,
-      Template: values?.Template,
+      Testcode: values?.testCode?.label,
+      Test_id: String(values?.testCode?.value),
+      Template: editorText,
     };
 
     try {
       const response = await MasterInvestigationRiskfactor(payload);
       if (response?.status) {
         notify(response.message, "success");
+        setEditable(true);
+        setEditorText("");
+        await fetchTestGrid(payload?.Centreid);
         //  handleCencel()
       } else {
         notify(response.message || "Submission failed", "error");
@@ -148,7 +136,6 @@ const Description = () => {
       ...prev,
       centreName: "",
       testCode: null,
-      Template: "",
     }));
     setIsEdit(false);
   };
@@ -163,10 +150,128 @@ const Description = () => {
     }
   }, [values?.centreName]);
 
-  useEffect(() => {
-    setValues({ ...values, Template: Editor });
-  }, [Editor]);
+  const fetchTestGrid = async (id) => {
+    try {
+      const response = await BindGetRiskFactor({
+        centreid: String(id),
+      });
+      if (response?.status) {
+        setTableData(response?.data);
+        val.BindTestgrid();
+        handleCencel();
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
 
+  const handleEdit = (val) => {
+    console.log("Edit", val);
+    setEditable(true);
+    setIsEdit(true);
+    setEditorText(val?.Template);
+    setValues({
+      centreName: val?.Centre,
+      testCode: val?.TestCode,
+      centreid: val?.centreid,
+      testCodeName: val?.TestCode,
+      testid: val?.testid,
+    });
+    // setPreview(val?.Image)
+  };
+
+  useEffect(() => {
+    if (values?.centreName?.Centreid) {
+      BindTestCode(values?.centreName?.Centreid);
+      fetchTestGrid(values?.centreName?.Centreid);
+    }
+  }, [values?.centreName]);
+
+  const handleTableData = (tableData) => {
+    return tableData?.map((row, index) => {
+      const { Centre, TestCode, Image, Template, centreid, testid } = row;
+      return {
+        SNo: <div className="p-1">{index + 1}</div>,
+        centre: Centre,
+        Testcode: TestCode,
+        // Department: Image,
+        // Template: Template,
+        Modify: (
+          <i
+            className="fa fa-edit"
+            style={{ color: "#1873c9", cursor: "pointer" }}
+            onClick={() => handleEdit(row)}
+          ></i>
+        ),
+        // Action: (
+        //   <div>
+        //     <button
+        //       className="btn btn-sm btn-primary me-2"
+        //       onClick={() => handleObservation(row)}
+        //       style={{ margin: "2px" }}
+        //     >
+        //       Observation
+        //     </button>
+        //     <button
+        //       className="btn btn-sm btn-secondary"
+        //       onClick={() => handleInterpretation(row)}
+        //     >
+        //       Interpretation
+        //     </button>
+        //   </div>
+        // ),
+      };
+    });
+  };
+
+  // const handleEdit = (row) => {
+  //   onEdit(row);
+  // };
+  const THEAD = [
+    t("S.No"),
+    t("Center Name"),
+    t("Test Code"),
+    // t("Image"),
+    // t("Template"),
+    t("Acction"),
+  ];
+  const handleUpdate = async () => {
+    // const requiredFields = [
+    //   { key: "centreName", message: "Centre Name is required" },
+    //   { key: "testCode", message: "Test Code is required" },
+    //   { key: "Description", message: "Description is required" },
+    // ];
+    // for (let field of requiredFields) {
+    //   if (!values[field.key]) {
+    //     notify(field.message, "error");
+    //     return false;
+    //   }
+    // }
+    // if (!base64Data) {
+    //   notify("Please upload a valid image file.", "error");
+    //   return;
+    // }
+    const payload = {
+      Centreid: String(values?.centreid),
+      Testcode: values?.testCode,
+      Test_id: String(values?.testid),
+      Template: editorText,
+    };
+    try {
+      const response = await MasterInvestigationRiskfactor(payload);
+      if (response?.status) {
+        setEditable(true);
+        setEditorText("");
+        notify(response.message, "success");
+        await fetchTestGrid(payload?.Centreid);
+        handleCencel();
+      } else {
+        notify(response.message, "error");
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -206,12 +311,11 @@ const Description = () => {
               setEditTable={setEditable}
             /> */}
             <FullTextEditor
-  value={values?.Template1}  // Use Template1 instead of Template
-  setValue={setEditor}
-  editable={Editable}
-  setEditTable={setEditable}
-/>
-
+              value={editorText} // Use Template1 instead of Template
+              setValue={handleChangeEditor}
+              EditTable={Editable}
+              setEditTable={setEditable}
+            />
           </div>
           <div className="button-container-center">
             {isEdit ? (
@@ -237,8 +341,24 @@ const Description = () => {
           </div>
         </div>
       </div>
+      {/* <RiskfactorDetails tableData={tableData} onEdit={handleEdit} /> */}
+      <div className="mt-2 spatient_registration_card">
+        <div className="patient_registration card">
+          <Heading title={t("Records")} isBreadcrumb={false} />
+          <div className="row p-2">
+            <div className="col-12">
+              <Tables
+                isSearch={true}
+                thead={THEAD}
+                tbody={handleTableData(tableData?.length ? tableData : [])}
+                style={{ maxHeight: "40vh" }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
 
-export default Description;
+export default Riskfactor;

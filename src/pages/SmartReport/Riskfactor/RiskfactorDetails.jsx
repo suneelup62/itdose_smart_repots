@@ -6,7 +6,7 @@ import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { notify } from "../../../utils/utils";
 import { axiosInstance } from "../../../utils/helpers";
 import makeApiRequest from "../../../networkServices/axiosInstance";
-const SmartReportDetails = ({ tableData, onEdit }) => {
+const RiskfactorDetails = ({ tableData, onEdit }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
@@ -15,7 +15,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     t("Center Name"),
     t("Test Code"),
     // t("Image"),
-    t("Desription"),
+    t("Template"),
     t("Acction"),
   ];
  const [uploadFileData, setUploadFileData] = useState({
@@ -28,14 +28,14 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   const handleTableData = (tableData) => {
     
     return tableData?.map((row, index) => {
-      const { Centre, TestCode, Image, Desription,centreid,testid} =
+      const { Centre, TestCode, Image, Template,centreid,testid} =
         row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: Centre,
         Testcode: TestCode,
         // Department: Image,
-        DepartmentCode: Desription,
+        Template: Template,
         Modify: (
           <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
         ),
@@ -137,7 +137,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
       <div className="mt-2 spatient_registration_card">
         <div className="patient_registration card">
           <Heading title={t("Records")} isBreadcrumb={false} />
-          <div className="row p-2">
+          {/* <div className="row p-2">
            <div className="col-12">
            <div>
               <button
@@ -157,7 +157,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
               </button>
             </div>
            </div>
-          </div>
+          </div> */}
           <div className="row p-2">
             <div className="col-12">
               <Tables
@@ -174,4 +174,4 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   );
 };
 
-export default SmartReportDetails;
+export default RiskfactorDetails;

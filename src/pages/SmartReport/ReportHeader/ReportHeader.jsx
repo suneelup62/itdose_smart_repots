@@ -67,8 +67,9 @@ const ReportHeader = () => {
       if (response?.data) {
         const testCodeOptions = handleReactSelectDropDownOptions(
           response.data,
-          "TestName",
-          "TestCode"
+          "TestCode",
+          "ID"
+          
         );
         setDropDownData((prev) => ({
           ...prev,
@@ -166,7 +167,7 @@ const ReportHeader = () => {
               // requiredClassName="required-fields"
               value={values?.centreName}
             />
-            <ReactSelect
+            {/* <ReactSelect
               placeholderName={t("Select Test Code")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -177,7 +178,7 @@ const ReportHeader = () => {
               dynamicOptions={dropDownData?.getBindTestCode}
               // requiredClassName="required-fields"
               value={values?.testCode}
-            />
+            /> */}
             {/* <div style={{ width: "200px", marginTop: "10px" }}>
            <BasicExample/>
            </div>
@@ -190,14 +191,14 @@ const ReportHeader = () => {
           </div>
 
           <div className="row p-2">
-            <div className="col-xl-8 col-md-4 col-sm-6 col-12">
+            {/* <div className="col-xl-8 col-md-4 col-sm-6 col-12">
               <FullTextEditor
                 value={values?.Template}
                 setValue={setEditor}
                 editable={Editable}
                 setEditTable={setEditable}
               />
-            </div>
+            </div> */}
 
             {/* <div
               className="col-xl-4 col-md-4 col-sm-6 col-12"

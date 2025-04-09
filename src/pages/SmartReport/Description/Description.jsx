@@ -48,20 +48,20 @@ const Description = () => {
   const [values, setValues] = useState({
     centreName: {},
     testCode: null,
-    Template: "",
+    Image: null,
     Description: "",
+    centreid:"",
+    testCodeName:""
   });
 
-  // const [image, setImage] = useState(null);
-  // const [crop, setCrop] = useState({ x: 0, y: 0 });
-  // const [zoom, setZoom] = useState(1);
-  // const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  // const [preview, setPreview] = useState(null);
-  // const [Editable, setEditable] = useState(false);
 
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState(null); // Base64 string with prefix
+  const [base64Data, setBase64Data] = useState(null); // Raw Base64 without prefix
   const [error, setError] = useState(null);
 
+console.log("values",values)
+
+  // console.log("preview",base64Data)
   const GetCentreName = async () => {
     try {
       const response = await CenterMasterBindclient();
@@ -94,7 +94,7 @@ const Description = () => {
         const testCodeOptions = handleReactSelectDropDownOptions(
           response.data,
           "TestCode",
-          "TestName"
+          "ID"
         );
         setDropDownData((prev) => ({
           ...prev,
@@ -146,10 +146,11 @@ const Description = () => {
   };
 
   const handleSubmit = async () => {
-    debugger
+    debugger 
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
+      { key: "Description", message: "Description is required" },
     ];
     for (let field of requiredFields) {
       if (!values[field.key]) {
@@ -157,19 +158,23 @@ const Description = () => {
         return false;
       }
     }
-
+    if (!base64Data) {
+      notify("Please upload a valid image file.", "error");
+      return;
+    }
     const payload = {
       Centreid: String(values?.centreName?.Centreid),
-      Testcode: values?.testCode?.label,
+      Testcode: String(values?.testCode?.label),
+      Test_id: String(values?.testCode?.value),
       Description: values?.Description,
-      Image: preview,
+      Image: base64Data, // Only the Base64 string (without prefix)
     };
-    console.log("Description", payload);
     try {
       const response = await MasterInvestigationDescription(payload);
       if (response?.status) {
         notify(response.message, "success");
-        //  handleCencel()
+        await  fetchTestGrid(payload?.Centreid);
+        handleCencel()
       } else {
         notify(response.message, "error");
       }
@@ -180,9 +185,9 @@ const Description = () => {
   const handleCencel = () => {
     setValues((prev) => ({
       ...prev,
-      centreName: "",
-      testCode: null,
-      Template: "",
+    centreName: {},
+    testCode: null,
+    Description: "",
     }));
     setIsEdit(false);
   };
@@ -206,120 +211,55 @@ const Description = () => {
     setEditable(true);
     console.log("Testing");
   };
-  // Handle file selection
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (file && file.type.startsWith("image/")) {
-  //     setImage(file);
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setPreview(reader.result); // Create image preview
-  //     };
-  //     reader.readAsDataURL(file);
-  //   } else {
-  //     notify("Please select a valid image file!","error");
-  //   }
-  // };
 
   const handleEdit = (val) => {
+    console.log("Edit",val)
     setIsEdit(true);
     setValues({
-      tableRowId: val?.id,
-      centreName: val?.Centreid,
-      testName: val?.TestName,
-      testCode: val?.Testcode,
-      department: val?.Department,
-      departmentCode: val?.Departcode,
-      isActive:
-        val.status === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
+      centreName:val?.Centre,
+      testCode:val?.testid,
+      Description:val?.Desription,
+      centreid:val?.centreid,
+      testCodeName:val?.TestCode
     });
+    // setPreview(val?.Image)
   };
 
-  // const handleFileChange = async (e) => {
-  //   const file = e.target.files[0];
-  //   if (file && file.type.startsWith("image/")) {
-  //     setImage(URL.createObjectURL(file));
-  //   } else {
-  //     alert("Please select a valid image file!");
-  //   }
-  // };
-
-  // const onCropComplete = useCallback((_, croppedAreaPixels) => {
-  //   setCroppedAreaPixels(croppedAreaPixels);
-  // }, []);
-
-  // const showCroppedImage = useCallback(async () => {
-  //   try {
-  //     const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-
-  //     // Compress the image to under 50 KB
-  //     const compressedBlob = await imageCompression(croppedImage, {
-  //       maxSizeMB: 0.05, // 50 KB = 0.05 MB
-  //       maxWidthOrHeight: 300,
-  //       useWebWorker: true,
-  //     });
-
-  //     const previewUrl = URL.createObjectURL(compressedBlob);
-  //     setPreview(previewUrl);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // }, [image, croppedAreaPixels]);
-
+ 
   // const handleFileChange = async (e) => {
   //   const file = e.target.files[0];
   //   setError(null);
 
   //   if (!file || !file.type.startsWith("image/")) {
-  //     // setError("Please upload a valid image file.");
   //     notify("Please upload a valid image file.", "error");
   //     return;
   //   }
 
-  //   const imageBitmap = await createImageBitmap(file);
-  //   const size = Math.min(imageBitmap.width, imageBitmap.height);
+  //   try {
+  //     const compressedBlob = await imageCompression(file, {
+  //       maxSizeMB: 0.05,
+  //       maxWidthOrHeight: 300,
+  //       useWebWorker: true,
+  //     });
 
-  //   // Create a canvas for cropping the center square
-  //   const canvas = document.createElement("canvas");
-  //   canvas.width = size;
-  //   canvas.height = size;
-  //   const ctx = canvas.getContext("2d");
+  //     if (compressedBlob.size > 51200) {
+  //       notify("Compressed image is too large. Try a smaller image.", "error");
+  //       return;
+  //     }
 
-  //   ctx.drawImage(
-  //     imageBitmap,
-  //     (imageBitmap.width - size) / 2,
-  //     (imageBitmap.height - size) / 2,
-  //     size,
-  //     size,
-  //     0,
-  //     0,
-  //     size,
-  //     size
-  //   );
-
-  //   // Convert canvas to blob
-  //   const croppedBlob = await new Promise((resolve) =>
-  //     canvas.toBlob(resolve, "image/jpeg")
-  //   );
-
-  //   // Compress to under 50 KB
-  //   const compressedBlob = await imageCompression(croppedBlob, {
-  //     maxSizeMB: 0.05, // 50 KB
-  //     maxWidthOrHeight: 300,
-  //     useWebWorker: true,
-  //   });
-
-  //   // Optional: Validate quality (very rough check)
-  //   if (compressedBlob.size > 51200) {
-  //     setError("Compressed image is too large. Try a smaller image.");
-  //     return;
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       const base64 = reader.result;
+  //       setPreview(base64); // Preview image
+  //       setBase64Data(base64.split(",")[1]); // Extract only base64 part
+  //     };
+  //     reader.readAsDataURL(compressedBlob);
+  //   } catch (err) {
+  //     console.error("Image compression failed:", err);
+  //     notify("Image compression failed.", "error");
   //   }
-
-  //   // Preview
-  //   const compressedUrl = URL.createObjectURL(compressedBlob);
-  //   setPreview(compressedUrl);
   // };
+
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -330,49 +270,122 @@ const Description = () => {
       return;
     }
 
-    const imageBitmap = await createImageBitmap(file);
-    const size = Math.min(imageBitmap.width, imageBitmap.height);
+    // ✅ Show original image in preview
+    setPreview(URL.createObjectURL(file));
 
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d");
+    try {
+      const compressedBlob = await imageCompression(file, {
+        maxSizeMB: 0.05,
+        maxWidthOrHeight: 300,
+        useWebWorker: true,
+      });
 
-    ctx.drawImage(
-      imageBitmap,
-      (imageBitmap.width - size) / 2,
-      (imageBitmap.height - size) / 2,
-      size,
-      size,
-      0,
-      0,
-      size,
-      size
-    );
+      if (compressedBlob.size > 51200) {
+        notify("Compressed image is too large. Try a smaller image.", "error");
+        return;
+      }
 
-    const croppedBlob = await new Promise((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg")
-    );
-
-    const compressedBlob = await imageCompression(croppedBlob, {
-      maxSizeMB: 0.05,
-      maxWidthOrHeight: 300,
-      useWebWorker: true,
-    });
-
-    if (compressedBlob.size > 51200) {
-      notify("Compressed image is too large. Try a smaller image.","error");
-      return;
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result;
+        const rawBase64 = base64.split(",")[1];
+        setBase64Data(rawBase64); // ✅ Save raw Base64 string for API
+      };
+      reader.readAsDataURL(compressedBlob);
+    } catch (err) {
+      console.error("Compression failed", err);
+      notify("Image compression failed.", "error");
     }
-
-    // Convert compressed blob to Base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result); // Base64 string
-    };
-    reader.readAsDataURL(compressedBlob);
   };
+    // const handleUpdate = async (val) => {
+    //   debugger
+    //   const requiredFields = {
+    //     centreName: "Centre name is Required",
+    //     testName: "Test name is Required",
+    //     testCode: "Test code is Required",
+    //     department: "Department is Required",
+    //     departmentCode: "Department code is Required",
+    //     isActive: "Status code is Required",
+    //   };
+  
+    //   for (const field in requiredFields) {
+    //     if (!values?.[field]) {
+    //       notify(requiredFields[field], "error");
+    //       return;
+    //     }
+    //   }
+  
+    //   const payload = {
+    //     idd: String(values.tableRowId),
+    //     Centreid: String(values.centreName),
+    //     TestName: String(values.testName),
+    //     Testcode: String(values.testCode),
+    //     Department: values?.department,
+    //     departcode: values?.departmentCode,
+    //     ReportFormat: String(values?.ReportType?.value||values?.ReportType),
+    //     chkactive: String(values.isActive?.value),
+    //   };
+    //   console.log("InvestigationMasterUpdatetest",payload)
+    //   try {
+    //     const response = await InvestigationMasterUpdatetest();
+    //     if (response?.status) {
+    //       notify(response?.message, "success");
+    //       setIsEdit(false);
+    //       await fetchTestGrid(values.centreName);
+    //       if (setChildData.isSearchActive) {
+    //         const payload1 = {
+    //           searchtype: setChildData?.serchVluses?.searchtype,
+    //           txtsearchInv: setChildData?.serchVluses?.txtsearchInv,
+    //           clientid: String(setChildData?.serchVluses?.clientid),
+    //         };
+    //         await setChildData.Bindsearchgrid(payload1);
+    //       }
+    //       handleCencel();
+    //     } else {
+    //       notify(response.message || "Updation failed", "error");
+    //     }
+    //   } catch (error) {
+    //     console.error("Something went wrong:", error);
+    //   }
+    // };
 
+    const handleUpdate = async () => {
+      debugger 
+      const requiredFields = [
+        { key: "centreName", message: "Centre Name is required" },
+        { key: "testCode", message: "Test Code is required" },
+        { key: "Description", message: "Description is required" },
+      ];
+      for (let field of requiredFields) {
+        if (!values[field.key]) {
+          notify(field.message, "error");
+          return false;
+        }
+      }
+      if (!base64Data) {
+        notify("Please upload a valid image file.", "error");
+        return;
+      }
+      const payload = {
+        Centreid: String(values?.centreName?.Centreid||values?.centreid),
+        Testcode: String(values?.testCode?.label||values?.testCodeName),
+        Test_id: String(values?.testCode?.value||values?.testCode),
+        Description: values?.Description,
+        Image: base64Data, // Only the Base64 string (without prefix)
+      };
+      try {
+        const response = await MasterInvestigationDescription(payload);
+        if (response?.status) {
+          notify(response.message, "success");
+          await  fetchTestGrid(payload?.Centreid);
+          handleCencel()
+        } else {
+          notify(response.message, "error");
+        }
+      } catch (error) {
+        console.error("Something went wrong:", error);
+      }
+    };
   return (
     <>
       <div className="mt-2 spatient_registration_card">
