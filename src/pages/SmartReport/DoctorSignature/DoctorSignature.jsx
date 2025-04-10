@@ -11,7 +11,9 @@ import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import {
   CenterMasterBindclient,
   CentreDoctorSignature,
+  fetchCentreDoctorSignatureAPI,
 } from "../../../networkServices/smartReport";
+import DoctorSignatureDetails from "./DoctorSignatureDetails";
 
 const doctorSignature = () => {
   const [tableData, setTableData] = useState([]);
@@ -98,6 +100,7 @@ const doctorSignature = () => {
 
       if (response?.status) {
         notify(response.message, "success");
+        await fetchCentreDoctorSignature(payload?.Centreid)
         setIsEdit(false);
         handleCencel();
       }
@@ -114,7 +117,33 @@ const doctorSignature = () => {
     }));
     setIsEdit(false);
   }
+  const fetchCentreDoctorSignature = async (id) => {
+    const payload={
+      Centreid: String(id),
+    }
+    console.log("Payload QRcode",payload)
+    try {
+      const response = await fetchCentreDoctorSignatureAPI(payload);
+      if (response?.status) {
+        setTableData(response?.data);
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
 
+   useEffect(() => {
+      if (values?.centreName?.Centreid) {
+        fetchCentreDoctorSignature(values?.centreName?.Centreid);
+      }
+    }, [values?.centreName]);
+  const handleEdit = (val) => {
+    console.log("Edit", val);
+    setIsEdit(true);
+    setValues({
+      centreName: val?.Centre,
+    });
+  };
   useEffect(() => {
     GetCentreName();
   }, []);
@@ -187,6 +216,7 @@ const doctorSignature = () => {
           </div>
         </div>
       </div>
+      <DoctorSignatureDetails tableData={tableData} onEdit={handleEdit} />
     </>
   );
 };

@@ -25,7 +25,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   };
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { Centreid,CentreName, LoginId,Password,State, city, Address, Isactive } = row;
+      const { Centreid,CentreName, LoginId,Password,State, city, Address, Isactive ,Logo_Img} = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         Centreid:Centreid,

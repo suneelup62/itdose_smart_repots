@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
 import ReactSelect from "../../../components/formComponent/ReactSelect";
@@ -31,8 +31,9 @@ const ReportCenter = () => {
     isActive: 0,
     id: 0,
     centreid: "",
-    LoginId:"",
-    Password:""
+    LoginId: "",
+    Password: "",
+    imageBase64: "",
   });
   const [dropDownData, setDropDownState] = useState({
     GetBindState: [],
@@ -53,13 +54,13 @@ const ReportCenter = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const fileInputRef = useRef(null); // ⬅️ Ref for the file input
   const getReportCentreGetData = async () => {
     try {
       const response = await ReportCentreGetData();
       if (response?.status) {
         setTableData(response?.data);
       }
-
     } catch (error) {
       console.log(error, "Something Went Wrong");
     }
@@ -131,8 +132,9 @@ const ReportCenter = () => {
       [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
     }));
   };
-  const handleSubmit = async () => {
 
+ 
+  const handleSubmit = async () => {
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "state", message: "State is required" },
@@ -151,11 +153,11 @@ const ReportCenter = () => {
       txtcity: String(values?.city?.value),
       txtadddress: values?.address,
       chkactive: String(values?.isActive),
-      LoginId:(values?.LoginId),
-      Password:(values?.Password),
+      LoginId: values?.LoginId,
+      Password: values?.Password,
       Logo_Img: values?.imageBase64 || "", // Include the Base64 image
     };
-    console.log("payload",payload)
+    console.log("payload", payload);
     try {
       const response = await smartReportNewAddCentre(payload);
       if (response?.status) {
@@ -172,21 +174,24 @@ const ReportCenter = () => {
   };
 
   const handleEdit = async (val) => {
-    console.log("handelEdit",val)
+    console.log("handelEdit", val);
     setIsEdit(true);
     try {
       setValues((prev) => ({
         ...prev,
         centreName: val?.CentreName,
         state: val?.stateid,
-        LoginId:val?.LoginId,
-        Password:val?.Password,
+        LoginId: val?.LoginId,
+        Password: val?.Password,
         city: val?.cityid,
         address: val.Address,
         isActive: val.Isactive === "Active" ? 1 : 0,
         id: 1,
         centreid: val?.Centreid,
       }));
+      setPreview((prev) => {
+        return val?.Logo_Img ? `data:image/png;base64,${val?.Logo_Img}` : null;
+      });
     } catch (error) {
       console.error("Error during edit:", error);
     }
@@ -219,8 +224,9 @@ const ReportCenter = () => {
           : String(values?.city || ""),
       txtadddress: values?.address || "",
       chkactive: String(values?.isActive),
-      LoginId:(values?.LoginId),
-      Password:(values?.Password)
+      LoginId: values?.LoginId,
+      Password: values?.Password,
+      Logo_Img: values?.imageBase64,
     };
 
     try {
@@ -237,53 +243,48 @@ const ReportCenter = () => {
       console.log(error, "Some Thing Went Wrong");
     }
   };
+
   const handleCencel = () => {
     setValues((prev) => ({
       ...prev,
       centreName: "",
       state: null,
-      LoginId:"",
-      Password:"",
+      LoginId: "",
+      Password: "",
       city: null,
       address: "",
       isActive: null,
+      imageBase64: "",
     }));
-    setIsEdit(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
+    setImage(null);          
+    setPreview(null);        
+    setIsEdit(false);    
+  
+   
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
 
- // Handle file selection
-//  const handleFileChange = (e) => {
-//   const file = e.target.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setImage(file);
+      const reader = new FileReader();
 
-//   if (file && file.type.startsWith("image/")) {
-//     setImage(file);
-//     const reader = new FileReader();
-//     reader.onloadend = () => {
-//       setPreview(reader.result); // Create image preview
-//     };
-//     reader.readAsDataURL(file);
-//   } else {
-//     // alert("Please select a valid image file!");
-//     notify("Please select a valid image file!","error")
-//   }
-// };
-const handleFileChange = (e) => {
-  const file = e.target.files[0];
+      reader.onloadend = () => {
+        setPreview(reader.result); // Set preview
+        setValues((prev) => ({
+          ...prev,
+          imageBase64: reader.result.split(",")[1],
+        })); // Save Base64 data
+      };
 
-  if (file && file.type.startsWith("image/")) {
-    setImage(file);
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setPreview(reader.result); // Set preview
-      setValues((prev) => ({ ...prev, imageBase64: reader.result.split(",")[1] })); // Save Base64 data
-    };
-
-    reader.readAsDataURL(file);
-  } else {
-    notify("Please select a valid image file!", "error");
-  }
-};
+      reader.readAsDataURL(file);
+    } else {
+      notify("Please select a valid image file!", "error");
+    }
+  };
 
   useEffect(() => {
     bindCity(values?.state?.value || values?.state);
@@ -323,18 +324,19 @@ const handleFileChange = (e) => {
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               name="LoginId"
               onChange={handleChange}
-            /><Input
-            type="text"
-            className="form-control"
-            id="Password"
-            lable={t("Password")}
-            placeholder=" "
-            required={true}
-            value={values?.Password}
-            respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-            name="Password"
-            onChange={handleChange}
-          />
+            />
+            <Input
+              type="text"
+              className="form-control"
+              id="Password"
+              lable={t("Password")}
+              placeholder=" "
+              required={true}
+              value={values?.Password}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              name="Password"
+              onChange={handleChange}
+            />
             <ReactSelect
               placeholderName={t("Select state")}
               searchable={true}
@@ -393,30 +395,29 @@ const handleFileChange = (e) => {
               />
               <label className="mt-2 ml-3">{t("IsActive")}</label>
             </div> */}
-             <div className="d-flex">
+            <div className="d-flex">
               <label className="mt-2 ml-3">{"IsActive :"}</label>
               <input
                 type="checkbox"
                 className="mt-2 ml-3"
                 name="isActive"
                 onChange={handleChange}
-                checked={values.isActive === 1}  // Ensure correct boolean conversion
+                checked={values.isActive === 1} // Ensure correct boolean conversion
               />
             </div>
-            <div className="d-flex" style={{marginLeft: "25px"}}>
-            <label className="mt-2 ml-3">{"Upload Image"}</label>
-              <input type="file" 
-              accept="image/*"
-              className="mt-2 ml-3"
-               onChange={handleFileChange} />
+            <div className="d-flex" style={{ marginLeft: "25px" }}>
+              <label className="mt-2 ml-3">{"Upload Image"}</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="mt-2 ml-3"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+              />
               {preview && (
                 <div>
-                  <h4>Image Preview:</h4>
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    style={{ width: "50px"}}
-                  />
+                  {/* <h4>Image Preview:</h4> */}
+                  <img  className="zoomUploadImage" src={preview} alt="Preview" style={{ width: "50px" }} />
                 </div>
               )}
             </div>

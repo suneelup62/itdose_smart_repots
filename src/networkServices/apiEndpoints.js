@@ -65,9 +65,15 @@ export const apiUrls = {
    
   // SmartReportMaster Centre QRCode
      QRCode: `/api/v1/SmartReportMaster/Centre_QRCode`,
+  
+     // SmartReportMaster Centre QRCode
+     BindQRCodeGrid: `/api/v1/SmartReportMaster/BindQRCodeGrid`,
 
   // SmartReportMaster Centre_DoctorSignature
      DoctorSignature: `/api/v1/SmartReportMaster/Centre_DoctorSignature`,
+  
+     // SmartReportMaster Centre_DoctorSignature
+     BindDoctorSignature: `/api/v1/SmartReportMaster/BindDoctorSignature`,
 
   // SmartReportMaster Investigation_Format
      InvFormat: `/api/v1/SmartReportMaster/Investigation_Format`,

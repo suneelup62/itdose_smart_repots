@@ -3,7 +3,7 @@ import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
 import ReactSelect from "../../../components/formComponent/ReactSelect";
 import { useEffect } from "react";
-import { handleReactSelectDropDownOptions, notify } from "../../../utils/utils";
+import { handleReactSelectDropDownOptions, handleReactSelectDropDownOptionsTest, notify } from "../../../utils/utils";
 import Input from "../../../components/formComponent/Input";
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import TextAreaInput from "../../../components/formComponent/TextAreaInput";
@@ -33,6 +33,7 @@ const Riskfactor = () => {
     testCode: null,
   });
   const [editorText, setEditorText] = useState("");
+  
   const handleChangeEditor = (data) => {
     setEditorText(data);
   };
@@ -66,11 +67,13 @@ const Riskfactor = () => {
         clientid: String(stateID),
       });
       if (response?.data) {
-        const testCodeOptions = handleReactSelectDropDownOptions(
-          response.data,
-          "TestCode",
-          "ID"
-        );
+         const testCodeOptions = handleReactSelectDropDownOptionsTest(
+                  response.data,
+                  "Test",
+                  "ID",
+                  "TestCode",
+                  "TestName"
+                );
         setDropDownData((prev) => ({
           ...prev,
           getBindTestCode: testCodeOptions,
@@ -92,10 +95,34 @@ const Riskfactor = () => {
     });
   };
 
+  // const handleReactChange = (name, selectedOption) => {
+  //   console.log("test",name)
+  //   setValues((prev) => ({ ...prev, [name]: selectedOption }));
+  // if(values?.testCode?.TestCode===!""){
+  //   fetchGetRiskFactor(
+  //     selectedOption?.Centreid || values?.centreName?.Centreid,
+  //     selectedOption?.TestCode || values?.testCode
+  //   )
+  // }
+  // };
   const handleReactChange = (name, selectedOption) => {
-    setValues((prev) => ({ ...prev, [name]: selectedOption }));
+    console.log("Selected:", name, selectedOption);
+  
+    const updatedValues = { ...values, [name]: selectedOption };
+    setValues(updatedValues);
+  
+    // Only call fetchGetRiskFactor when testCode is selected
+    if (name === "testCode" && selectedOption?.TestCode) {
+      fetchGetRiskFactor(
+        values?.centreName?.Centreid || selectedOption?.Centreid,
+        selectedOption?.TestCode
+      );
+    }
   };
+  
 
+  
+  
   console.log("values", values);
   const handleSubmit = async () => {
     const requiredFields = [
@@ -111,19 +138,19 @@ const Riskfactor = () => {
 
     const payload = {
       Centreid: String(values?.centreName?.Centreid),
-      Testcode: values?.testCode?.label,
+      Testcode: values?.testCode?.TestCode,
       Test_id: String(values?.testCode?.value),
       Template: editorText,
     };
-
+ console.log("payload",payload)
     try {
       const response = await MasterInvestigationRiskfactor(payload);
       if (response?.status) {
         notify(response.message, "success");
+        setIsEdit(false);
         setEditable(true);
         setEditorText("");
-        await fetchTestGrid(payload?.Centreid);
-        //  handleCencel()
+        handleCencel()
       } else {
         notify(response.message || "Submission failed", "error");
       }
@@ -134,10 +161,11 @@ const Riskfactor = () => {
   const handleCencel = () => {
     setValues((prev) => ({
       ...prev,
-      centreName: "",
       testCode: null,
     }));
     setIsEdit(false);
+    setEditable(true);
+    setEditorText("");
   };
 
   useEffect(() => {
@@ -150,15 +178,17 @@ const Riskfactor = () => {
     }
   }, [values?.centreName]);
 
-  const fetchTestGrid = async (id) => {
+  const fetchGetRiskFactor = async (id,Code) => {
+    const payload={
+      Centreid:String(id),
+      TestCode:Code
+    }
     try {
-      const response = await BindGetRiskFactor({
-        centreid: String(id),
-      });
+      const response = await BindGetRiskFactor(payload);
       if (response?.status) {
-        setTableData(response?.data);
-        val.BindTestgrid();
-        handleCencel();
+        setEditable(true);
+        setIsEdit(true);
+        setEditorText(response?.data[0]?.Template);
       }
     } catch (error) {
       console.error("Something went wrong:", error);
@@ -167,6 +197,7 @@ const Riskfactor = () => {
 
   const handleEdit = (val) => {
     console.log("Edit", val);
+     setIsEdit(false);
     setEditable(true);
     setIsEdit(true);
     setEditorText(val?.Template);
@@ -183,58 +214,9 @@ const Riskfactor = () => {
   useEffect(() => {
     if (values?.centreName?.Centreid) {
       BindTestCode(values?.centreName?.Centreid);
-      fetchTestGrid(values?.centreName?.Centreid);
     }
   }, [values?.centreName]);
 
-  const handleTableData = (tableData) => {
-    return tableData?.map((row, index) => {
-      const { Centre, TestCode, Image, Template, centreid, testid } = row;
-      return {
-        SNo: <div className="p-1">{index + 1}</div>,
-        centre: Centre,
-        Testcode: TestCode,
-        // Department: Image,
-        // Template: Template,
-        Modify: (
-          <i
-            className="fa fa-edit"
-            style={{ color: "#1873c9", cursor: "pointer" }}
-            onClick={() => handleEdit(row)}
-          ></i>
-        ),
-        // Action: (
-        //   <div>
-        //     <button
-        //       className="btn btn-sm btn-primary me-2"
-        //       onClick={() => handleObservation(row)}
-        //       style={{ margin: "2px" }}
-        //     >
-        //       Observation
-        //     </button>
-        //     <button
-        //       className="btn btn-sm btn-secondary"
-        //       onClick={() => handleInterpretation(row)}
-        //     >
-        //       Interpretation
-        //     </button>
-        //   </div>
-        // ),
-      };
-    });
-  };
-
-  // const handleEdit = (row) => {
-  //   onEdit(row);
-  // };
-  const THEAD = [
-    t("S.No"),
-    t("Center Name"),
-    t("Test Code"),
-    // t("Image"),
-    // t("Template"),
-    t("Acction"),
-  ];
   const handleUpdate = async () => {
     // const requiredFields = [
     //   { key: "centreName", message: "Centre Name is required" },
@@ -252,9 +234,9 @@ const Riskfactor = () => {
     //   return;
     // }
     const payload = {
-      Centreid: String(values?.centreid),
-      Testcode: values?.testCode,
-      Test_id: String(values?.testid),
+      Centreid: String(values?.centreName?.Centreid),
+      Testcode: values?.testCode?.TestCode,
+      Test_id: String(values?.testCode?.value),
       Template: editorText,
     };
     try {
@@ -263,7 +245,7 @@ const Riskfactor = () => {
         setEditable(true);
         setEditorText("");
         notify(response.message, "success");
-        await fetchTestGrid(payload?.Centreid);
+        setIsEdit(false);
         handleCencel();
       } else {
         notify(response.message, "error");
@@ -291,7 +273,7 @@ const Riskfactor = () => {
               value={values?.centreName}
             />
             <ReactSelect
-              placeholderName={t("Select Test Code")}
+              placeholderName={t("Select test")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"testCode"}
@@ -304,12 +286,6 @@ const Riskfactor = () => {
             />
           </div>
           <div className="FullTextEditor">
-            {/* <FullTextEditor
-              value={values?.Template}
-              setValue={setEditor}
-              editable={Editable}
-              setEditTable={setEditable}
-            /> */}
             <FullTextEditor
               value={editorText} // Use Template1 instead of Template
               setValue={handleChangeEditor}
@@ -338,22 +314,6 @@ const Riskfactor = () => {
                 {t("Submit")}
               </button>
             )}
-          </div>
-        </div>
-      </div>
-      {/* <RiskfactorDetails tableData={tableData} onEdit={handleEdit} /> */}
-      <div className="mt-2 spatient_registration_card">
-        <div className="patient_registration card">
-          <Heading title={t("Records")} isBreadcrumb={false} />
-          <div className="row p-2">
-            <div className="col-12">
-              <Tables
-                isSearch={true}
-                thead={THEAD}
-                tbody={handleTableData(tableData?.length ? tableData : [])}
-                style={{ maxHeight: "40vh" }}
-              />
-            </div>
           </div>
         </div>
       </div>

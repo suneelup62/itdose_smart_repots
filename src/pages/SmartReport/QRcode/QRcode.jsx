@@ -11,7 +11,9 @@ import TextAreaInput from "../../../components/formComponent/TextAreaInput";
 import {
   CenterMasterBindclient,
   CentreQRCode,
+  fetchQRcodeDetailsAPI,
 } from "../../../networkServices/smartReport";
+import QRcodeDetails from "./QRcodeDetails";
 
 const QRcode = () => {
   const [tableData, setTableData] = useState([]);
@@ -100,6 +102,7 @@ const QRcode = () => {
       const response = await CentreQRCode(payload);
       if (response?.status) {
         notify(response.message, "success");
+        fetchQRcodeDetails(payload?.Centreid);
         setIsEdit(false);
         handleCencel();
       } else {
@@ -120,10 +123,41 @@ const QRcode = () => {
     setIsEdit(false);
   }
 
+  const fetchQRcodeDetails = async (id) => {
+    const payload={
+      centreid: String(id),
+    }
+    console.log("Payload QRcode",payload)
+    try {
+      const response = await fetchQRcodeDetailsAPI(payload);
+      if (response?.status) {
+        setTableData(response?.data);
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
+
+
+ useEffect(() => {
+    if (values?.centreName?.Centreid) {
+      fetchQRcodeDetails(values?.centreName?.Centreid);
+    }
+  }, [values?.centreName]);
+  
+  
   useEffect(() => {
     GetCentreName();
   }, []);
 
+
+  const handleEdit = (val) => {
+    console.log("Edit", val);
+    setIsEdit(true);
+    setValues({
+      centreName: val?.Centre,
+    });
+  };
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -137,7 +171,7 @@ const QRcode = () => {
               id={"centreName"}
               name={"centreName"}
               removeIsClearable={true}
-              handleChange={handleReactChange}
+              handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={dropDownData?.GetBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
@@ -192,6 +226,7 @@ const QRcode = () => {
           </div>
         </div>
       </div>
+      <QRcodeDetails tableData={tableData} onEdit={handleEdit} />
     </>
   );
 };

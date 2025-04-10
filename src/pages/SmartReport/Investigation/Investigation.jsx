@@ -281,6 +281,7 @@ const Investigation = () => {
   function handleCencel() {
     setValues((prev) => ({
       ...prev,
+      centreName:null,
       testName: "",
       testCode: "",
       department: "",

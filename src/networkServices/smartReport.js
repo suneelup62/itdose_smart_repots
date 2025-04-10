@@ -318,7 +318,25 @@ export const BindInvestigationTestCode = async (payload) => {
       console.error("Error Found", error); 
     }
   };
-  // SmartReportMaster Centre_DoctorSignature
+
+
+    // /SmartReportMaster BindQRCodeGrid
+    export const fetchQRcodeDetailsAPI = async (payload) => {
+      store.dispatch(setLoading(true));
+      try {
+        const options = {
+          method: "Post",
+          data: payload,
+        };
+        const data = await makeApiRequest(`${apiUrls.BindQRCodeGrid}`, options);
+        store.dispatch(setLoading(false));
+        return data;
+      } catch (error) {
+        store.dispatch(setLoading(false));
+        console.error("Error Found", error); 
+      }
+    };
+  // SmartReportMaster BindDoctorSignature
   export const CentreDoctorSignature = async (payload) => {
     store.dispatch(setLoading(true));
     try {
@@ -327,6 +345,22 @@ export const BindInvestigationTestCode = async (payload) => {
         data: payload,
       };
       const data = await makeApiRequest(`${apiUrls.DoctorSignature}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
+  // SmartReportMaster fetchCentreDoctorSignatureAPI
+  export const fetchCentreDoctorSignatureAPI = async (payload) => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+        method: "Post",
+        data: payload,
+      };
+      const data = await makeApiRequest(`${apiUrls.BindDoctorSignature}`, options);
       store.dispatch(setLoading(false));
       return data;
     } catch (error) {

@@ -140,6 +140,27 @@ export const handleReactSelectDropDownOptions = (state, labelKey, valueKey) => {
   });
 };
 
+
+export const handleReactSelectDropDownOptionsTest = (state, labelKey, valueKey) => {
+  return state?.map((ele, index) => {
+    if (typeof ele === "object") {
+      return {
+        ...ele,
+        label: ele[labelKey],
+        value: ele[valueKey],
+      };
+    } else {
+      return {
+        label: ele,
+        value: ele,
+        TestCode:ele,
+        TestName:ele
+
+      };
+    }
+  });
+};
+
 export const WithoutObjecthandleReactSelectDropDownOptions = (state) => {
   return state?.map((ele, index) => {
     return {

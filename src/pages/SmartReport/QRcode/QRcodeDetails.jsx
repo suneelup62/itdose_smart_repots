@@ -6,17 +6,16 @@ import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { notify } from "../../../utils/utils";
 import { axiosInstance } from "../../../utils/helpers";
 import makeApiRequest from "../../../networkServices/axiosInstance";
-const SmartReportDetails = ({ tableData, onEdit }) => {
+const QRcodeDetails = ({ tableData, onEdit }) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
   const THEAD = [
     t("S.No"),
     t("Center Name"),
-    t("Test"),
-    // t("Image"),
-    t("Desription"),
-    t("Acction"),
+    t("Height"),
+    t("Alignment"),
+    // t("Acction"),
   ];
  const [uploadFileData, setUploadFileData] = useState({
     uploadFile: "",
@@ -28,17 +27,17 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   const handleTableData = (tableData) => {
     console.log("handleTableData",tableData)
     return tableData?.map((row, index) => {
-      const { Centre, Test, Image, Desription,centreid,testid,TestCode} =
+      const { Centre, Height,Alignment} =
         row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: Centre,
-        Test: Test,
+        Height: Height,
+        Alignment:Alignment
         // Department: Image,
-        DepartmentCode: Desription,
-        Modify: (
-          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
-        ),
+        // Modify: (
+        //   <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
+        // ),
         // Action: (
         //   <div>
         //     <button
@@ -136,7 +135,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
       <div className="mt-2 spatient_registration_card">
         <div className="patient_registration card">
           <Heading title={t("Records")} isBreadcrumb={false} />
-          <div className="row p-2">
+          {/* <div className="row p-2">
            <div className="col-12">
            <div>
               <button
@@ -156,7 +155,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
               </button>
             </div>
            </div>
-          </div>
+          </div> */}
           <div className="row p-2">
             <div className="col-12">
               <Tables
@@ -173,4 +172,4 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   );
 };
 
-export default SmartReportDetails;
+export default QRcodeDetails;
