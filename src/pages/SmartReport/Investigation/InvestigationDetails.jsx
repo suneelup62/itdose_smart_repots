@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
 
@@ -54,14 +54,23 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     t("Modify"),
     // t("Acction"),
   ];
+  // const [uploadFileData, setUploadFileData] = useState({
+  //   uploadFile: "",
+  //   previewUrl: "",
+  // });
+
   const [uploadFileData, setUploadFileData] = useState({
-    uploadFile: "",
-    previewUrl: "",
+    uploadFile: null,
+    previewUrl: null,
   });
+  const fileInputRef = useRef(null);
+
   const handleClose = () => {
     setHandleModelData((val) => ({ ...val, isOpen: false }));
   };
 
+
+  console.log("uploadFileData",uploadFileData)
   const handleObservation = (row) => {
     setHandleModelData({
       isOpen: true,
@@ -210,18 +219,6 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
 
   const tableDisplayData = isSearchActive ? searchTableData : tableData;
 
-  // const tableDisplayData = isSearchActive ? searchTableData : tableData;
-
-  // const handelUploadToExcel = () => {
-  //   return setHandleModelData({
-  //     isOpen: true,
-  //     width: "40vw",
-  //     label: "Upload To Excel File",
-  //     Component: <UploadToExcel />,
-  //     // RejectPurchaseRequest: RejectPurchaseRequest
-  //   });
-  // };
-
   const handleDownloadToExcel = async () => {
     const localData = useLocalStorage("authToken", "get");
     const headers = {
@@ -250,35 +247,68 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     }
   };
 
-  const handelUploadToExcel = async () => {
-    debugger
-  if(uploadFileData.uploadFile===""){
-    notify("Please upload a file","error")
-  }
-    let formData = new FormData();
-    formData.append("file", uploadFileData.uploadFile);
+  // const handelUploadToExcel = async () => {
 
+  // if(uploadFileData.uploadFile===""){
+  //   notify("Please upload a file","error")
+  // }
+  //   let formData = new FormData();
+  //   formData.append("file", uploadFileData.uploadFile);
+
+  //   try {
+  //     const options = {
+  //       method: "Post",
+  //       data: formData,
+  //     };
+  //     const data = await makeApiRequest(
+  //       "/api/v1/InvestigationMaster/save",
+  //       options,
+  //       "multipart/form-data"
+  //     );
+  //     if(data?.success){
+  //       notify(data?.message,"success")
+  //       handleCencel()
+  //     }else{
+  //       notify(data?.data,"error")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error Found", error);
+  //   }
+  // };
+
+
+  const handelUploadToExcel = async () => {
+    if (!uploadFileData.uploadFile) {
+      notify("Please upload a file", "error");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("file", uploadFileData.uploadFile);
+  
     try {
       const options = {
-        method: "Post",
+        method: "POST",
         data: formData,
       };
+  
       const data = await makeApiRequest(
         "/api/v1/InvestigationMaster/save",
         options,
         "multipart/form-data"
       );
-      if(data?.success){
-        notify(data?.message,"success")
-        handleCencel()
-      }else{
-        notify(data?.data,"error")
+  
+      if (data?.success) {
+        notify(data?.message, "success");
+        handleCencel(); // Clear the uploaded file on success
+      } else {
+        notify(data?.data || "Something went wrong", "error");
       }
     } catch (error) {
       console.error("Error Found", error);
+      notify("An unexpected error occurred", "error");
     }
   };
-
   const uploadFile = (e) => {
     const uploadFile = e?.target.files[0];
     const previewUrl = URL?.createObjectURL(uploadFile);
@@ -296,19 +326,17 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   };
 
   const handleCencel = () => {
-    setUploadFileData((prev) => ({
-      ...prev,
-        uploadFile: "",
-        previewUrl: "",
-    }));
-    setIsEdit(false);
-  };
-  const hendelClear = () => {
-    setSerchVluses({
-      searchtype: "",
-      txtsearchInv: "",
+    setUploadFileData({
+      uploadFile: "",
+      previewUrl: "",
     });
+  
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
+  
+
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -347,7 +375,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
                 Download Excel File
               </button>
 
-              <input type="file" onChange={uploadFile} id="file"  style={{marginLeft:"30px"}}/>
+              <input type="file" onChange={uploadFile}  ref={fileInputRef} id="file"  style={{marginLeft:"30px"}}/>
               <button
                 className="btn btn-sm btn-primary me-2"
                 onClick={() => handelUploadToExcel()}

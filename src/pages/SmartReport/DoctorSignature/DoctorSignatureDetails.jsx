@@ -14,7 +14,7 @@ const DoctorSignatureDetails = ({ tableData, onEdit }) => {
     t("S.No"),
     t("Center Name"),
     t("Alignment"),
-    // t("Acction"),
+    t("Acction"),
   ];
  const [uploadFileData, setUploadFileData] = useState({
     uploadFile: "",
@@ -24,18 +24,16 @@ const DoctorSignatureDetails = ({ tableData, onEdit }) => {
     onEdit(row);
   };
   const handleTableData = (tableData) => {
-    console.log("handleTableData",tableData)
     return tableData?.map((row, index) => {
       const { Centre,Alignment} =
         row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: Centre,
-        Alignment:Alignment
-        // Department: Image,
-        // Modify: (
-        //   <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
-        // ),
+        Alignment:Alignment,
+        Modify: (
+          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
+        ),
         // Action: (
         //   <div>
         //     <button
@@ -157,7 +155,7 @@ const DoctorSignatureDetails = ({ tableData, onEdit }) => {
           <div className="row p-2">
             <div className="col-12">
               <Tables
-                isSearch={true}
+                // isSearch={true}
                 thead={THEAD}
                 tbody={handleTableData(tableData?.length ? tableData : [])}
                 style={{ maxHeight: "40vh" }}

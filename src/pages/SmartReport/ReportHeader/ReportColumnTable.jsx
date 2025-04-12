@@ -2,14 +2,18 @@ import Table from 'react-bootstrap/Table';
 
 function ReportColumnTable() {
   return (
-    <Table striped bordered hover responsive>
-      <thead>
+    <Table>
+      {/* <thead>
         <tr>
           <th>S.No</th>
           <th>Report Column</th>
         </tr>
-      </thead>
+      </thead> */}
       <tbody>
+      <tr>
+          <td><b>S.No</b></td>
+          <td><b>Report Column</b></td>
+        </tr>
         <tr>
           <td>1</td>
           <td>subcategoryid</td>

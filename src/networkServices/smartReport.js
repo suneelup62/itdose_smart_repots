@@ -451,3 +451,38 @@ export const BindInvestigationTestCode = async (payload) => {
       console.error("Error Found", error); 
     }
   };
+
+
+    // SmartReportMaster AddAndUpdateSmartreportHeade
+    export const AddAndUpdateSmartreportHeade = async (payload) => {
+      store.dispatch(setLoading(true));
+      try {
+        const options = {
+          method: "Post",
+          data: payload,
+        };
+        const data = await makeApiRequest(`${apiUrls.SmartreportHeader}`, options);
+        store.dispatch(setLoading(false));
+        return data;
+      } catch (error) {
+        store.dispatch(setLoading(false));
+        console.error("Error Found", error); 
+      }
+    };
+
+    // SmartReportMaster  GetReportHeader
+    export const GetReportHeaderAPI = async (payload) => {
+      store.dispatch(setLoading(true));
+      try {
+        const options = {
+          method: "Post",
+          data: payload,
+        };
+        const data = await makeApiRequest(`${apiUrls.GetReportHeader}`, options);
+        store.dispatch(setLoading(false));
+        return data;
+      } catch (error) {
+        store.dispatch(setLoading(false));
+        console.error("Error Found", error); 
+      }
+    };

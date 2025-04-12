@@ -186,9 +186,17 @@ const Riskfactor = () => {
     try {
       const response = await BindGetRiskFactor(payload);
       if (response?.status) {
+        if (response.data.length > 0) {
         setEditable(true);
         setIsEdit(true);
         setEditorText(response?.data[0]?.Template);
+        } else{
+          setIsEdit(false);
+    setEditable(true);
+    setEditorText("");
+    notify("No found for this code.", "error");
+        }
+       
       }
     } catch (error) {
       console.error("Something went wrong:", error);

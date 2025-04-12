@@ -115,7 +115,7 @@ const FullTextEditor = ({ value, setValue, EditTable, setEditTable }) => {
       { name: "others", items: ["-"] },
     ],
 
-    height: 180,
+    height: 250,
     enterMode: 2,
   };
 

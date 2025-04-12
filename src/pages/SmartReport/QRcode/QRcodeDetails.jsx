@@ -15,7 +15,7 @@ const QRcodeDetails = ({ tableData, onEdit }) => {
     t("Center Name"),
     t("Height"),
     t("Alignment"),
-    // t("Acction"),
+    t("Acction"),
   ];
  const [uploadFileData, setUploadFileData] = useState({
     uploadFile: "",
@@ -25,7 +25,6 @@ const QRcodeDetails = ({ tableData, onEdit }) => {
     onEdit(row);
   };
   const handleTableData = (tableData) => {
-    console.log("handleTableData",tableData)
     return tableData?.map((row, index) => {
       const { Centre, Height,Alignment} =
         row;
@@ -33,7 +32,10 @@ const QRcodeDetails = ({ tableData, onEdit }) => {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: Centre,
         Height: Height,
-        Alignment:Alignment
+        Alignment:Alignment,
+        Modify: (
+          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
+        ),
         // Department: Image,
         // Modify: (
         //   <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
@@ -159,7 +161,7 @@ const QRcodeDetails = ({ tableData, onEdit }) => {
           <div className="row p-2">
             <div className="col-12">
               <Tables
-                isSearch={true}
+                // isSearch={true}
                 thead={THEAD}
                 tbody={handleTableData(tableData?.length ? tableData : [])}
                 style={{ maxHeight: "40vh" }}

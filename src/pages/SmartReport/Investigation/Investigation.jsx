@@ -153,7 +153,6 @@ const Investigation = () => {
   };
 
   const handleSubmit = async () => {
-    debugger
     const requiredFields = {
       centreName: "Centre name is Required",
       testName: "Test name is Required",
@@ -211,7 +210,7 @@ const Investigation = () => {
     });
   };
   const handleUpdate = async (val) => {
-    debugger
+
     const requiredFields = {
       centreName: "Centre name is Required",
       testName: "Test name is Required",

@@ -87,8 +87,14 @@ export const apiUrls = {
    // InvestigationMaster BindGetDescription
   
    GetDescription: `/api/v1/SmartReportMaster/GetDescription`,
-   // InvestigationMaster BindGetDescription
   
+   // InvestigationMaster BindGetDescription
    GetRiskFactor: `/api/v1/SmartReportMaster/GetRiskFactor`,
+   
+   // InvestigationMaster BindGetDescription
+   SmartreportHeader: `/api/v1/SmartReportMaster/Smartreport_header`,
+   
+   // InvestigationMaster BindGetDescription
+   GetReportHeader: `/api/v1/SmartReportMaster/GetReportHeader`,
 
 };

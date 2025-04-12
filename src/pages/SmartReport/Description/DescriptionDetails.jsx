@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
 import Tables from "../../../components/UI/customTable";
@@ -19,9 +19,11 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     t("Acction"),
   ];
  const [uploadFileData, setUploadFileData] = useState({
-    uploadFile: "",
-    previewUrl: "",
+    uploadFile: null,
+    previewUrl: null,
   });
+
+   const fileInputRef = useRef(null);
   const handleEdit = (row) => {
     onEdit(row);
   };
@@ -34,28 +36,10 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: Centre,
         Test: Test,
-        // Department: Image,
         DepartmentCode: Desription,
         Modify: (
           <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
         ),
-        // Action: (
-        //   <div>
-        //     <button
-        //       className="btn btn-sm btn-primary me-2"
-        //       onClick={() => handleObservation(row)}
-        //       style={{ margin: "2px" }}
-        //     >
-        //       Observation
-        //     </button>
-        //     <button
-        //       className="btn btn-sm btn-secondary"
-        //       onClick={() => handleInterpretation(row)}
-        //     >
-        //       Interpretation
-        //     </button>
-        //   </div>
-        // ),
       };
     });
   };
@@ -131,6 +115,17 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         notify("Please upload a valid Excel file", "error");
       }
     };
+
+    const handleCencel = () => {
+      setUploadFileData({
+        uploadFile: "",
+        previewUrl: "",
+      });
+    
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    };
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -146,7 +141,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
                 Download Excel File
               </button>
 
-              <input type="file" onChange={uploadFile} id="file"  style={{marginLeft:"30px"}}/>
+              <input type="file" onChange={uploadFile} id="file" ref={fileInputRef}  style={{marginLeft:"30px"}}/>
               <button
                 className="btn btn-sm btn-primary me-2"
                 onClick={() => handelUploadToExcel()}

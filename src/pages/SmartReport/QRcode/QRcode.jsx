@@ -14,6 +14,7 @@ import {
   fetchQRcodeDetailsAPI,
 } from "../../../networkServices/smartReport";
 import QRcodeDetails from "./QRcodeDetails";
+import { number } from "../../../utils/constant";
 
 const QRcode = () => {
   const [tableData, setTableData] = useState([]);
@@ -44,8 +45,9 @@ const QRcode = () => {
 
   const [values, setValues] = useState({
     centreName: null,
-    height: "",
+    height: null,
     alignment: null,
+    centreid:null
   });
 
   const [isEdit, setIsEdit] = useState(false);
@@ -113,7 +115,88 @@ const QRcode = () => {
     }
   };
 
-  function handleCencel() {
+    // const handleUpdate = async () => {
+    //   const requiredFields = [
+    //     { key: "centreName", message: "Centre Name is required" },
+    //     { key: "testCode", message: "Test Code is required" },
+    //     { key: "Description", message: "Description is required" },
+    //     // { key: "base64Data", message: "Please upload a valid image file." },
+    //   ];
+    //   for (let field of requiredFields) {
+    //     if (!values[field.key]) {
+    //       notify(field.message, "error");
+    //       return false;
+    //     }
+    //   }
+    //  // Validate image base64
+    // if (!values.imageBase64) {
+    //   notify("Please upload a valid image file.", "error");
+    //   return;
+    // }
+    //   const payload = {
+    //     Centreid: String(values?.centreName?.Centreid || values?.centreid),
+    //     Testcode: String(values?.testCode?.label || values?.testCodeName),
+    //     Test_id: String(values?.testCode?.value || values?.testCode),
+    //     Description: values?.Description,
+    //     Image: values?.imageBase64, 
+    //   };
+    //   try {
+    //     const response = await MasterInvestigationDescription(payload);
+    //     if (response?.status) {
+    //       notify(response.message, "success");
+    //       await fetchTestGrid(payload?.Centreid);
+    //       handleCencel();
+    //     } else {
+    //       notify(response.message, "error");
+    //     }
+    //   } catch (error) {
+    //     console.error("Something went wrong:", error);
+    //   }
+    // };
+    console.log("values",values)
+    const handleUpdate = async () => {
+      const requiredFields = {
+        centreName: "Centre name is Required",
+        height: "Height is Required",
+        alignment: "Alignment is Required",
+      };
+  
+      for (const field in requiredFields) {
+        if (!values?.[field]) {
+          notify(requiredFields[field], "error");
+          return;
+        }
+      }
+  
+      // const payload = {
+      //   Centreid: String(values?.centreid || ""),
+      //   Height: `${values?.height}`===number?`${values?.height}px`:`${values?.height}`,
+      //   Alignment: String(values?.alignment?.value || ""),
+      // };
+      const payload = { 
+        Centreid: String(values?.centreid || ""),
+        Height: typeof values?.height === "string" 
+          ? `${values.height}` 
+          : `${values.height}px`,
+        Alignment: values?.alignment?.value || values?.alignment,
+      };
+      
+      try {
+        const response = await CentreQRCode(payload);
+        if (response?.status) {
+          notify(response.message, "success");
+          fetchQRcodeDetails(payload?.Centreid);
+          setIsEdit(false);
+          handleCencel();
+        } else {
+          notify(response.message || "Submission failed", "error");
+        }
+      } catch (error) {
+        console.error("Something went wrong:", error);
+      }
+    };
+  
+    function handleCencel() {
     setValues((prev) => ({
       ...prev,
       centreName: null,
@@ -127,7 +210,6 @@ const QRcode = () => {
     const payload={
       centreid: String(id),
     }
-    console.log("Payload QRcode",payload)
     try {
       const response = await fetchQRcodeDetailsAPI(payload);
       if (response?.status) {
@@ -156,6 +238,9 @@ const QRcode = () => {
     setIsEdit(true);
     setValues({
       centreName: val?.Centre,
+      centreid:val?.centreid,
+      height:val?.Height,
+      alignment: val?.Alignment,
     });
   };
   return (
@@ -171,13 +256,14 @@ const QRcode = () => {
               id={"centreName"}
               name={"centreName"}
               removeIsClearable={true}
+              isDisabled={isEdit}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={dropDownData?.GetBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
             />
             <Input
-              type="number"
+              type="text"
               className="form-control"
               id="height"
               lable={t("Height pixel")}
@@ -198,7 +284,7 @@ const QRcode = () => {
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={ALIGNMENT_OPTION}
-              value={values?.alignment?.value}
+              value={values?.alignment}
               // requiredClassName="required-fields"
             />
           </div>

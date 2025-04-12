@@ -50,35 +50,35 @@ const Description = () => {
     imageBase64: null,
   });
 
-  // const [preview, setPreview] = useState(null); // Base64 string with prefix
-  // const [base64Data, setBase64Data] = useState(null); // Raw Base64 without prefix
-  // const fileInputRef = useRef(null); // ⬅️ Ref for the file input
-  // const [error, setError] = useState(null);
-
-
    const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const fileInputRef = useRef(null); // ⬅️ Ref for the file input
   console.log("values", values);
 
-  // console.log("preview",base64Data)
+
   const GetCentreName = async () => {
     try {
       const response = await CenterMasterBindclient();
-      if (response?.status) {
+      if (response?.status && Array.isArray(response?.data)) { //Added Array check
+        console.log("Response data:", response.data); // Log the data for debugging
         setDropDownData((prev) => ({
           ...prev,
-          getBindCentreName: handleReactSelectDropDownOptions(
-            response?.data,
-            "CentreName",
-            "Centreid"
-          ),
+          getBindCentreName: handleReactSelectDropDownOptions(response?.data, "CentreName", "Centreid"),
+        }));
+      } else {
+        console.error("Invalid response data from CenterMasterBindclient:", response);
+        //Handle the case where response is not as expected, maybe set an empty array?
+        setDropDownData((prev) => ({
+          ...prev,
+          getBindCentreName: [], //or some default value.
         }));
       }
     } catch (error) {
-      console.log(error, "Something went wrong");
+      console.error(error, "Something went wrong in GetCentreName");
     }
   };
+  
+
   const BindTestCode = async (stateID) => {
     if (!stateID) {
       setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
@@ -121,18 +121,38 @@ const Description = () => {
     }
   };
   // Separate function to fetch and update test grid data
+  // const fetchTestGrid = async (id) => {
+  //   try {
+  //     const response = await BindGetDescription({
+  //       centreid: String(id),
+  //     });
+  //     if (response?.status) {
+  //       setTableData(response?.data);
+  //       handleCencel();
+  //     }
+  //     if (response?.data.length === 0) {
+  //           notify(" Not Data Found", "error");
+  //           }
+  //   } catch (error) {
+  //     console.error("Something went wrong:", error);
+  //   }
+  // };
+
+
   const fetchTestGrid = async (id) => {
     try {
-      const response = await BindGetDescription({
-        centreid: String(id),
-      });
-      if (response?.status) {
-        setTableData(response?.data);
-        val.BindTestgrid();
-        handleCencel();
+      const response = await BindGetDescription({ centreid: String(id) });
+  
+      if (!response?.status || !response?.data || response?.data.length === 0) {
+        notify("No Data Found", "error");
+        return; // Stop execution if no data
       }
+  
+      setTableData(response.data); 
+      // handleCencel(); // Removed - unnecessary
     } catch (error) {
       console.error("Something went wrong:", error);
+      //Consider adding a notification here to inform the user about the general error.  e.g., notify("An error occurred", "error");
     }
   };
   const handleChange = (e) => {
@@ -347,6 +367,7 @@ const Description = () => {
               name={"centreName"}
               removeIsClearable={true}
               handleChange={handleReactChange}
+              isDisabled={isEdit}
               dynamicOptions={dropDownData?.getBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
@@ -358,6 +379,7 @@ const Description = () => {
               id={"testCode"}
               name={"testCode"}
               removeIsClearable={true}
+              isDisabled={isEdit}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={dropDownData?.getBindTestCode}
               // requiredClassName="required-fields"

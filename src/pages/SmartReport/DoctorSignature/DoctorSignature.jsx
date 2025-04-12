@@ -45,6 +45,7 @@ const doctorSignature = () => {
   const [values, setValues] = useState({
     centreName: null,
     alignment: null,
+    centreid:null
   });
 
   const [isEdit, setIsEdit] = useState(false);
@@ -109,6 +110,39 @@ const doctorSignature = () => {
     }
   };
 
+  const handleUpdate  = async () => {
+    const requiredFields = {
+      centreName: "Centre name is Required",
+      alignment: "Alignment is Required",
+    };
+
+    for (const field in requiredFields) {
+      if (!values?.[field]) {
+        notify(requiredFields[field], "error");
+        return;
+      }
+    }
+
+    const payload = {
+      Centreid: String(values?.centreid || ""),
+      Alignment: String(values.alignment?.value || ""),
+    };
+
+    try {
+      const response = await CentreDoctorSignature(payload);
+
+      if (response?.status) {
+        notify(response.message, "success");
+        await fetchCentreDoctorSignature(payload?.Centreid)
+        setIsEdit(false);
+        handleCencel();
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
+
+
   function handleCencel() {
     setValues((prev) => ({
       ...prev,
@@ -142,6 +176,8 @@ const doctorSignature = () => {
     setIsEdit(true);
     setValues({
       centreName: val?.Centre,
+      alignment:val?.Alignment,
+      centreid:val?.centreid
     });
   };
   useEffect(() => {
@@ -161,24 +197,12 @@ const doctorSignature = () => {
               id={"centreName"}
               name={"centreName"}
               removeIsClearable={true}
+              isDisabled={isEdit}
               handleChange={handleReactChange}
               dynamicOptions={dropDownData?.GetBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
             />
-            {/* <Input
-              type="file"
-              className="form-control"
-              id="file"
-              lable={t("Height pixel")}
-              placeholder=" "
-              required={true}
-              value={values?.height}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              name="file"
-              max="2"
-              onChange={handleChange}
-            /> */}
             <ReactSelect
               placeholderName={t("Alignment")}
               searchable={true}
@@ -188,7 +212,7 @@ const doctorSignature = () => {
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={ALIGNMENT_OPTION}
-              value={values?.alignment?.value}
+              value={values?.alignment}
               // requiredClassName="required-fields"
             />
           </div>
