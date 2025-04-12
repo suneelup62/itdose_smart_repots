@@ -97,7 +97,7 @@ export const smartReportUpdateCentre = async (payload) => {
       const options = {
           method: "get", 
       };
-      const data = await makeApiRequest(`${apiUrls.bindclient}`, options);
+      const data = await makeApiRequest(`${apiUrls.GetCentreName}`, options);
       store.dispatch(setLoading(false));
       return data;
     } catch (error) {
@@ -106,6 +106,23 @@ export const smartReportUpdateCentre = async (payload) => {
     }
   };
 
+
+
+  // Smart Report Center Master bindclient
+  export const GetCentreNameAPI = async () => {
+    store.dispatch(setLoading(true));
+    try {
+      const options = {
+          method: "get", 
+      };
+      const data = await makeApiRequest(`${apiUrls.GetCentreName}`, options);
+      store.dispatch(setLoading(false));
+      return data;
+    } catch (error) {
+      store.dispatch(setLoading(false));
+      console.error("Error Found", error); 
+    }
+  };
   // Smart Report Bind Report Drop
   export const BindReportDrop = async () => {
     store.dispatch(setLoading(true));

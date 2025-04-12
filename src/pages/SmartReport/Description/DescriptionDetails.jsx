@@ -28,7 +28,6 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     onEdit(row);
   };
   const handleTableData = (tableData) => {
-    console.log("handleTableData",tableData)
     return tableData?.map((row, index) => {
       const { Centre, Test, Image, Desription,centreid,testid,TestCode} =
         row;
@@ -74,9 +73,10 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
 
 
   const handelUploadToExcel = async () => {
-  if(uploadFileData.uploadFile===""){
-    notify("Please upload a file","error")
-  }
+     if (!uploadFileData.uploadFile) {
+       notify("Please upload a file", "error");
+       return;
+     }
     let formData = new FormData();
     formData.append("file", uploadFileData.uploadFile);
 

@@ -19,7 +19,7 @@ export const apiUrls = {
   CentreGetData: `/api/v1/CentreMaster/GetData`,
 
   // Centre Master bindclient
-  bindclient: `/api/v1/CentreMaster/bindclient`,
+  GetCentreName: `/api/v1/CentreMaster/bindclient`,
 
   // Centre Master Bind ReportDrop
   ReportDrop: `/api/v1/CentreMaster/BindReportDrop`,
