@@ -249,6 +249,8 @@ const Riskfactor = () => {
         setValues((prev) => ({ ...prev, testCode: null }));
         BindTestCode(currentCentreId);
         prevCentreId.current = currentCentreId;
+        setEditable(true);
+        setEditorText("");
       }
     }, [values?.centreName]);
   return (

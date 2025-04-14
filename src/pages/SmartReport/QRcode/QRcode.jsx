@@ -26,27 +26,19 @@ const QRcode = () => {
   const ALIGNMENT_OPTION = [
     {
       label: "Right",
-      value: "Right",
+      value: "right",
     },
 
     {
-      label: "Center",
-      value: "Center",
-    },
-    {
-      label: "Top",
-      value: "Top",
-    },
-    {
-      label: "Bottom",
-      value: "Bottom",
-    },
+      label: "Left",
+      value: "left",
+    }
   ];
 
   const [values, setValues] = useState({
     centreName: null,
     height: null,
-    alignment: null,
+    alignment:null,
     centreid:null
   });
 
@@ -178,7 +170,7 @@ const QRcode = () => {
         Height: typeof values?.height === "string" 
           ? `${values.height}` 
           : `${values.height}px`,
-        Alignment: values?.alignment?.value || values?.alignment,
+        Alignment: values?.alignment?.value || "",
       };
       
       try {
@@ -276,7 +268,7 @@ const QRcode = () => {
               onChange={handleChange}
             />
             <ReactSelect
-              placeholderName={t("Alignment")}
+              placeholderName={t("Select alignment")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"alignment"}

@@ -435,67 +435,6 @@ const Description = () => {
   const testCodeCacheRef = useRef({});
   const testGridCacheRef = useRef({});
 
-  // const GetCentreName = async () => {
-  //   try {
-  //     const response = await CenterMasterBindclient();
-  //     if (response?.status && Array.isArray(response?.data)) {
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         getBindCentreName: handleReactSelectDropDownOptions(
-  //           response.data,
-  //           "CentreName",
-  //           "Centreid"
-  //         ),
-  //       }));
-  //     } else {
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         getBindCentreName: [],
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.error("Something went wrong in GetCentreName", error);
-  //   }
-  // };
-
-  // const BindTestCode = async (stateID) => {
-  //   if (!stateID) {
-  //     setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
-  //     return [];
-  //   }
-
-  //   if (testCodeCacheRef.current[stateID]) {
-  //     setDropDownData((prev) => ({
-  //       ...prev,
-  //       getBindTestCode: testCodeCacheRef.current[stateID],
-  //     }));
-  //     return testCodeCacheRef.current[stateID];
-  //   }
-
-  //   try {
-  //     const response = await BindInvestigationTestCode({ clientid: String(stateID) });
-  //     if (response?.data) {
-  //       const testCodeOptions = handleReactSelectDropDownOptionsTest(
-  //         response.data,
-  //         "Test",
-  //         "ID",
-  //         "TestCode",
-  //         "TestName"
-  //       );
-  //       testCodeCacheRef.current[stateID] = testCodeOptions;
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         getBindTestCode: testCodeOptions,
-  //       }));
-  //       return testCodeOptions;
-  //     }
-  //     return [];
-  //   } catch (error) {
-  //     console.error("Error fetching test code:", error);
-  //     return [];
-  //   }
-  // };
-
   const fetchTestGrid = async (id) => {
     if (testGridCacheRef.current[id]) {
       setTableData(testGridCacheRef.current[id]);
@@ -669,17 +608,8 @@ const Description = () => {
   }, []);
 
 
-
-  // useEffect(() => {
-  //   if (values?.centreName?.Centreid) {
-  //     BindTestCode(values.centreName.Centreid);
-  //     fetchTestGrid(values.centreName.Centreid);
-  //   }
-  // }, [values?.centreName]);
-
   useEffect(() => {
     const currentCentreId = values?.centreName?.Centreid;
-  
     if (currentCentreId && currentCentreId !== prevCentreId.current) {
       setValues((prev) => ({ ...prev, testCode: null }));
       BindTestCode(currentCentreId);
@@ -688,14 +618,6 @@ const Description = () => {
     }
   }, [values?.centreName]);
   
-
-  // useEffect(() => {
-  //   if (values?.centreName?.Centreid) {
-  //     BindTestCode(values?.centreName?.Centreid);
-  //   }
-  // }, [values?.centreName]);
-  
-
   return (
     <>
       <div className="mt-2 spatient_registration_card">

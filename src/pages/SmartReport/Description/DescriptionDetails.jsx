@@ -73,6 +73,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
 
 
   const handelUploadToExcel = async () => {
+    debugger
      if (!uploadFileData.uploadFile) {
        notify("Please upload a file", "error");
        return;
@@ -90,17 +91,73 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         options,
         "multipart/form-data"
       );
+      console.log("data",data.data.message)
       if(data?.success){
         notify(data?.message,"success")
         handleCencel()
       }else{
-        notify(data?.message, "error");
+        notify(data?.data?.message, "error");
       }
     } catch (error) {
       console.error("Error Found", error);
+      notify(
+        error?.response?.data?.message || "Something went wrong while uploading",
+        "error"
+      );
     }
+    
   };
-    const uploadFile = (e) => {
+   
+  
+  // const handelUploadToExcel = async () => {
+  //   debugger;
+  
+  //   // Step 1: Check if a file was selected
+  //   if (!uploadFileData.uploadFile) {
+  //     console.error("No file selected for upload.");
+  //     return;
+  //   }
+  
+  //   // Step 2: Prepare the form data
+  //   const formData = new FormData();
+  //   formData.append("file", uploadFileData.uploadFile);
+  
+  //   try {
+  //     // Step 3: Configure API request
+  //     const options = {
+  //       method: "Post",
+  //       data: formData,
+  //     };
+  
+  //     // Step 4: Make the API call
+  //     const response = await makeApiRequest(
+  //       "/api/v1/SmartReportMaster/UploaddescriptionExcel",
+  //       options,
+  //       "multipart/form-data"
+  //     );
+
+  //     // Step 5: Handle the API response
+  //     if (response?.success) {
+  //       notify(response?.message,"success");
+  //       handleCencel(); // Tip: consider renaming to handleCancel if it's a typo
+  //     } else {
+  //       notify("Upload failed:", response?.data?.message,"error");
+  //       // You can handle duplicate entry message here if needed
+  //       if (
+  //         response?.message &&
+  //         response.message.includes("Duplicate entry")
+  //       ) {
+  //         console.error("Duplicate entry found in uploaded Excel file.");
+  //         // Optional: handle duplicates in UI here
+  //       }
+  //     }
+  //   } catch (error) {
+  //     // Step 6: Catch and handle unexpected errors
+  //     console.error("Error uploading file:", error?.response?.data || error);
+  //   }
+  // };
+  
+  const uploadFile = (e) => {
       const uploadFile = e?.target.files[0];
       const previewUrl = URL?.createObjectURL(uploadFile);
       if (

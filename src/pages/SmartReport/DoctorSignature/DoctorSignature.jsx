@@ -25,20 +25,12 @@ const doctorSignature = () => {
   const ALIGNMENT_OPTION = [
     {
       label: "Right",
-      value: "Right",
+      value: "right",
     },
 
     {
-      label: "Center",
-      value: "Center",
-    },
-    {
-      label: "Top",
-      value: "Top",
-    },
-    {
-      label: "Bottom",
-      value: "Bottom",
+      label: "Left",
+      value: "left",
     },
   ];
 
@@ -204,7 +196,7 @@ const doctorSignature = () => {
               value={values?.centreName}
             />
             <ReactSelect
-              placeholderName={t("Alignment")}
+              placeholderName={t("Select alignment")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"alignment"}
