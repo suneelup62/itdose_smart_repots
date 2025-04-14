@@ -73,7 +73,6 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
 
 
   const handelUploadToExcel = async () => {
-    debugger
      if (!uploadFileData.uploadFile) {
        notify("Please upload a file", "error");
        return;
@@ -91,19 +90,16 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         options,
         "multipart/form-data"
       );
-      console.log("data",data.data.message)
+      console.log("data",data.message)
       if(data?.success){
         notify(data?.message,"success")
         handleCencel()
       }else{
         notify(data?.data?.message, "error");
+        handleCencel()
       }
     } catch (error) {
       console.error("Error Found", error);
-      notify(
-        error?.response?.data?.message || "Something went wrong while uploading",
-        "error"
-      );
     }
     
   };
