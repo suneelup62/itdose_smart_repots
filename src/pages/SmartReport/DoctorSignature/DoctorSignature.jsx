@@ -138,6 +138,7 @@ const doctorSignature = () => {
   function handleCencel() {
     setValues((prev) => ({
       ...prev,
+      centreName:null,
       testName: null,
       alignment: null,
     }));
