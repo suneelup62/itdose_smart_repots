@@ -159,12 +159,7 @@ const QRcode = () => {
           return;
         }
       }
-  
-      // const payload = {
-      //   Centreid: String(values?.centreid || ""),
-      //   Height: `${values?.height}`===number?`${values?.height}px`:`${values?.height}`,
-      //   Alignment: String(values?.alignment?.value || ""),
-      // };
+
       const payload = { 
         Centreid: String(values?.centreid || ""),
         Height: typeof values?.height === "string" 
