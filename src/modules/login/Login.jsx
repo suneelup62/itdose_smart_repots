@@ -69,6 +69,7 @@ const Login = () => {
               Cookies.set("user", JSON.stringify(response?.data?.user));
               useLocalStorage("theme", "set", "sky_blue_theme");
               // useLocalStorage("theme", "set", "purple_theme");
+              useLocalStorage("userDetails", "set", response?.data?.user?.userDetails?.userName);
               useLocalStorage(
                 "authToken",
                 "set",
@@ -161,7 +162,7 @@ const Login = () => {
                     padding: "3px 17px",
                     borderRadius: "3px",
                     backgroundColor: "#fff",
-                    color: "#6f42c1",
+                    color: "#1c9592",
                   }}
                 >
                   <a style={{ fontWeight: "bold" }}>Login</a>

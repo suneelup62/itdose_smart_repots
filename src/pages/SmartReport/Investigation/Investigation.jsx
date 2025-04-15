@@ -237,7 +237,7 @@ const Investigation = () => {
       ReportFormat: String(values?.ReportType?.value||values?.ReportType),
       chkactive: String(values.isActive?.value),
     };
-    console.log("InvestigationMasterUpdatetest",payload)
+
     try {
       const response = await InvestigationMasterUpdatetest(payload);
       if (response?.status) {
@@ -280,7 +280,6 @@ const Investigation = () => {
   function handleCencel() {
     setValues((prev) => ({
       ...prev,
-      centreName:null,
       testName: "",
       testCode: "",
       department: "",

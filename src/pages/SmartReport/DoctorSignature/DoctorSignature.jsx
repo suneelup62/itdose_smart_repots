@@ -117,7 +117,7 @@ const doctorSignature = () => {
 
     const payload = {
       Centreid: String(values?.centreid || ""),
-      Alignment: String(values.alignment?.value || ""),
+      Alignment: String(values?.alignment?.value || ""),
     };
 
     try {
@@ -138,7 +138,6 @@ const doctorSignature = () => {
   function handleCencel() {
     setValues((prev) => ({
       ...prev,
-      centreName:null,
       testName: null,
       alignment: null,
     }));

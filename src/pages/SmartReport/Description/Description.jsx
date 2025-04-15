@@ -432,7 +432,6 @@ const Description = () => {
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
 
-  const testCodeCacheRef = useRef({});
   const testGridCacheRef = useRef({});
 
   const fetchTestGrid = async (id) => {
@@ -589,14 +588,14 @@ const Description = () => {
   };
 
   const handleCancel = () => {
-    setValues({
-      centreName: null,
+    setValues(prev => ({
+      ...prev,
       testCode: null,
       Description: "",
       imageBase64: null,
       centreid: "",
       testCodeName: "",
-    });
+    }));
     if (fileInputRef.current) fileInputRef.current.value = "";
     setPreview(null);
     setImage(null);

@@ -70,7 +70,6 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   };
 
 
-  console.log("uploadFileData",uploadFileData)
   const handleObservation = (row) => {
     setHandleModelData({
       isOpen: true,
@@ -85,7 +84,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   }
 
   const handleTableData = (tableData) => {
-    console.log("handleTableData",tableData)
+
     return tableData?.map((row, index) => {
       const { centre, TestName, Testcode, Department, Departcode,FormatName, status,ReportFormat } =
         row;
@@ -300,7 +299,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   
       if (data?.success) {
         notify(data?.message, "success");
-        handleCencel(); // Clear the uploaded file on success
+        handleCencel(); 
       } else {
         notify(data?.data || "Something went wrong", "error");
       }

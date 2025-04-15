@@ -355,7 +355,6 @@ const ReportHeader = () => {
   const handleCencel = () => {
     setValues((prev) => ({
       ...prev,
-      centreName:null,
       Heigh: "",
       XPosition: "",
       YPosition: "",

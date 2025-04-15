@@ -145,7 +145,7 @@ const QRcode = () => {
     //     console.error("Something went wrong:", error);
     //   }
     // };
-    console.log("values",values)
+
     const handleUpdate = async () => {
       const requiredFields = {
         centreName: "Centre name is Required",
@@ -186,7 +186,6 @@ const QRcode = () => {
     function handleCencel() {
     setValues((prev) => ({
       ...prev,
-      centreName: null,
       height: "",
       alignment: null,
     }));

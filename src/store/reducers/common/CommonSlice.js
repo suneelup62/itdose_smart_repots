@@ -26,13 +26,13 @@ const initialState = {
         {
           childrenName: "Description",
           childrenOrder: "3",
-          breadcrumb: "Smart Report/Investigation Description",
+          breadcrumb: "Smart Report/Description",
           url: "/description",
         },
         {
           childrenName: "Riskfactor",
           childrenOrder: "4",
-          breadcrumb: "Smart Report/Investigation Riskfactor",
+          breadcrumb: "Smart Report/Riskfactor",
           url: "/riskfactor",
         },
         {
