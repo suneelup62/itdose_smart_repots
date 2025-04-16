@@ -18,6 +18,7 @@ import "rc-easyui/dist/themes/icon.css";
 import "rc-easyui/dist/themes/react.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-quill/dist/quill.snow.css";
+import ErrorBoundary from "../src/utils/hooks/ErrorBoundary"
 const { VITE_NODE_ENV, VITE_GA_ID } = import.meta.env;
 
 //  Disable console logs in production
@@ -35,12 +36,23 @@ if (import.meta.env.PROD && import.meta.env.VITE_GA_ID) {
 }
 const container = document.getElementById("root");
 const root = createRoot(container);
+// root.render(
+//   <PrimeReactProvider>
+//     <Provider store={store}>
+//       <BrowserRouter>
+//         <App />
+//         {/* <Confirmation  /> */}
+//       </BrowserRouter>
+//     </Provider>
+//   </PrimeReactProvider>
+// );
 root.render(
   <PrimeReactProvider>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
-        {/* <Confirmation  /> */}
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </BrowserRouter>
     </Provider>
   </PrimeReactProvider>
