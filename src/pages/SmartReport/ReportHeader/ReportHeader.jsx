@@ -247,7 +247,6 @@ const ReportHeader = () => {
       ReportFoterheight: String(values?.FooterHeight),
       Template: editorText,
     };
-    console.log("payload", payload);
     try {
       const response = await AddAndUpdateSmartreportHeade(payload);
       if (response?.status) {

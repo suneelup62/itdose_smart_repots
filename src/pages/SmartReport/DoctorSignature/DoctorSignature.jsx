@@ -147,7 +147,7 @@ const doctorSignature = () => {
     const payload={
       Centreid: String(id),
     }
-    console.log("Payload QRcode",payload)
+
     try {
       const response = await fetchCentreDoctorSignatureAPI(payload);
       if (response?.status) {
