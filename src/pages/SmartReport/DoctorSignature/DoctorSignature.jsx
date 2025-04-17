@@ -84,8 +84,8 @@ const doctorSignature = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid || ""),
-      Alignment: String(values.alignment?.value || ""),
+      Centreid: String(values?.centreName?.Centreid),
+      Alignment: String(values.alignment?.value),
     };
 
     try {
@@ -116,8 +116,8 @@ const doctorSignature = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreid || ""),
-      Alignment: String(values?.alignment?.value || ""),
+      Centreid: String(values?.centreid),
+      Alignment: String(values?.alignment?.value),
     };
 
     try {
@@ -164,7 +164,7 @@ const doctorSignature = () => {
       }
     }, [values?.centreName]);
   const handleEdit = (val) => {
-    console.log("Edit", val);
+ 
     setIsEdit(true);
     setValues({
       centreName: val?.Centre,

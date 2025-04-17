@@ -4,11 +4,8 @@ import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 const baseurl = import.meta.env.VITE_APP_REACT_APP_BASE_URL;
 
 const axiosInstance = axios.create({
-  baseURL: baseurl,
-  withCredentials: false,
-  // headers: {
-  //   "Content-Type": "application/json",
-  // },
+  baseURL: "",
+  withCredentials: true,
 });
 
 let globalErrorFlag = false;

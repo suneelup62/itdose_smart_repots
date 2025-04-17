@@ -3,8 +3,6 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default ({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
-  const apiUrl = `${env.VITE_APP_REACT_APP_BASE_URL}`;
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
 
@@ -23,7 +21,11 @@ export default ({ mode }) => {
 
     server: {
       proxy: {
-        "/api/v1/": {
+        "/api": {
+          target: process.env.VITE_APP_REACT_APP_BASE_URL,
+          changeOrigin: true,
+        },
+        "/reports": {
           target: process.env.VITE_APP_REACT_APP_BASE_URL,
           changeOrigin: true,
         },

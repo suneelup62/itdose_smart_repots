@@ -162,7 +162,7 @@ const Login = () => {
                     padding: "3px 17px",
                     borderRadius: "3px",
                     backgroundColor: "#fff",
-                    color: "#1c9592",
+                    color: "#103851",
                   }}
                 >
                   <a style={{ fontWeight: "bold" }}>Login</a>

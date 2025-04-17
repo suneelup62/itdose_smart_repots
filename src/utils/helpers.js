@@ -87,8 +87,8 @@ export const TruncatedLabel = (lable, length) => {
  const baseurl = import.meta.env.VITE_APP_REACT_APP_BASE_URL;
 
  export const axiosInstance = axios.create({
-  baseURL: baseurl,
-  withCredentials: false,
+  baseURL: "",
+  withCredentials: true,
   // headers: {
   //   "Content-Type": "application/json",
   // },

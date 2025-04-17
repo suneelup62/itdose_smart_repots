@@ -15,13 +15,14 @@ import {
 } from "../../../networkServices/smartReport";
 import QRcodeDetails from "./QRcodeDetails";
 import { number } from "../../../utils/constant";
+import { useCommonDropdowns } from "../../../utils/hooks/useCommonDropdowns";
 
 const QRcode = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  const [dropDownData, setDropDownData] = useState({
-    GetBindCentreName: [],
-  });
+  // const [dropDownData, setDropDownData] = useState({
+  //   GetBindCentreName: [],
+  // });
 
   const ALIGNMENT_OPTION = [
     {
@@ -34,7 +35,7 @@ const QRcode = () => {
       value: "left",
     }
   ];
-
+  const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
   const [values, setValues] = useState({
     centreName: null,
     height: null,
@@ -45,23 +46,23 @@ const QRcode = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
 
-  const GetCentreName = async () => {
-    try {
-      const response = await CenterMasterBindclient();
-      if (response?.status) {
-        setDropDownData((prev) => ({
-          ...prev,
-          GetBindCentreName: handleReactSelectDropDownOptions(
-            response?.data,
-            "CentreName",
-            "Centreid"
-          ),
-        }));
-      }
-    } catch (error) {
-      console.log(error, "Something went wrong");
-    }
-  };
+  // const GetCentreName = async () => {
+  //   try {
+  //     const response = await CenterMasterBindclient();
+  //     if (response?.status) {
+  //       setDropDownData((prev) => ({
+  //         ...prev,
+  //         GetBindCentreName: handleReactSelectDropDownOptions(
+  //           response?.data,
+  //           "CentreName",
+  //           "Centreid"
+  //         ),
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error, "Something went wrong");
+  //   }
+  // };
 
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
@@ -244,7 +245,7 @@ const QRcode = () => {
               removeIsClearable={true}
               isDisabled={isEdit}
               handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={dropDownData?.GetBindCentreName}
+              dynamicOptions={dropDownData?.getBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
             />
