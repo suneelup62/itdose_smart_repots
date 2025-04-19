@@ -291,7 +291,7 @@ function Tables({
 
           <div className="row">
             <div className="col-12">
-              <Table className="mainTable pt-2  " bordered>
+              <Table className="mainTable pt-2  " bordered >
                 <thead style={{ zIndex: 1 }}>
                   <tr>
                     {theadData?.map((headData, index) => (

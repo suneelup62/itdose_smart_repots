@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
-import Tables from "../../../components/UI/customTable";
+import Tables from "../../../utils/hooks/customTable"; // uses the updated table component
 import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
 import { notify } from "../../../utils/utils";
 import { axiosInstance } from "../../../utils/helpers";
 import makeApiRequest from "../../../networkServices/axiosInstance";
-const SmartReportDetails = ({ tableData, onEdit }) => {
+
+const SmartReportDetails = ({ tableData, onEdit}) => {
   const [t] = useTranslation();
   const ip = useLocalStorage("ip", "get");
 
@@ -14,36 +15,41 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     t("S.No"),
     t("Center Name"),
     t("Test"),
-    // t("Image"),
     t("Desription"),
     t("Acction"),
   ];
- const [uploadFileData, setUploadFileData] = useState({
+
+  const [uploadFileData, setUploadFileData] = useState({
     uploadFile: null,
     previewUrl: null,
   });
 
-   const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
+const [isUploadSuccess, setIsUploadSuccess] = useState(false); 
   const handleEdit = (row) => {
     onEdit(row);
   };
+
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { Centre, Test, Image, Desription,centreid,testid,TestCode} =
-        row;
+      const { Centre, Test, Desription } = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         centre: Centre,
         Test: Test,
         DepartmentCode: Desription,
         Modify: (
-          <i className="fa fa-edit" style={{ color: "#1873c9", cursor: "pointer" }} onClick={() => handleEdit(row)}></i>
+          <i
+            className="fa fa-edit"
+            style={{ color: "#1873c9", cursor: "pointer" }}
+            onClick={() => handleEdit(row)}
+          ></i>
         ),
       };
     });
   };
 
- const handleDownloadToExcel = async () => {
+  const handleDownloadToExcel = async () => {
     const localData = useLocalStorage("authToken", "get");
     const headers = {
       "Content-Type": "",
@@ -58,7 +64,6 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
           headers: headers,
         })
         .then((res) => {
-          console.log(res);
           const url = window.URL.createObjectURL(new Blob([res.data]));
           const link = document.createElement("a");
           link.href = url;
@@ -71,12 +76,13 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     }
   };
 
-
   const handelUploadToExcel = async () => {
-     if (!uploadFileData.uploadFile) {
-       notify("Please upload a file", "error");
-       return;
-     }
+    setIsUploadSuccess(true)
+    if (!uploadFileData.uploadFile) {
+      notify("Please upload a file", "error");
+      setIsUploadSuccess(false)
+      return;
+    }
     let formData = new FormData();
     formData.append("file", uploadFileData.uploadFile);
 
@@ -90,55 +96,53 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         options,
         "multipart/form-data"
       );
-      if(data?.success){
-        notify(data?.message,"success")
-        handleCencel()
-      }else{
+      if (data?.success) {
+        notify(data?.message, "success");
+        setIsUploadSuccess(false)
+        handleCencel();
+      } else {
         notify(data?.data?.message, "error");
-        handleCencel()
+        handleCencel();
       }
     } catch (error) {
       console.error("Error Found", error);
     }
-    
   };
-   
-
-  
   const uploadFile = (e) => {
-      const uploadFile = e?.target.files[0];
-      const previewUrl = URL?.createObjectURL(uploadFile);
-      if (
-        uploadFile &&
-        (uploadFile?.name.endsWith(".xlsx") || uploadFile?.name.endsWith(".xls"))
-      ) {
-        setUploadFileData({
-          uploadFile: uploadFile,
-          previewUrl: previewUrl,
-        });
-      }else{
-        notify("Please upload a valid Excel file", "error");
-      }
-    };
-
-    const handleCencel = () => {
+  
+    const uploadFile = e?.target.files[0];
+    const previewUrl = URL?.createObjectURL(uploadFile);
+    if (
+      uploadFile &&
+      (uploadFile?.name.endsWith(".xlsx") || uploadFile?.name.endsWith(".xls"))
+    ) {
       setUploadFileData({
-        uploadFile: "",
-        previewUrl: "",
+        uploadFile: uploadFile,
+        previewUrl: previewUrl,
       });
-    
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    };
+    } else {
+      notify("Please upload a valid Excel file", "error");
+    }
+  };
+
+  const handleCencel = () => {
+    setUploadFileData({
+      uploadFile: "",
+      previewUrl: "",
+    });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
-    <>
-      <div className="mt-2 spatient_registration_card">
-        <div className="patient_registration card">
-          <Heading title={t("Records")} isBreadcrumb={false} />
-          <div className="row p-2">
-           <div className="col-12">
-           <div>
+    <div className="mt-2 spatient_registration_card">
+      <div className="patient_registration card">
+        <Heading title={t("Records")} isBreadcrumb={false} />
+        <div className="row p-2">
+          <div className="col-12">
+            <div>
               <button
                 className="btn btn-sm btn-secondary"
                 onClick={() => handleDownloadToExcel()}
@@ -146,30 +150,38 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
                 Download Excel File
               </button>
 
-              <input type="file" onChange={uploadFile} id="file" ref={fileInputRef}  style={{marginLeft:"30px"}}/>
+              <input
+                type="file"
+                onChange={uploadFile}
+                id="file"
+                ref={fileInputRef}
+                style={{ marginLeft: "30px" }}
+              />
               <button
                 className="btn btn-sm btn-primary me-2"
                 onClick={() => handelUploadToExcel()}
                 style={{ margin: "2px" }}
+                disabled={isUploadSuccess}
               >
                 Upload Excel File
               </button>
             </div>
-           </div>
           </div>
-          <div className="row p-2">
-            <div className="col-12">
-              <Tables
-                isSearch={true}
-                thead={THEAD}
-                tbody={handleTableData(tableData?.length ? tableData : [])}
-                style={{ maxHeight: "40vh" }}
-              />
-            </div>
+        </div>
+        <div className="row p-2">
+          <div className="col-12">
+
+            <Tables
+              thead={THEAD}
+              tbody={handleTableData(tableData)}
+              scroll={{ y: "400px" }}
+              pagination={{ pageSize: 10 }}
+              isSearchInput={true}
+            />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -33,9 +33,9 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
     txtsearchInv: "",
     clientid: "",
   });
-
+  const [isUploadSuccess, setIsUploadSuccess] = useState(false); 
   const [searchTableData, setSearchByTableData] = useState([]);
-  const [isSearchActive, setIsSearchActive] = useState(false); // Track if search is active
+  const [isSearchActive, setIsSearchActive] = useState(false); 
   const serchBydropDownData = [
     { value: "TestName", label: "Test Name" },
     { value: "Testcode", label: "Test Code" },
@@ -277,8 +277,10 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
 
 
   const handelUploadToExcel = async () => {
+    setIsUploadSuccess(true)
     if (!uploadFileData.uploadFile) {
       notify("Please upload a file", "error");
+      setIsUploadSuccess(false)
       return;
     }
   
@@ -299,6 +301,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
   
       if (data?.success) {
         notify(data?.message, "success");
+        setIsUploadSuccess(false)
         handleCencel(); 
       } else {
         notify(data?.data || "Something went wrong", "error");
@@ -342,6 +345,28 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
         <div className="patient_registration card">
           <Heading title={t("Records")} isBreadcrumb={false} />
           <div className="row p-2">
+            <div className="col-12">
+            <div>
+              <button
+                className="btn btn-sm btn-secondary"
+                onClick={() => handleDownloadToExcel()}
+              >
+                Download Excel File
+              </button>
+
+              <input type="file" onChange={uploadFile}  ref={fileInputRef} id="file"  style={{marginLeft:"30px"}}/>
+              <button
+                className="btn btn-sm btn-primary me-2"
+                onClick={() => handelUploadToExcel()}
+                disabled={isUploadSuccess}
+                style={{ margin: "2px" }}
+              >
+                Upload Excel File
+              </button>
+            </div>
+            </div>
+          </div>
+          <div className="row p-2">
             <ReactSelect
               placeholderName={t("Serch by")}
               searchable={true}
@@ -366,23 +391,7 @@ const InvestigationDetails = ({ tableData, onEdit, sendDataToParent }) => {
               name="txtsearchInv"
               onChange={handleChangeTable}
             />
-            <div>
-              <button
-                className="btn btn-sm btn-secondary"
-                onClick={() => handleDownloadToExcel()}
-              >
-                Download Excel File
-              </button>
-
-              <input type="file" onChange={uploadFile}  ref={fileInputRef} id="file"  style={{marginLeft:"30px"}}/>
-              <button
-                className="btn btn-sm btn-primary me-2"
-                onClick={() => handelUploadToExcel()}
-                style={{ margin: "2px" }}
-              >
-                Upload Excel File
-              </button>
-            </div>
+            
           </div>
           <div className="row p-2">
             <div className="col-12">

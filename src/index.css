@@ -884,14 +884,14 @@ button {
 ::-webkit-scrollbar {
   width: 5px;
   background-color: #f5f5f5;
-  height: 2px !important;
+  height: 5px !important;
   /* display: none; */
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #a1c6db;
   border-radius: 5px;
-  height: 2px !important;
+  height: 5px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -4834,4 +4834,20 @@ button.btn-success:hover {
   transform: scale(2); /* Adjust the zoom level */
   z-index: 10;
   position: relative;
+}
+
+
+.table-active {
+  background-color: lightblue  !important;
+}
+
+
+.coutomTableThead{
+  color: #03a0e7;
+    background-color: #d9eef7;
+    white-space: nowrap;
+}
+
+.noDataFoun{
+  text-align: center;
 }
