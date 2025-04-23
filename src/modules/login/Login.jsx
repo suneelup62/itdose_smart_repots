@@ -69,7 +69,7 @@ const Login = () => {
               Cookies.set("user", JSON.stringify(response?.data?.user));
               useLocalStorage("theme", "set", "sky_blue_theme");
               // useLocalStorage("theme", "set", "purple_theme");
-              useLocalStorage("userDetails", "set", response?.data?.user?.userDetails?.userName);
+              useLocalStorage("userDetails", "set", response?.data?.user?.userDetails);
               useLocalStorage(
                 "authToken",
                 "set",
