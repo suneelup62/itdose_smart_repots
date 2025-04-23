@@ -127,14 +127,15 @@
 
 import React, { useState, useMemo } from "react";
 import Input from "../../components/formComponent/Input";
-import Table from "react-bootstrap/Table"; // ✅ Bootstrap Table import
+import Table from "react-bootstrap/Table"; 
 
 const Tables = ({
   thead = [],
   tbody = [],
   scroll = {},
   pagination = { pageSize: 10 },
-  isSearchInput
+  isSearchInput,
+  isSearchInputlable
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -169,8 +170,8 @@ const Tables = ({
           type="text"
           className="form-control"
           id="test"
-          lable="Search by Test"
-          placeholder=" "
+          lable={isSearchInputlable}
+          placeholder={isSearchInputlable}
           required={true}
           value={searchTerm}
           respclass="col-xl-3 col-md-4 col-sm-6 col-12"

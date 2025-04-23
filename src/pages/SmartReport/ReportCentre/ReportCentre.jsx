@@ -33,7 +33,9 @@ const ReportCenter = () => {
     centreid: "",
     LoginId: "",
     Password: "",
-    imageBase64: "",
+    imageBase64: null,
+    frontPage:{},
+    historic:{}
   });
   const [dropDownData, setDropDownState] = useState({
     GetBindState: [],
@@ -51,10 +53,33 @@ const ReportCenter = () => {
       value: "0",
     },
   ];
+
+  const FRONT_PAGE_OPTION=[
+      {
+      label: "Yes",
+      value: "1"
+    },
+    {
+      label: "No",
+      value:"0"
+    },
+  ]
+
+  const HISTORIC_REPRESENT =[   
+    {
+      label: "Yes",
+      value: "1"
+    },
+    {
+      label: "No",
+      value:"0"
+    },
+  ]
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null); // ⬅️ Ref for the file input
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const getReportCentreGetData = async () => {
     try {
       const response = await ReportCentreGetData();
@@ -147,6 +172,11 @@ const ReportCenter = () => {
         return false;
       }
     }
+    if (!values.imageBase64) {
+          notify("Please upload a valid image file.", "error");
+          return;
+        }
+    setIsSubmitted(true);
     const payload = {
       txtcentrename: values?.centreName,
       txtstate: String(values?.state?.value),
@@ -155,14 +185,17 @@ const ReportCenter = () => {
       chkactive: String(values?.isActive),
       LoginId: values?.LoginId,
       Password: values?.Password,
-      Logo_Img: values?.imageBase64 || "", // Include the Base64 image
+      Logo_Img: values?.imageBase64, 
+      Frontpage:String(values?.frontPage?.value),
+      HistoricRepresent:String(values?.historic?.value)
     };
-    console.log("payload", payload);
+   
     try {
       const response = await smartReportNewAddCentre(payload);
       if (response?.status) {
         notify(response?.message, "success");
         setIsEdit(false);
+        setIsSubmitted(false);
         getReportCentreGetData();
         handleCencel();
       } else {
@@ -188,6 +221,9 @@ const ReportCenter = () => {
         isActive: val.Isactive === "Active" ? 1 : 0,
         id: 1,
         centreid: val?.Centreid,
+        imageBase64:val?.Logo_Img,
+        frontPage:val?.Frontpage ==="Yes" ? FRONT_PAGE_OPTION[0]:FRONT_PAGE_OPTION[1],
+        historic:val?.Historicrepresnt ==="Yes" ? HISTORIC_REPRESENT[0]:HISTORIC_REPRESENT[1]
       }));
       setPreview((prev) => {
         return val?.Logo_Img ? `data:image/png;base64,${val?.Logo_Img}` : null;
@@ -211,6 +247,10 @@ const ReportCenter = () => {
       }
     }
 
+    if (!values.imageBase64) {
+          notify("Please upload a valid image file.", "error");
+          return;
+        }
     const payload = {
       centreid: String(values?.centreid || ""),
       txtcentrename: values?.centreName || "",
@@ -227,6 +267,8 @@ const ReportCenter = () => {
       LoginId: values?.LoginId,
       Password: values?.Password,
       Logo_Img: values?.imageBase64,
+      Frontpage:String(values?.frontPage?.value),
+      HistoricRepresent:String(values?.historic?.value)
     };
 
     try {
@@ -254,7 +296,9 @@ const ReportCenter = () => {
       city: null,
       address: "",
       isActive: null,
-      imageBase64: "",
+      imageBase64: null,
+      frontPage:null,
+      historic:null
     }));
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; 
@@ -294,6 +338,7 @@ const ReportCenter = () => {
     getState();
     getReportCentreGetData();
   }, []);
+
 
   return (
     <>
@@ -381,7 +426,7 @@ const ReportCenter = () => {
               removeIsClearable={true}
               handleChange={(name, e) => handleReactChange(name, e)}
               dynamicOptions={IS_ACTIVE_OPTION}
-              value={values?.isActive?.value}
+              value={values?.isActive}
               // requiredClassName="required-fields"
             /> */}
             {/* <div className="d-flex">
@@ -395,6 +440,31 @@ const ReportCenter = () => {
               />
               <label className="mt-2 ml-3">{t("IsActive")}</label>
             </div> */}
+              <ReactSelect
+              placeholderName={t("Front page")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"frontPage"}
+              name={"frontPage"}
+              removeIsClearable={true}
+              handleChange={(name, e) => handleReactChange(name, e)}
+              dynamicOptions={FRONT_PAGE_OPTION}
+              // requiredClassName="required-fields"
+              value={values?.frontPage?.value}
+            />
+              <ReactSelect
+              placeholderName={t("Historic representation")}
+              searchable={true}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              id={"historic"}
+              name={"historic"}
+              removeIsClearable={true}
+              handleChange={(name, e) => handleReactChange(name, e)}
+              dynamicOptions={HISTORIC_REPRESENT}
+              // requiredClassName="required-fields"
+              value={values?.historic?.value}
+            />
+
             <div className="d-flex">
               <label className="mt-2 ml-3">{"IsActive :"}</label>
               <input
@@ -439,8 +509,8 @@ const ReportCenter = () => {
                 </button>
               </>
             ) : (
-              <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
-                {t("Submit")}
+              <button className="btn btn-sm btn-primary "  disabled={isSubmitted} onClick={handleSubmit}>
+                 {isSubmitted ? 'Submitting...' : 'Submit'}
               </button>
             )}
           </div>

@@ -14,13 +14,17 @@ import {
   fetchCentreDoctorSignatureAPI,
 } from "../../../networkServices/smartReport";
 import DoctorSignatureDetails from "./DoctorSignatureDetails";
+// import { useDispatch } from "react-redux";
+// import { useSelector } from "react-redux";
+// import { getCentreNameAction } from "../../../store/reducers/CentreName/getCentreName";
 
+import {useCommonDropdownsCenter}  from '../../../utils/hooks/useCommonDropdownsCenter'
 const doctorSignature = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  const [dropDownData, setDropDownData] = useState({
-    GetBindCentreName: [],
-  });
+  // const [dropDownData, setDropDownData] = useState({
+  //   GetBindCentreName: [],
+  // });
 
   const ALIGNMENT_OPTION = [
     {
@@ -43,23 +47,25 @@ const doctorSignature = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
 
-  const GetCentreName = async () => {
-    try {
-      const response = await CenterMasterBindclient();
-      if (response?.status) {
-        setDropDownData((prev) => ({
-          ...prev,
-          GetBindCentreName: handleReactSelectDropDownOptions(
-            response?.data,
-            "CentreName",
-            "Centreid"
-          ),
-        }));
-      }
-    } catch (error) {
-      console.log(error, "Something went wrong");
-    }
-  };
+  const {dropDownData} = useCommonDropdownsCenter()
+  
+  // const GetCentreName = async () => {
+  //   try {
+  //     const response = await CenterMasterBindclient();
+  //     if (response?.status) {
+  //       setDropDownData((prev) => ({
+  //         ...prev,
+  //         GetBindCentreName: handleReactSelectDropDownOptions(
+  //           response?.data,
+  //           "CentreName",
+  //           "Centreid"
+  //         ),
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error, "Something went wrong");
+  //   }
+  // };
 
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
@@ -172,10 +178,19 @@ const doctorSignature = () => {
       centreid:val?.centreid
     });
   };
-  useEffect(() => {
-    GetCentreName();
-  }, []);
+  // useEffect(() => {
+  //   GetCentreName();
+  // }, []);
 
+  // const { centres, loading, error } = useSelector((state) => state.CentreName);
+  // const dispatch = useDispatch();
+
+  // console.log("redux centres",centres)
+  // useEffect(() => {
+  //   if (centres.length === 0) {
+  //     dispatch(getCentreNameAction());
+  //   }
+  // }, []);
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -191,7 +206,7 @@ const doctorSignature = () => {
               removeIsClearable={true}
               isDisabled={isEdit}
               handleChange={handleReactChange}
-              dynamicOptions={dropDownData?.GetBindCentreName}
+              dynamicOptions={dropDownData?.getBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
             />

@@ -16,6 +16,8 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     t("State"),
     t("City"),
     t("Addres"),
+    t("Frontpage"),
+    t("Historicrepresnt"),
     t("Status"),
     t("Acction"),
   ];
@@ -25,7 +27,7 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
   };
   const handleTableData = (tableData) => {
     return tableData?.map((row, index) => {
-      const { Centreid,CentreName, LoginId,Password,State, city, Address, Isactive ,Logo_Img} = row;
+      const { Centreid,CentreName, LoginId,Password,State, city, Address, Isactive ,Logo_Img,Frontpage,Historicrepresnt} = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
         Centreid:Centreid,
@@ -35,6 +37,8 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
         State: State,
         city: city,
         Address: Address,
+        Frontpage:Frontpage,
+        Historicrepresnt:Historicrepresnt,
         Isactive: (
           <span
             style={{

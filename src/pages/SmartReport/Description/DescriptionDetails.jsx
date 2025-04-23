@@ -177,6 +177,7 @@ const [isUploadSuccess, setIsUploadSuccess] = useState(false);
               scroll={{ y: "400px" }}
               pagination={{ pageSize: 10 }}
               isSearchInput={true}
+              isSearchInputlable={"Search by Test"}
             />
           </div>
         </div>

@@ -15,7 +15,7 @@ import {
 } from "../../../networkServices/smartReport";
 import QRcodeDetails from "./QRcodeDetails";
 import { number } from "../../../utils/constant";
-import { useCommonDropdowns } from "../../../utils/hooks/useCommonDropdowns";
+import {useCommonDropdownsCenter}  from '../../../utils/hooks/useCommonDropdownsCenter'
 
 const QRcode = () => {
   const [tableData, setTableData] = useState([]);
@@ -35,7 +35,7 @@ const QRcode = () => {
       value: "left",
     }
   ];
-  const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
+    const {dropDownData} = useCommonDropdownsCenter()
   const [values, setValues] = useState({
     centreName: null,
     height: null,
@@ -215,10 +215,9 @@ const QRcode = () => {
   }, [values?.centreName]);
   
   
-  useEffect(() => {
-    GetCentreName();
-  }, []);
-
+  // useEffect(() => {
+  //   GetCentreName();
+  // }, []);
 
   const handleEdit = (val) => {
     console.log("Edit", val);

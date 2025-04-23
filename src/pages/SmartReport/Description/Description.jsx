@@ -221,7 +221,7 @@ const Description = () => {
       prevCentreId.current = currentCentreId;
     }
   }, [values?.centreName]);
-  console.log("testing")
+
   return (
     <>
       <div className="mt-2 spatient_registration_card">
