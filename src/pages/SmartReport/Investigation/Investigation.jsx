@@ -17,13 +17,10 @@ import {
   InvestigationMasterUpdatetest,
   ReportCentreGetData,
 } from "../../../networkServices/smartReport";
-
+ const localData = useLocalStorage("userDetails", "get");
 const Investigation = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  // const [dropDownData, setDropDownData] = useState({
-  //   GetBindCentreName: [],
-  // });
   const [dropDownData, setDropDownData] = useState({
     GetBindCentreName: [],
     GetFormatOption: [],
@@ -57,6 +54,7 @@ const Investigation = () => {
 
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
+  const [showCentreDropdown, setShowCentreDropdown] = useState(true);
 
   // const GetCentreName = async () => {
   //   try {
@@ -75,26 +73,68 @@ const Investigation = () => {
   //     console.log(error, "Something went wrong");
   //   }
   // };
-  const GetCentreName = async () => {
-    try {
-      const response = await CenterMasterBindclient();
+  // const GetCentreName = async () => {
+  //   try {
+  //     const response = await CenterMasterBindclient();
 
-      if (response?.status) {
-        const dataArray = Array.isArray(response?.data) ? response.data : []; // Ensure an array
+  //     if (response?.status) {
+  //       const dataArray = Array.isArray(response?.data) ? response.data : []; // Ensure an array
 
-        setDropDownData((prev) => ({
-          ...prev,
-          GetBindCentreName: handleReactSelectDropDownOptions(
-            dataArray,
-            "CentreName",
-            "Centreid"
-          ),
-        }));
-      }
-    } catch (error) {
-      console.log(error, "Something went wrong");
+  //       setDropDownData((prev) => ({
+  //         ...prev,
+  //         GetBindCentreName: handleReactSelectDropDownOptions(
+  //           dataArray,
+  //           "CentreName",
+  //           "Centreid"
+  //         ),
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error, "Something went wrong");
+  //   }
+  // };
+
+console.log("vaue",values)
+
+const GetCentreName = async () => {
+  try {
+    const response = await CenterMasterBindclient();
+
+    if (localData?.userDetails?.flag === "1") {
+      const userCentreId = localData.userDetails.centreId;
+      const userCentreName = localData.userDetails.centreName;
+
+      setValues((prev) => ({
+        ...prev,
+        centreName: {
+          label: userCentreName,
+          value: userCentreId,
+        },
+      }));
+
+      await BindTestgrid(userCentreId);
+      setShowCentreDropdown(false); // hide dropdown for flag "1"
+      return;
     }
-  };
+
+    if (response?.status) {
+      const dataArray = Array.isArray(response?.data) ? response.data : [];
+
+      setDropDownData((prev) => ({
+        ...prev,
+        GetBindCentreName: handleReactSelectDropDownOptions(
+          dataArray,
+          "CentreName",
+          "Centreid"
+        ),
+      }));
+    }
+  } catch (error) {
+    console.log(error, "Something went wrong");
+  }
+};
+
+
 
   const GetFormatOption = async () => {
     try {
@@ -290,14 +330,22 @@ const Investigation = () => {
     setIsEdit(false);
   }
 
+  // useEffect(() => {
+  //   GetCentreName();
+  //   GetFormatOption();
+  // }, []);
+
+
   useEffect(() => {
     GetCentreName();
     GetFormatOption();
   }, []);
-
+  
   const receiveChildObject = (obj) => {
     setSetChildData(obj); // Store child object in state
   };
+
+  console.log("localData userDetails",localData?.userDetails)
 
   return (
     <>
@@ -305,7 +353,7 @@ const Investigation = () => {
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            <ReactSelect
+            {/* <ReactSelect
               placeholderName={t("Select centre name")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -316,7 +364,39 @@ const Investigation = () => {
               dynamicOptions={dropDownData?.GetBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
+            /> */}
+          {showCentreDropdown ? (
+  <ReactSelect
+    placeholderName={t("Select centre name")}
+    searchable={true}
+    respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+    id="centreName"
+    name="centreName"
+    removeIsClearable={true}
+    handleChange={handleReactChange}
+    dynamicOptions={dropDownData?.GetBindCentreName}
+    value={values?.centreName}
+  />
+) : (
+  // <div className="col-xl-3 col-md-4 col-sm-6 col-12">
+  //   <label className="form-label">{t("Centre name")}</label>
+  //   <div className="form-control bg-light">{values?.centreName?.label}</div>
+  // </div>
+<Input
+              type="text"
+              className="form-control"
+              id="testName"
+              lable={t("Centre name")}
+              placeholder=" "
+              value={values?.centreName?.label}
+              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+              name="testName"
+              disabled= {true}
             />
+
+)}
+
+
             <Input
               type="text"
               className="form-control"

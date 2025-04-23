@@ -24,14 +24,17 @@ import {
 import Editor from "quill/core/editor";
 import { TextEditor } from "rc-easyui";
 import Table from "react-bootstrap/Table";
+
+import { useCentreDropdown } from "../../../utils/hooks/useCentreDropdown";
+
 const ReportHeader = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  const [dropDownData, setDropDownData] = useState({
-    getBindCentreName: [],
-    getBindTestCode: [],
-  });
-
+  // const [dropDownData, setDropDownData] = useState({
+  //   getBindCentreName: [],
+  //   getBindTestCode: [],
+  // });
+console.log("lll")
   const [Editor, setEditor] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
@@ -47,23 +50,38 @@ const ReportHeader = () => {
 
   const [Editable, setEditable] = useState(false);
   const [editorText, setEditorText] = useState("");
-  const GetCentreName = async () => {
-    try {
-      const response = await CenterMasterBindclient();
-      if (response?.status) {
-        setDropDownData((prev) => ({
-          ...prev,
-          getBindCentreName: handleReactSelectDropDownOptions(
-            response?.data,
-            "CentreName",
-            "Centreid"
-          ),
-        }));
-      }
-    } catch (error) {
-      console.log(error, "Something went wrong");
-    }
-  };
+  // const GetCentreName = async () => {
+  //   try {
+  //     const response = await CenterMasterBindclient();
+  //     if (response?.status) {
+  //       setDropDownData((prev) => ({
+  //         ...prev,
+  //         getBindCentreName: handleReactSelectDropDownOptions(
+  //           response?.data,
+  //           "CentreName",
+  //           "Centreid"
+  //         ),
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error, "Something went wrong");
+  //   }
+  // };
+
+  const {
+    centreOptions,
+    selectedCentre,
+    setSelectedCentre,
+    showCentreDropdown,
+  } = useCentreDropdown();
+
+  // const handleReactChange = (name, option) => {
+  //   setSelectedCentre(option);
+  // };
+
+  console.log("showCentreDropdown", selectedCentre);
+
+  console.log("valuse",values)
   const BindTestCode = async (stateID) => {
     if (!stateID) {
       setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
@@ -95,8 +113,6 @@ const ReportHeader = () => {
     }
   };
 
-
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues((prevValues) => ({
@@ -122,7 +138,6 @@ const ReportHeader = () => {
 
     const updatedValues = { ...values, [name]: selectedOption };
     setValues(updatedValues);
-
     // Only call GetReportHeader when testCode is selected
     // if (name === "centreName" && selectedOption?.centreName) {
     //   GetReportHeader(selectedOption?.centreName?.Centreid);
@@ -262,7 +277,7 @@ const ReportHeader = () => {
       console.error("Something went wrong:", error);
     }
   };
-  
+
   const handleUpdate = async () => {
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
@@ -370,7 +385,7 @@ const ReportHeader = () => {
   //   };
   //   try {
   //     const response = await GetReportHeaderAPI(payload);
-  //     if (response?.status) {     
+  //     if (response?.status) {
   //       const responseData=response.data[0]
   //       setEditable(true);
   //       setIsEdit(true);
@@ -389,31 +404,29 @@ const ReportHeader = () => {
   //     console.error("Something went wrong:", error);
   //   }
   // };
-  
-  
+
   const GetReportHeader = async (id) => {
     const payload = {
       Centreid: String(id),
     };
     try {
       const response = await GetReportHeaderAPI(payload);
-      if (response?.status) { 
-        
+      if (response?.status) {
         if (response.data.length > 0) {
-          const responseData=response.data[0]
-        setEditable(true);
-        setIsEdit(true);
-        setEditorText(response?.data[0]?.Template);
-        setValues((prev)=>{
-          return{
-            ...prev,
-            Heigh: responseData?.Reportheaderheight,
-            XPosition: responseData?.ReportheaderXposition,
-            YPosition: responseData?.ReportheaderYPosition,
-            FooterHeight: responseData?.ReportFoterheight,
-          }
-        })
-        } else{
+          const responseData = response.data[0];
+          setEditable(true);
+          setIsEdit(true);
+          setEditorText(response?.data[0]?.Template);
+          setValues((prev) => {
+            return {
+              ...prev,
+              Heigh: responseData?.Reportheaderheight,
+              XPosition: responseData?.ReportheaderXposition,
+              YPosition: responseData?.ReportheaderYPosition,
+              FooterHeight: responseData?.ReportFoterheight,
+            };
+          });
+        } else {
           // setEditable(false);
           // setEditable(true);
           // setEditorText("");
@@ -439,17 +452,25 @@ const ReportHeader = () => {
           setEditorText("");
           notify("No report header found for this center.", "error");
         }
-       
       }
     } catch (error) {
       console.error("Something went wrong:", error);
     }
   };
-  useEffect(() => {
-    GetCentreName();
-  }, []);
+  // useEffect(() => {
+  //   GetCentreName();
+  // }, []);
 
   useEffect(() => {
+    if(!showCentreDropdown){
+      setValues((prev) => ({
+        ...prev,
+        centreName: {
+          // label: selectedCentre?.label,
+          // value: selectedCentre?.value,
+        },
+      }));
+     }
     if (values?.centreName?.Centreid) {
       GetReportHeader(values?.centreName?.Centreid);
     }
@@ -465,7 +486,7 @@ const ReportHeader = () => {
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            <ReactSelect
+            {/* <ReactSelect
               placeholderName={t("Select Centre Name")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -476,7 +497,37 @@ const ReportHeader = () => {
               dynamicOptions={dropDownData?.getBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
-            />
+            /> */}
+
+            {showCentreDropdown ? (
+              <ReactSelect
+                placeholderName={t("Select centre name")}
+                searchable={true}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                id="centreName"
+                name="centreName"
+                removeIsClearable={true}
+                handleChange={handleReactChange}
+                dynamicOptions={centreOptions}
+                value={values?.centreName}
+              />
+            ) : (
+              // <div className="col-xl-3 col-md-4 col-sm-6 col-12">
+              //   <label className="form-label">{t("Centre name")}</label>
+              //   <div className="form-control bg-light">{values?.centreName?.label}</div>
+              // </div>
+              <Input
+                type="text"
+                className="form-control"
+                id="testName"
+                lable={t("Centre name")}
+                placeholder=" "
+                value={selectedCentre?.label}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                name="testName"
+                disabled={true}
+              />
+            )}
             {/* <ReactSelect
               placeholderName={t("Select test")}
               searchable={true}
@@ -512,7 +563,7 @@ const ReportHeader = () => {
 
             <div
               className="col-xl-2 col-md-4 col-sm-6 col-12"
-              style={{ width: "200px"}}
+              style={{ width: "200px" }}
             >
               <ReportColumnTable />
             </div>

@@ -144,7 +144,7 @@ import Layout from "@app/layouts";
 import Authenticated from "@app/Guard/Authenticated.jsx";
 import Guest from "@app/Guard/Guest.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
+
 
 import {
   GetBindMenu,
@@ -156,7 +156,7 @@ import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 function RenderRoute() {
   const { GetMenuList } = useSelector((state) => state?.CommonSlice);
-  const localData = useLocalStorage("authToken", "get");
+  const localData = useLocalStorage("userData", "get");
   const location = useLocation();
   const dispatch = useDispatch();
   const [waitForRoute, setWaitForRoute] = useState(true);
@@ -214,13 +214,6 @@ function RenderRoute() {
     }
     return acc;
   }, []);
-
-  // console.log("local Tokin ",localData)
-  const decoded = jwtDecode(localData);
-  const decodeAddflag ={...decoded,
-    flag:1
-  }
-
   return (
     <>
       <ToastContainer
