@@ -20,6 +20,7 @@ import { notify } from "../../utils/utils";
 import HeaderInput from "../../components/formComponent/HeaderInput";
 
 import { useLocalStorage } from "../../utils/hooks/useLocalStorage";
+import { reset } from "../../store/reducers/common/CommonSlice";
 const Header = React.memo(() => {
   /**
    * Make an API request for MasterPage/EmployeeWiseCentreList.
@@ -56,6 +57,7 @@ const Header = React.memo(() => {
     Cookies.remove("authToken", { path: "" });
     Cookies.remove("user", { path: "" });
     localStorage.clear();
+    dispatch(reset())
     navigate("/login");
   };
 

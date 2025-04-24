@@ -9,7 +9,7 @@ import {
   loadingSlice,
   logoutSlice,
   vitalSignSlice,
-  CentreName
+  CentreName,
 } from "./reducers";
 // import logger from "redux-logger";
 
@@ -23,7 +23,7 @@ const store = configureStore({
     TokenManagementSlice:TokenManagementSlice,
     DashboardSlices:DashboardSlices,
     vitalSignSlice:vitalSignSlice,
-    CentreName:CentreName
+    CentreName:CentreName,
   },
   // middleware: (getDefaultMiddleware) =>
   //   getDefaultMiddleware({ serializableCheck: false }).concat(logger),
