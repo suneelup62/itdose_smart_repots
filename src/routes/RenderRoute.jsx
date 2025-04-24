@@ -185,6 +185,9 @@ function RenderRoute() {
     }
   };
 
+
+  console.log("GetMenuList",GetMenuList)
+  
   useEffect(() => {
     if (localData && GetMenuList?.length === 0) {
       fetchData();
@@ -333,6 +336,7 @@ const allRoutes = {
         () => import("@app/pages/SmartReport/ReportCentre/ReportCentre.jsx")
       ),
       exact: true,
+      flag:1,
     },
     {
       layout: Layout,
