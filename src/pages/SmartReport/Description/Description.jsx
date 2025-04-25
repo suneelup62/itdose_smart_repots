@@ -37,6 +37,7 @@ const Description = () => {
     testCodeName: "",
   });
 
+  console.log("dropDownData",dropDownData)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -45,7 +46,7 @@ const Description = () => {
 
   const fetchTestGrid = async (id) => {
     if (testGridCacheRef.current[id]) {
-      setTableData(testGridCacheRef.current[id]);
+      setTableData(testGridCacheRef.current[id]||"");
       return;
     }
 
@@ -95,7 +96,7 @@ const Description = () => {
 
   const handleSubmit = async () => {
     const requiredFields = [
-      { key: "centreName", message: "Centre Name is required" },
+      // { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
       { key: "Description", message: "Description is required" },
     ];
@@ -113,13 +114,13 @@ const Description = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid),
+      Centreid: String(values?.centreName?.Centreid||localData?.centreId),
       Testcode: String(values?.testCode?.TestCode),
       Test_id: String(values?.testCode?.value),
       Description: values?.Description,
       Image: values?.imageBase64,
     };
-
+    console.log("payload upadted",payload)
     try {
       const response = await MasterInvestigationDescription(payload);
       if (response?.status) {
@@ -156,13 +157,14 @@ const Description = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid || values?.centreid),
+      Centreid: String(values?.centreName?.Centreid || values?.centreid||localData?.centreId),
       Testcode: String(values?.testCode?.label || values?.testCodeName),
       Test_id: String(values?.testCode?.value || values?.testCode),
       Description: values?.Description,
       Image: values?.imageBase64,
     };
 
+    console.log("payload upadted",payload)
     try {
       const response = await MasterInvestigationDescription(payload);
       if (response?.status) {
@@ -171,7 +173,7 @@ const Description = () => {
         // 💡 Invalidate testGrid cache before fetching new
         testGridCacheRef.current[payload.Centreid] = null;
 
-        await fetchTestGrid(payload.Centreid);
+        await fetchTestGrid(payload.Centreid||localData?.centreId);
         handleCancel();
       } else {
         notify(response.message, "error");
@@ -211,6 +213,11 @@ const Description = () => {
 
   useEffect(() => {
     GetCentreName();
+    if(localData?.flag == 1){
+      fetchTestGrid(localData?.centreId)
+      BindTestCode(localData?.centreId);       
+    }
+   
   }, []);
 
   useEffect(() => {
@@ -223,6 +230,17 @@ const Description = () => {
     }
   }, [values?.centreName]);
 
+
+  // useEffect(()=>{
+  //   if(localData?.flag == 1){
+  //     setValues((prev) => ({ ...prev, 
+        
+  //       centreName:dropDownData?.getBindCentreName[0]}));
+  //   }
+  //   fetchTestGrid(values?.centreName?.Centreid)
+  // },[localData?.flag == 1])
+  console.log("testGridCacheRef",testGridCacheRef)
+  console.log("values",values)
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -237,7 +255,7 @@ const Description = () => {
                 lable={t("Centre name")}
                 placeholder=" "
                 required={true}
-                value={values?.centreName?.label}
+                value={localData?.centreName}
                 respclass="col-xl-3 col-md-4 col-sm-6 col-12"
                 name="testName"
                 disabled={true}

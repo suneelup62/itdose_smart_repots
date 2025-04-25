@@ -8,8 +8,10 @@ import {
   handleReactSelectDropDownOptions,
   handleReactSelectDropDownOptionsTest,
 } from "../utils";
+import { useLocalStorage } from "../../utils/hooks/useLocalStorage";
 
 export const useCommonDropdowns = () => {
+  const localData = useLocalStorage("userDetails", "get");
   const [dropDownData, setDropDownData] = useState({
     getBindCentreName: [],
     getBindTestCode: [],
@@ -24,10 +26,23 @@ export const useCommonDropdowns = () => {
           "CentreName",
           "Centreid"
         );
-        setDropDownData((prev) => ({
-          ...prev,
-          getBindCentreName: data,
-        }));
+        if(localData?.flag==1){
+           const allCenterName=data
+           const cenenterNameFlagOne=allCenterName.filter((e)=>{
+            return e.Centreid == localData?.centreId
+           })
+          setDropDownData((prev) => ({
+            ...prev,
+            getBindCentreName: cenenterNameFlagOne,
+          }));
+        }
+        else{
+          setDropDownData((prev) => ({
+            ...prev,
+            getBindCentreName: data,
+          }));
+        }
+       
         return data;
       }
     } catch (error) {
