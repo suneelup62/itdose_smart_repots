@@ -47,7 +47,6 @@ const Investigation = () => {
     },
   });
 
-  console.log("localData", localData?.flag);
   const GetCentreName = async () => {
     try {
       const response = await CenterMasterBindclient();
@@ -180,9 +179,7 @@ const Investigation = () => {
     }
   };
 
-
   const handleUpdate = async (val) => {
-
     const requiredFields = {
       centreName: "Centre name is Required",
       testName: "Test name is Required",
@@ -206,7 +203,7 @@ const Investigation = () => {
       Testcode: String(values.testCode),
       Department: values?.department,
       departcode: values?.departmentCode,
-      ReportFormat: String(values?.ReportType?.value||values?.ReportType),
+      ReportFormat: String(values?.ReportType?.value || values?.ReportType),
       chkactive: String(values.isActive?.value),
     };
 
@@ -248,7 +245,6 @@ const Investigation = () => {
   }
 
   const handleOnEdit = (val) => {
-    console.log("Edit", val);
     setIsEdit(true);
     setValues({
       tableRowId: val?.id,
@@ -270,7 +266,7 @@ const Investigation = () => {
   const receiveChildObject = (obj) => {
     setSetChildData(obj); // Store child object in state
   };
-  console.log("value",values)
+
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -411,4 +407,3 @@ const Investigation = () => {
 };
 
 export default Investigation;
-
