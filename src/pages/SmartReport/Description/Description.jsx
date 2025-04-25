@@ -17,12 +17,16 @@ import {
 } from "../../../networkServices/smartReport";
 
 import { useCommonDropdowns } from "../../../utils/hooks/useCommonDropdowns";
+import { useLocalStorage } from "../../../utils/hooks/useLocalStorage";
+import Input from "../../../components/formComponent/Input";
+
 const Description = () => {
   const [t] = useTranslation();
   const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
-    const prevCentreId = useRef(null);
+  const prevCentreId = useRef(null);
   const [tableData, setTableData] = useState([]);
-
+  const localData = useLocalStorage("userDetails", "get");
+  console.log("RoleFlag", localData?.flag);
   const [isEdit, setIsEdit] = useState(false);
   const [values, setValues] = useState({
     centreName: null,
@@ -32,7 +36,6 @@ const Description = () => {
     centreid: "",
     testCodeName: "",
   });
-  
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -91,7 +94,6 @@ const Description = () => {
   };
 
   const handleSubmit = async () => {
- 
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
       { key: "testCode", message: "Test Code is required" },
@@ -193,7 +195,7 @@ const Description = () => {
   };
 
   const handleCancel = () => {
-    setValues(prev => ({
+    setValues((prev) => ({
       ...prev,
       testCode: null,
       Description: "",
@@ -211,7 +213,6 @@ const Description = () => {
     GetCentreName();
   }, []);
 
-
   useEffect(() => {
     const currentCentreId = values?.centreName?.Centreid;
     if (currentCentreId && currentCentreId !== prevCentreId.current) {
@@ -228,18 +229,33 @@ const Description = () => {
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            <ReactSelect
-              placeholderName={t("Select centre name")}
-              searchable={true}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              id={"centreName"}
-              name={"centreName"}
-              removeIsClearable={true}
-              handleChange={handleReactChange}
-              isDisabled={isEdit}
-              dynamicOptions={dropDownData?.getBindCentreName}
-              value={values?.centreName}
-            />
+            {localData?.flag == 1 ? (
+              <Input
+                type="text"
+                className="form-control"
+                id="testName"
+                lable={t("Centre name")}
+                placeholder=" "
+                required={true}
+                value={values?.centreName?.label}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                name="testName"
+                disabled={true}
+              />
+            ) : (
+              <ReactSelect
+                placeholderName={t("Select centre name")}
+                searchable={true}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                id={"centreName"}
+                name={"centreName"}
+                removeIsClearable={true}
+                handleChange={handleReactChange}
+                isDisabled={isEdit}
+                dynamicOptions={dropDownData?.getBindCentreName}
+                value={values?.centreName}
+              />
+            )}
             <ReactSelect
               placeholderName={t("Select test")}
               searchable={true}
@@ -289,10 +305,16 @@ const Description = () => {
           <div className="button-container-center mt-3">
             {isEdit ? (
               <>
-                <button className="btn btn-sm btn-primary" onClick={handleUpdate}>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={handleUpdate}
+                >
                   {t("Update")}
                 </button>
-                <button className="btn btn-sm btn-secondary ml-2" onClick={handleCancel}>
+                <button
+                  className="btn btn-sm btn-secondary ml-2"
+                  onClick={handleCancel}
+                >
                   {t("Cancel")}
                 </button>
               </>
@@ -304,7 +326,7 @@ const Description = () => {
           </div>
         </div>
       </div>
-      <DescriptionDetails tableData={tableData} onEdit={handleEdit}/>
+      <DescriptionDetails tableData={tableData} onEdit={handleEdit} />
     </>
   );
 };

@@ -184,9 +184,6 @@ function RenderRoute() {
       setWaitForRoute(false);
     }
   };
-
-
-  console.log("GetMenuList",GetMenuList)
   
   useEffect(() => {
     if (localData && GetMenuList?.length === 0) {

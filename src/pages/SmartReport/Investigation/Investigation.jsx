@@ -47,7 +47,7 @@ const Investigation = () => {
     },
   });
 
-  console.log("localData",localData?.flag)
+  console.log("localData", localData?.flag);
   const GetCentreName = async () => {
     try {
       const response = await CenterMasterBindclient();
@@ -94,7 +94,11 @@ const Investigation = () => {
         const dataArray = Array.isArray(response?.data) ? response.data : [];
         setDropDownData((prev) => ({
           ...prev,
-          GetFormatOption: handleReactSelectDropDownOptions(dataArray, "FORMAT", "Id"),
+          GetFormatOption: handleReactSelectDropDownOptions(
+            dataArray,
+            "FORMAT",
+            "Id"
+          ),
         }));
       }
     } catch (error) {
@@ -106,7 +110,9 @@ const Investigation = () => {
     if (!centreId) return;
 
     try {
-      const response = await InvestigationMasterBindTestgrid({ clientid: String(centreId) });
+      const response = await InvestigationMasterBindTestgrid({
+        clientid: String(centreId),
+      });
       if (response?.status) {
         setTableData(response?.data);
       }
@@ -148,7 +154,9 @@ const Investigation = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.value || values?.centreName?.Centreid),
+      Centreid: String(
+        values?.centreName?.value || values?.centreName?.Centreid
+      ),
       TestName: values?.testName,
       Testcode: values?.testCode,
       Department: values?.department,
@@ -172,6 +180,60 @@ const Investigation = () => {
     }
   };
 
+
+  const handleUpdate = async (val) => {
+
+    const requiredFields = {
+      centreName: "Centre name is Required",
+      testName: "Test name is Required",
+      testCode: "Test code is Required",
+      department: "Department is Required",
+      departmentCode: "Department code is Required",
+      isActive: "Status code is Required",
+    };
+
+    for (const field in requiredFields) {
+      if (!values?.[field]) {
+        notify(requiredFields[field], "error");
+        return;
+      }
+    }
+
+    const payload = {
+      idd: String(values.tableRowId),
+      Centreid: String(values.centreName),
+      TestName: String(values.testName),
+      Testcode: String(values.testCode),
+      Department: values?.department,
+      departcode: values?.departmentCode,
+      ReportFormat: String(values?.ReportType?.value||values?.ReportType),
+      chkactive: String(values.isActive?.value),
+    };
+
+    try {
+      const response = await InvestigationMasterUpdatetest(payload);
+      if (response?.status) {
+        notify(response?.message, "success");
+        setIsEdit(false);
+        // await fetchTestGrid(values.centreName);
+        await BindTestgrid(payload.Centreid);
+        if (setChildData.isSearchActive) {
+          const payload1 = {
+            searchtype: setChildData?.serchVluses?.searchtype,
+            txtsearchInv: setChildData?.serchVluses?.txtsearchInv,
+            clientid: String(setChildData?.serchVluses?.clientid),
+          };
+          await setChildData.Bindsearchgrid(payload1);
+        }
+        handleCencel();
+      } else {
+        notify(response.message || "Updation failed", "error");
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
+
   function handleCencel() {
     setValues((prev) => ({
       ...prev,
@@ -179,17 +241,36 @@ const Investigation = () => {
       testCode: "",
       department: "",
       departmentCode: "",
-      ReportType: { label: "", value: "" },
+      ReportType: null,
       isActive: {},
     }));
     setIsEdit(false);
   }
 
+  const handleOnEdit = (val) => {
+    console.log("Edit", val);
+    setIsEdit(true);
+    setValues({
+      tableRowId: val?.id,
+      centreName: val?.Centreid,
+      testName: val?.TestName,
+      testCode: val?.Testcode,
+      department: val?.Department,
+      departmentCode: val?.Departcode,
+      ReportType: val?.ReportFormat,
+      isActive:
+        val.status === "Active" ? IS_ACTIVE_OPTION[0] : IS_ACTIVE_OPTION[1],
+    });
+  };
+
   useEffect(() => {
     GetCentreName();
     GetFormatOption();
   }, []);
-
+  const receiveChildObject = (obj) => {
+    setSetChildData(obj); // Store child object in state
+  };
+  console.log("value",values)
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -209,22 +290,18 @@ const Investigation = () => {
                 value={values?.centreName}
               />
             ) : (
-              // <div className="col-xl-3 col-md-4 col-sm-6 col-12">
-              //   <label className="form-label">{t("Centre name")}</label>
-              //   <div className="form-control bg-light">{values?.centreName?.label}</div>
-              // </div>
               <Input
-              type="text"
-              className="form-control"
-              id="testName"
-              lable={t("Centre name")}
-              placeholder=" "
-              required={true}
-              value={values?.centreName?.label}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              name="testName"
-              disabled={true}
-            />
+                type="text"
+                className="form-control"
+                id="testName"
+                lable={t("Centre name")}
+                placeholder=" "
+                required={true}
+                value={values?.centreName?.label}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                name="testName"
+                disabled={true}
+              />
             )}
 
             <Input
@@ -295,16 +372,22 @@ const Investigation = () => {
               removeIsClearable={true}
               handleChange={handleReactChange}
               dynamicOptions={IS_ACTIVE_OPTION}
-              value={values?.isActive}
+              value={values?.isActive?.value}
             />
           </div>
           <div className="button-container-center">
             {isEdit ? (
               <>
-                <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={handleUpdate}
+                >
                   {t("Update")}
                 </button>
-                <button className="btn btn-sm btn-secondary ml-2" onClick={handleCencel}>
+                <button
+                  className="btn btn-sm btn-secondary ml-2"
+                  onClick={handleCencel}
+                >
                   {t("Cancel")}
                 </button>
               </>
@@ -318,9 +401,9 @@ const Investigation = () => {
       </div>
       <InvestigationDetails
         tableData={tableData}
-        onEdit={(val) => console.log("Edit clicked", val)}
+        onEdit={handleOnEdit}
         fetchDataAfterEdit={() => {}}
-        sendDataToParent={(obj) => setSetChildData(obj)}
+        sendDataToParent={receiveChildObject}
         setParentData={setChildData}
       />
     </>
@@ -328,3 +411,4 @@ const Investigation = () => {
 };
 
 export default Investigation;
+

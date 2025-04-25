@@ -453,7 +453,7 @@ const ReportCenter = () => {
               value={values?.frontPage?.value}
             />
               <ReactSelect
-              placeholderName={t("Historic representation")}
+              placeholderName={t("Health analysis")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
               id={"historic"}
