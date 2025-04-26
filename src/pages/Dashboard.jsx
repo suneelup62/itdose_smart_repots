@@ -19,6 +19,8 @@ import { notify } from "../utils/utils";
 import Marque from "../components/UI/Marque";
 import NewsDataDashboard from "../components/modalComponent/Utils/NewsDataDashboard";
 import { useCommonDropdownsCenter } from "../utils/hooks/useCommonDropdownsCenter";
+import { useDispatch } from "react-redux";
+import { getCentreNameAction } from "../store/reducers/CentreName/getCentreName";
 Chart.register(...registerables);
 
 const Dashboard = () => {
@@ -32,7 +34,7 @@ const Dashboard = () => {
     toDate: new Date(),
     selectDate: "3",
   });
-
+  const dispatch = useDispatch();
    const userDetails = useCookiesStorage('user')
 
   const handleHeightOfBirthDaycard = () => {
@@ -41,7 +43,7 @@ const Dashboard = () => {
       document.getElementById("birthdayHead")?.getBoundingClientRect().height
     );
   };
-const {dropDownData} = useCommonDropdownsCenter()
+// const {dropDownData} = useCommonDropdownsCenter()
   const handleDateValue = (selectedRange) => {
     const today = new Date();
     let startDate, endDate;
@@ -727,7 +729,11 @@ const {dropDownData} = useCommonDropdownsCenter()
         );
     }
   };
+  useEffect(() => {
+    dispatch(getCentreNameAction());
+  }, []);
 
+  
   return (
     <div>
       <div className="mainDashboardwrp">

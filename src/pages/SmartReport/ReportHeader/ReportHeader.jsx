@@ -24,17 +24,13 @@ import {
 import Editor from "quill/core/editor";
 import { TextEditor } from "rc-easyui";
 import Table from "react-bootstrap/Table";
-
-import { useCentreDropdown } from "../../../utils/hooks/useCentreDropdown";
+import { useCommonDropdowns } from "../../../utils/hooks/useCommonDropdowns";
 
 const ReportHeader = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  // const [dropDownData, setDropDownData] = useState({
-  //   getBindCentreName: [],
-  //   getBindTestCode: [],
-  // });
-console.log("lll")
+  const localData = useLocalStorage("userDetails", "get");
+  const { dropDownData, GetCentreName } = useCommonDropdowns();
   const [Editor, setEditor] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
@@ -50,38 +46,13 @@ console.log("lll")
 
   const [Editable, setEditable] = useState(false);
   const [editorText, setEditorText] = useState("");
-  // const GetCentreName = async () => {
-  //   try {
-  //     const response = await CenterMasterBindclient();
-  //     if (response?.status) {
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         getBindCentreName: handleReactSelectDropDownOptions(
-  //           response?.data,
-  //           "CentreName",
-  //           "Centreid"
-  //         ),
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "Something went wrong");
-  //   }
-  // };
+  // const {
+  //   centreOptions,
+  //   selectedCentre,
+  //   setSelectedCentre,
+  //   showCentreDropdown,
+  // } = useCentreDropdown();
 
-  const {
-    centreOptions,
-    selectedCentre,
-    setSelectedCentre,
-    showCentreDropdown,
-  } = useCentreDropdown();
-
-  // const handleReactChange = (name, option) => {
-  //   setSelectedCentre(option);
-  // };
-
-  console.log("showCentreDropdown", selectedCentre);
-
-  console.log("valuse",values)
   const BindTestCode = async (stateID) => {
     if (!stateID) {
       setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
@@ -129,66 +100,12 @@ console.log("lll")
     setEditorText(data);
   };
 
-  // const handleReactChange = (name, selectedOption) => {
-  //   setValues((prev) => ({ ...prev, [name]: selectedOption }));
-  // };
-
   const handleReactChange = (name, selectedOption) => {
     console.log("Selected:", name, selectedOption);
 
     const updatedValues = { ...values, [name]: selectedOption };
     setValues(updatedValues);
-    // Only call GetReportHeader when testCode is selected
-    // if (name === "centreName" && selectedOption?.centreName) {
-    //   GetReportHeader(selectedOption?.centreName?.Centreid);
-    // }
   };
-  // const handleSubmit = async () => {
-  //    const requiredFields = [
-  //      { key: "centreName", message: "Centre Name is required" },
-  //      { key: "testCode", message: "Test Code is required" },
-  //      { key: "Heigh", message: "Heigh is required" },
-  //      { key: "XPosition", message: "XPosition is required" },
-  //      { key: "YPosition", message: "YPosition is required" },
-  //      { key: "FooterHeight", message: "FooterHeight is required" },
-  //    ];
-  //    for (let field of requiredFields) {
-  //      if (!values[field.key]) {
-  //        notify(field.message, "error");
-  //        return false;
-  //      }
-  //    }
-
-  //    if(editorText===""){
-  //     notify("Template is required", "error");
-  //     return false;
-  //    }
-  //    const payload = {
-  //      Centreid: String(values?.centreName?.Centreid),
-  //      Test_id: String(values?.testCode?.value),
-  //      Testcode: values?.testCode?.TestCode,
-  //      Heigh: String(values?.Heigh),
-  //      XPosition:String(values?.XPosition),
-  //      YPosition:String(values?.YPosition),
-  //      FooterHeight:String(values?.FooterHeight),
-  //      Template: editorText,
-  //    };
-  // console.log("payload",payload)
-  //    try {
-  //      const response = await MasterInvestigationRiskfactor();
-  //      if (response?.status) {
-  //        notify(response.message, "success");
-  //        setIsEdit(false);
-  //        setEditable(true);
-  //        setEditorText("");
-  //        handleCencel()
-  //      } else {
-  //        notify(response.message || "Submission failed", "error");
-  //      }
-  //    } catch (error) {
-  //      console.error("Something went wrong:", error);
-  //    }
-  //  };
 
   const handleSubmit = async () => {
     const requiredFields = [
@@ -255,7 +172,7 @@ console.log("lll")
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid),
+      Centreid: String(values?.centreName?.Centreid || localData?.centreId),
       Reportheaderheight: String(values?.Heigh),
       ReportheaderXposition: String(values?.XPosition),
       ReportHeaderYPosition: String(values?.YPosition),
@@ -280,7 +197,7 @@ console.log("lll")
 
   const handleUpdate = async () => {
     const requiredFields = [
-      { key: "centreName", message: "Centre Name is required" },
+      // { key: "centreName", message: "Centre Name is required" },
       // { key: "testCode", message: "Test Code is required" },
       { key: "Heigh", message: "Heigh is required" },
       { key: "XPosition", message: "XPosition is required" },
@@ -343,7 +260,7 @@ console.log("lll")
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid),
+      Centreid: String(values?.centreName?.Centreid || localData?.centreId),
       Reportheaderheight: String(values?.Heigh),
       ReportheaderXposition: String(values?.XPosition),
       ReportHeaderYPosition: String(values?.YPosition),
@@ -379,32 +296,6 @@ console.log("lll")
     setEditorText("");
   };
 
-  // const GetReportHeader = async (id) => {
-  //   const payload = {
-  //     Centreid: String(id),
-  //   };
-  //   try {
-  //     const response = await GetReportHeaderAPI(payload);
-  //     if (response?.status) {
-  //       const responseData=response.data[0]
-  //       setEditable(true);
-  //       setIsEdit(true);
-  //       setEditorText(response?.data[0]?.Template);
-  //       setValues((prev)=>{
-  //         return{
-  //           ...prev,
-  //           Heigh: responseData?.Reportheaderheight,
-  //           XPosition: responseData?.ReportheaderXposition,
-  //           YPosition: responseData?.ReportheaderYPosition,
-  //           FooterHeight: responseData?.ReportFoterheight,
-  //         }
-  //       })
-  //     }
-  //   } catch (error) {
-  //     console.error("Something went wrong:", error);
-  //   }
-  // };
-
   const GetReportHeader = async (id) => {
     const payload = {
       Centreid: String(id),
@@ -427,19 +318,6 @@ console.log("lll")
             };
           });
         } else {
-          // setEditable(false);
-          // setEditable(true);
-          // setEditorText("");
-          // setValues((prev)=>{
-          //   return{
-          //     ...prev,
-          //     centreName:null,
-          //     Heigh: "",
-          //     XPosition:"",
-          //     YPosition: "",
-          //     FooterHeight: "",
-          //   }
-          // })
           setValues((prev) => ({
             ...prev,
             Heigh: "",
@@ -457,98 +335,53 @@ console.log("lll")
       console.error("Something went wrong:", error);
     }
   };
-  // useEffect(() => {
-  //   GetCentreName();
-  // }, []);
 
   useEffect(() => {
-    if(!showCentreDropdown){
-      setValues((prev) => ({
-        ...prev,
-        centreName: {
-          // label: selectedCentre?.label,
-          // value: selectedCentre?.value,
-        },
-      }));
-     }
     if (values?.centreName?.Centreid) {
       GetReportHeader(values?.centreName?.Centreid);
     }
-  }, [values?.centreName]);
+    if (localData?.flag == 1) {
+      GetReportHeader(localData?.centreId);
+    }
+    setValues({ ...values, Template: Editor });
+  }, [values?.centreName, Editor]);
 
   useEffect(() => {
-    setValues({ ...values, Template: Editor });
-  }, [Editor]);
-
+    GetCentreName();
+  }, []);
   return (
     <>
       <div className="mt-2 spatient_registration_card">
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            {/* <ReactSelect
-              placeholderName={t("Select Centre Name")}
-              searchable={true}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              id={"centreName"}
-              name={"centreName"}
-              removeIsClearable={true}
-              handleChange={handleReactChange}
-              dynamicOptions={dropDownData?.getBindCentreName}
-              // requiredClassName="required-fields"
-              value={values?.centreName}
-            /> */}
-
-            {showCentreDropdown ? (
-              <ReactSelect
-                placeholderName={t("Select centre name")}
-                searchable={true}
-                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-                id="centreName"
-                name="centreName"
-                removeIsClearable={true}
-                handleChange={handleReactChange}
-                dynamicOptions={centreOptions}
-                value={values?.centreName}
-              />
-            ) : (
-              // <div className="col-xl-3 col-md-4 col-sm-6 col-12">
-              //   <label className="form-label">{t("Centre name")}</label>
-              //   <div className="form-control bg-light">{values?.centreName?.label}</div>
-              // </div>
+            {localData?.flag == 1 ? (
               <Input
                 type="text"
                 className="form-control"
                 id="testName"
                 lable={t("Centre name")}
                 placeholder=" "
-                value={selectedCentre?.label}
+                required={true}
+                value={localData?.centreName}
                 respclass="col-xl-3 col-md-4 col-sm-6 col-12"
                 name="testName"
                 disabled={true}
               />
+            ) : (
+              <ReactSelect
+                placeholderName={t("Select centre name")}
+                searchable={true}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                id={"centreName"}
+                name={"centreName"}
+                removeIsClearable={true}
+                handleChange={handleReactChange}
+                isDisabled={isEdit}
+                dynamicOptions={dropDownData?.getBindCentreName}
+                value={values?.centreName}
+              />
             )}
-            {/* <ReactSelect
-              placeholderName={t("Select test")}
-              searchable={true}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              id={"testCode"}
-              name={"testCode"}
-              removeIsClearable={true}
-              handleChange={(name, e) => handleReactChange(name, e)}
-              dynamicOptions={dropDownData?.getBindTestCode}
-              // requiredClassName="required-fields"
-              value={values?.testCode}
-            /> */}
-            {/* <div style={{ width: "200px", marginTop: "10px" }}>
-              <BasicExample/>
-            </div> */}
-            {/* <FullTextEditor
-                        value={editorText} // Use Template1 instead of Template
-                        setValue={handleChangeEditor}
-                        EditTable={Editable}
-                        setEditTable={setEditable}
-                      /> */}
           </div>
 
           <div className="row p-2">
@@ -570,7 +403,6 @@ console.log("lll")
           </div>
           <div className="row p-2">
             <div className="col-xl-8 col-md-4 col-sm-6 col-12">
-              {/* <ReportStyleTable/> */}
               <div>
                 <Table responsive>
                   <tbody>
@@ -691,7 +523,6 @@ console.log("lll")
           </div>
         </div>
       </div>
-      {/* <InvestigationDetails tableData={tableData} onEdit={handleEdit} fetchDataAfterEdit={handleUpdate} sendDataToParent={receiveChildObject} setParentData={setChildData} /> */}
     </>
   );
 };

@@ -22,7 +22,7 @@ import Input from "../../../components/formComponent/Input";
 
 const Description = () => {
   const [t] = useTranslation();
-  const { dropDownData, GetCentreName, BindTestCode,centres } = useCommonDropdowns();
+  const { dropDownData, GetCentreName, BindTestCode,} = useCommonDropdowns();
   const prevCentreId = useRef(null);
   const [tableData, setTableData] = useState([]);
   const localData = useLocalStorage("userDetails", "get");
@@ -36,8 +36,6 @@ const Description = () => {
     testCodeName: "",
   });
 
-  console.log("dropDownData",dropDownData)
-  console.log("centres to redux",centres)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
