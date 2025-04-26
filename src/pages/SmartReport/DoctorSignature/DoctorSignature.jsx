@@ -14,17 +14,12 @@ import {
   fetchCentreDoctorSignatureAPI,
 } from "../../../networkServices/smartReport";
 import DoctorSignatureDetails from "./DoctorSignatureDetails";
-// import { useDispatch } from "react-redux";
-// import { useSelector } from "react-redux";
-// import { getCentreNameAction } from "../../../store/reducers/CentreName/getCentreName";
 
-import {useCommonDropdownsCenter}  from '../../../utils/hooks/useCommonDropdownsCenter'
+import { useCommonDropdowns } from "../../../utils/hooks/useCommonDropdowns";
 const doctorSignature = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  // const [dropDownData, setDropDownData] = useState({
-  //   GetBindCentreName: [],
-  // });
+  const localData = useLocalStorage("userDetails", "get");
 
   const ALIGNMENT_OPTION = [
     {
@@ -41,31 +36,14 @@ const doctorSignature = () => {
   const [values, setValues] = useState({
     centreName: null,
     alignment: null,
-    centreid:null
+    centreid: null,
   });
 
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
 
-  const {dropDownData} = useCommonDropdownsCenter()
-  
-  // const GetCentreName = async () => {
-  //   try {
-  //     const response = await CenterMasterBindclient();
-  //     if (response?.status) {
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         GetBindCentreName: handleReactSelectDropDownOptions(
-  //           response?.data,
-  //           "CentreName",
-  //           "Centreid"
-  //         ),
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "Something went wrong");
-  //   }
-  // };
+  const { dropDownData, GetCentreName } = useCommonDropdowns();
+  console.log("dropDownData doctorSignature", dropDownData);
 
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
@@ -90,7 +68,7 @@ const doctorSignature = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid),
+      Centreid: String(values?.centreName?.Centreid || localData?.centreId),
       Alignment: String(values.alignment?.value),
     };
 
@@ -99,7 +77,7 @@ const doctorSignature = () => {
 
       if (response?.status) {
         notify(response.message, "success");
-        await fetchCentreDoctorSignature(payload?.Centreid)
+        await fetchCentreDoctorSignature(payload?.Centreid);
         setIsEdit(false);
         handleCencel();
       }
@@ -108,7 +86,7 @@ const doctorSignature = () => {
     }
   };
 
-  const handleUpdate  = async () => {
+  const handleUpdate = async () => {
     const requiredFields = {
       centreName: "Centre name is Required",
       alignment: "Alignment is Required",
@@ -122,7 +100,7 @@ const doctorSignature = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreid),
+      Centreid: String(values?.centreid || localData?.centreId),
       Alignment: String(values?.alignment?.value),
     };
 
@@ -131,7 +109,7 @@ const doctorSignature = () => {
 
       if (response?.status) {
         notify(response.message, "success");
-        await fetchCentreDoctorSignature(payload?.Centreid)
+        await fetchCentreDoctorSignature(payload?.Centreid);
         setIsEdit(false);
         handleCencel();
       }
@@ -139,7 +117,6 @@ const doctorSignature = () => {
       console.error("Something went wrong:", error);
     }
   };
-
 
   function handleCencel() {
     setValues((prev) => ({
@@ -150,9 +127,9 @@ const doctorSignature = () => {
     setIsEdit(false);
   }
   const fetchCentreDoctorSignature = async (id) => {
-    const payload={
-      Centreid: String(id),
-    }
+    const payload = {
+      Centreid: String(id || localData?.centreId),
+    };
 
     try {
       const response = await fetchCentreDoctorSignatureAPI(payload);
@@ -164,52 +141,57 @@ const doctorSignature = () => {
     }
   };
 
-   useEffect(() => {
-      if (values?.centreName?.Centreid) {
-        fetchCentreDoctorSignature(values?.centreName?.Centreid);
-      }
-    }, [values?.centreName]);
+  useEffect(() => {
+    if (values?.centreName?.Centreid) {
+      fetchCentreDoctorSignature(values?.centreName?.Centreid);
+    }
+    if (localData?.flag == 1) {
+      fetchCentreDoctorSignature(localData?.centreId);
+    }
+    GetCentreName();
+  }, [values?.centreName]);
   const handleEdit = (val) => {
- 
     setIsEdit(true);
     setValues({
       centreName: val?.Centre,
-      alignment:val?.Alignment,
-      centreid:val?.centreid
+      alignment: val?.Alignment,
+      centreid: val?.centreid,
     });
   };
-  // useEffect(() => {
-  //   GetCentreName();
-  // }, []);
 
-  // const { centres, loading, error } = useSelector((state) => state.CentreName);
-  // const dispatch = useDispatch();
-
-  // console.log("redux centres",centres)
-  // useEffect(() => {
-  //   if (centres.length === 0) {
-  //     dispatch(getCentreNameAction());
-  //   }
-  // }, []);
   return (
     <>
       <div className="mt-2 spatient_registration_card">
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            <ReactSelect
-              placeholderName={t("Select centre name")}
-              searchable={true}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              id={"centreName"}
-              name={"centreName"}
-              removeIsClearable={true}
-              isDisabled={isEdit}
-              handleChange={handleReactChange}
-              dynamicOptions={dropDownData?.getBindCentreName}
-              // requiredClassName="required-fields"
-              value={values?.centreName}
-            />
+            {localData?.flag == 1 ? (
+              <Input
+                type="text"
+                className="form-control"
+                id="testName"
+                lable={t("Centre name")}
+                placeholder=" "
+                required={true}
+                value={localData?.centreName}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                name="testName"
+                disabled={true}
+              />
+            ) : (
+              <ReactSelect
+                placeholderName={t("Select centre name")}
+                searchable={true}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                id={"centreName"}
+                name={"centreName"}
+                removeIsClearable={true}
+                handleChange={handleReactChange}
+                isDisabled={isEdit}
+                dynamicOptions={dropDownData?.getBindCentreName}
+                value={values?.centreName}
+              />
+            )}
             <ReactSelect
               placeholderName={t("Select alignment")}
               searchable={true}

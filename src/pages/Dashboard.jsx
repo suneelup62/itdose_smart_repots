@@ -18,6 +18,7 @@ import ReactSelect from "../components/formComponent/ReactSelect";
 import { notify } from "../utils/utils";
 import Marque from "../components/UI/Marque";
 import NewsDataDashboard from "../components/modalComponent/Utils/NewsDataDashboard";
+import { useCommonDropdownsCenter } from "../utils/hooks/useCommonDropdownsCenter";
 Chart.register(...registerables);
 
 const Dashboard = () => {
@@ -40,7 +41,7 @@ const Dashboard = () => {
       document.getElementById("birthdayHead")?.getBoundingClientRect().height
     );
   };
-
+const {dropDownData} = useCommonDropdownsCenter()
   const handleDateValue = (selectedRange) => {
     const today = new Date();
     let startDate, endDate;

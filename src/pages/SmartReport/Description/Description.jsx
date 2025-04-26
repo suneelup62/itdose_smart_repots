@@ -22,11 +22,10 @@ import Input from "../../../components/formComponent/Input";
 
 const Description = () => {
   const [t] = useTranslation();
-  const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
+  const { dropDownData, GetCentreName, BindTestCode,centres } = useCommonDropdowns();
   const prevCentreId = useRef(null);
   const [tableData, setTableData] = useState([]);
   const localData = useLocalStorage("userDetails", "get");
-  console.log("RoleFlag", localData?.flag);
   const [isEdit, setIsEdit] = useState(false);
   const [values, setValues] = useState({
     centreName: null,
@@ -38,6 +37,7 @@ const Description = () => {
   });
 
   console.log("dropDownData",dropDownData)
+  console.log("centres to redux",centres)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -230,17 +230,6 @@ const Description = () => {
     }
   }, [values?.centreName]);
 
-
-  // useEffect(()=>{
-  //   if(localData?.flag == 1){
-  //     setValues((prev) => ({ ...prev, 
-        
-  //       centreName:dropDownData?.getBindCentreName[0]}));
-  //   }
-  //   fetchTestGrid(values?.centreName?.Centreid)
-  // },[localData?.flag == 1])
-  console.log("testGridCacheRef",testGridCacheRef)
-  console.log("values",values)
   return (
     <>
       <div className="mt-2 spatient_registration_card">
