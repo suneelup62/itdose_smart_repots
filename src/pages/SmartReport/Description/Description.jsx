@@ -118,14 +118,14 @@ const Description = () => {
       Description: values?.Description,
       Image: values?.imageBase64,
     };
-    console.log("payload upadted",payload)
+
     try {
       const response = await MasterInvestigationDescription(payload);
       if (response?.status) {
         notify(response.message, "success");
         testGridCacheRef.current[payload.Centreid] = null;
 
-        await fetchTestGrid(payload.Centreid);
+        await fetchTestGrid(payload?.Centreid);
         handleCancel();
       } else {
         notify(response.message, "error");
