@@ -24,76 +24,21 @@ import {
 const Riskfactor = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
-  // const [dropDownData, setDropDownData] = useState({
-  //   getBindCentreName: [],
-  //   getBindTestCode: [],
-  // });
-
-    const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
-    const prevCentreId = useRef(null);
+  const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
+  const localData = useLocalStorage("userDetails", "get");
+  const prevCentreId = useRef(null);
   const [isEdit, setIsEdit] = useState(false);
   const [setChildData, setSetChildData] = useState({});
-
+  const [editorText, setEditorText] = useState("");
+  const [Editable, setEditable] = useState(false);
   const [values, setValues] = useState({
     centreName: null,
     testCode: null,
   });
-  const [editorText, setEditorText] = useState("");
-
+ 
   const handleChangeEditor = (data) => {
     setEditorText(data);
   };
-
-  const [Editable, setEditable] = useState(false);
-  // const GetCentreName = async () => {
-  //   try {
-  //     const response = await CenterMasterBindclient();
-  //     if (response?.status) {
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         getBindCentreName: handleReactSelectDropDownOptions(
-  //           response?.data,
-  //           "CentreName",
-  //           "Centreid"
-  //         ),
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "Something went wrong");
-  //   }
-  // };
-
-
-  // const BindTestCode = async (stateID) => {
-  //   if (!stateID) {
-  //     setDropDownData((prev) => ({ ...prev, getBindTestCode: [] }));
-  //     return [];
-  //   }
-
-  //   try {
-  //     const response = await BindInvestigationTestCode({
-  //       clientid: String(stateID),
-  //     });
-  //     if (response?.data) {
-  //       const testCodeOptions = handleReactSelectDropDownOptionsTest(
-  //         response.data,
-  //         "Test",
-  //         "ID",
-  //         "TestCode",
-  //         "TestName"
-  //       );
-  //       setDropDownData((prev) => ({
-  //         ...prev,
-  //         getBindTestCode: testCodeOptions,
-  //       }));
-  //       return testCodeOptions; // Return the city options for immediate use
-  //     }
-  //     return [];
-  //   } catch (error) {
-  //     console.error("Error fetching cities:", error);
-  //     return [];
-  //   }
-  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,18 +49,16 @@ const Riskfactor = () => {
   };
 
   const handleReactChange = (name, selectedOption) => {
-
     const updatedValues = { ...values, [name]: selectedOption };
     setValues(updatedValues);
 
     if (name === "testCode" && selectedOption?.TestCode) {
       fetchGetRiskFactor(
-        values?.centreName?.Centreid || selectedOption?.Centreid,
+        values?.centreName?.Centreid || selectedOption?.Centreid||localData?.centreId,
         selectedOption?.TestCode
       );
     }
   };
-
 
   const handleSubmit = async () => {
     const requiredFields = [
@@ -130,12 +73,11 @@ const Riskfactor = () => {
     }
 
     const payload = {
-      Centreid: String(values?.centreName?.Centreid),
+      Centreid: String(values?.centreName?.Centreid||localData?.centreId),
       Testcode: values?.testCode?.TestCode,
       Test_id: String(values?.testCode?.value),
       Template: editorText,
     };
-    console.log("payload", payload);
     try {
       const response = await MasterInvestigationRiskfactor(payload);
       if (response?.status) {
@@ -160,16 +102,6 @@ const Riskfactor = () => {
     setEditable(true);
     setEditorText("");
   };
-
-  useEffect(() => {
-    GetCentreName();
-  }, []);
-
-  // useEffect(() => {
-  //   if (values?.centreName?.Centreid) {
-  //     BindTestCode(values?.centreName?.Centreid);
-  //   }
-  // }, [values?.centreName]);
 
   const fetchGetRiskFactor = async (id, Code) => {
     const payload = {
@@ -213,7 +145,7 @@ const Riskfactor = () => {
 
   const handleUpdate = async () => {
     const payload = {
-      Centreid: String(values?.centreName?.Centreid),
+      Centreid: String(values?.centreName?.Centreid||localData?.centreId),
       Testcode: values?.testCode?.TestCode,
       Test_id: String(values?.testCode?.value),
       Template: editorText,
@@ -234,32 +166,29 @@ const Riskfactor = () => {
     }
   };
 
+  useEffect(() => {
+    GetCentreName();
+  }, []);
 
-  // useEffect(() => {
-  //   if (values?.centreName?.Centreid) {
-  //     BindTestCode(values?.centreName?.Centreid);
-  //   }
-  // }, [values?.centreName]);
+  useEffect(() => {
+    const currentCentreId = values?.centreName?.Centreid||localData?.centreId;
 
+    if (currentCentreId && currentCentreId !== prevCentreId.current) {
+      setValues((prev) => ({ ...prev, testCode: null }));
+      BindTestCode(currentCentreId);
+      prevCentreId.current = currentCentreId;
+      setEditable(true);
+      setEditorText("");
+    }
+  }, [values?.centreName]);
 
-   useEffect(() => {
-      const currentCentreId = values?.centreName?.Centreid;
-    
-      if (currentCentreId && currentCentreId !== prevCentreId.current) {
-        setValues((prev) => ({ ...prev, testCode: null }));
-        BindTestCode(currentCentreId);
-        prevCentreId.current = currentCentreId;
-        setEditable(true);
-        setEditorText("");
-      }
-    }, [values?.centreName]);
   return (
     <>
       <div className="mt-2 spatient_registration_card">
         <div className="patient_registration card">
           <Heading isBreadcrumb={true} />
           <div className="row p-2">
-            <ReactSelect
+            {/* <ReactSelect
               placeholderName={t("Select Centre Name")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -270,7 +199,34 @@ const Riskfactor = () => {
               dynamicOptions={dropDownData?.getBindCentreName}
               // requiredClassName="required-fields"
               value={values?.centreName}
-            />
+            /> */}
+            {localData?.flag == 1 ? (
+              <Input
+                type="text"
+                className="form-control"
+                id="testName"
+                lable={t("Centre name")}
+                placeholder=" "
+                required={true}
+                value={localData?.centreName}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                name="testName"
+                disabled={true}
+              />
+            ) : (
+              <ReactSelect
+                placeholderName={t("Select centre name")}
+                searchable={true}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                id={"centreName"}
+                name={"centreName"}
+                removeIsClearable={true}
+                handleChange={handleReactChange}
+                isDisabled={isEdit}
+                dynamicOptions={dropDownData?.getBindCentreName}
+                value={values?.centreName}
+              />
+            )}
             <ReactSelect
               placeholderName={t("Select test")}
               searchable={true}
