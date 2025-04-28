@@ -4851,3 +4851,7 @@ button.btn-success:hover {
 .noDataFoun{
   text-align: center;
 }
+
+.btnDisplayNone {
+  display: none;
+}

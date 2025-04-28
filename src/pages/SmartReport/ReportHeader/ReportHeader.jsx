@@ -508,12 +508,23 @@ const ReportHeader = () => {
                 >
                   {t("Update")}
                 </button>
-                <button
+                {localData?.flag==1?<button
+                  className="btn btn-sm btn-primary ml-2 btnDisplayNone"
+                  onClick={handleCencel}
+                >
+                  {t("Cancel")}
+                </button>:  <button
                   className="btn btn-sm btn-primary ml-2"
                   onClick={handleCencel}
                 >
                   {t("Cancel")}
-                </button>
+                </button>}
+                {/* <button
+                  className="btn btn-sm btn-primary ml-2"
+                  onClick={handleCencel}
+                >
+                  {t("Cancel")}
+                </button> */}
               </>
             ) : (
               <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
