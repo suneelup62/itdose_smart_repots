@@ -16,8 +16,8 @@ const SmartReportDetails = ({ tableData, onEdit }) => {
     t("State"),
     t("City"),
     t("Addres"),
-    t("Frontpage"),
-    t("Historicrepresnt"),
+    t("Front page"),
+    t("Health analysis"),
     t("Status"),
     t("Acction"),
   ];
