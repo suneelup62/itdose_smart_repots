@@ -20,7 +20,17 @@ const doctorSignature = () => {
   const [tableData, setTableData] = useState([]);
   const [t] = useTranslation();
   const localData = useLocalStorage("userDetails", "get");
-
+  const [isEdit, setIsEdit] = useState(false);
+  const [setChildData, setSetChildData] = useState({});
+  const { dropDownData, GetCentreName } = useCommonDropdowns();
+  const handleReactChange = (name, selectedOption) => {
+    setValues((prev) => ({ ...prev, [name]: selectedOption }));
+  };
+  const [values, setValues] = useState({
+    centreName: null,
+    alignment: null,
+    centreid: null,
+  });
   const ALIGNMENT_OPTION = [
     {
       label: "Right",
@@ -32,23 +42,6 @@ const doctorSignature = () => {
       value: "left",
     },
   ];
-
-  const [values, setValues] = useState({
-    centreName: null,
-    alignment: null,
-    centreid: null,
-  });
-
-  const [isEdit, setIsEdit] = useState(false);
-  const [setChildData, setSetChildData] = useState({});
-
-  const { dropDownData, GetCentreName } = useCommonDropdowns();
-  console.log("dropDownData doctorSignature", dropDownData);
-
-  const handleReactChange = (name, selectedOption) => {
-    setValues((prev) => ({ ...prev, [name]: selectedOption }));
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -150,6 +143,7 @@ const doctorSignature = () => {
     }
     GetCentreName();
   }, [values?.centreName]);
+
   const handleEdit = (val) => {
     setIsEdit(true);
     setValues({
