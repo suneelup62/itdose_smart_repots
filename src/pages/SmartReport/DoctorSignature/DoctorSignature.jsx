@@ -88,7 +88,7 @@ const doctorSignature = () => {
 
   const handleUpdate = async () => {
     const requiredFields = {
-      centreName: "Centre name is Required",
+      // centreName: "Centre name is Required",
       alignment: "Alignment is Required",
     };
 
