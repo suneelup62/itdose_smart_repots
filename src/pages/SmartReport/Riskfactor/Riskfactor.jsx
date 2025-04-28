@@ -119,7 +119,7 @@ const Riskfactor = () => {
           setIsEdit(false);
           setEditable(true);
           setEditorText("");
-          notify("No found for this code.", "error");
+          notify("No data found for this code.", "error");
         }
       }
     } catch (error) {
