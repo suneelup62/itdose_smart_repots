@@ -97,4 +97,9 @@ export const apiUrls = {
    // InvestigationMaster BindGetDescription
    GetReportHeader: `/api/v1/SmartReportMaster/GetReportHeader`,
 
+   // Dashboard Getreportcount 
+   Getreportcount: `/api/v1/SmartReportMaster/Getreportcount`,
+   
+   // Dashboard InsertReportcount
+   InsertReportcount: `/api/v1/SmartReportMaster/InsertReportcount`,
 };

@@ -503,3 +503,41 @@ export const BindInvestigationTestCode = async (payload) => {
         console.error("Error Found", error); 
       }
     };
+
+
+    // Dashboard Getreportcount 
+
+    export const DashboardGetreportcount = async (payload) => {
+      store.dispatch(setLoading(true));
+      try {
+        const options = {
+          method: "Post",
+          data: payload,
+        };
+        const data = await makeApiRequest(`${apiUrls.Getreportcount}`, options);
+        store.dispatch(setLoading(false));
+        return data;
+      } catch (error) {
+        store.dispatch(setLoading(false));
+        console.error("Error Found", error); 
+      }
+    };
+ 
+     //DashboardInsertReportcount
+     
+    export const DashboardInsertReportcount = async (payload) => {
+      store.dispatch(setLoading(true));
+      try {
+        const options = {
+          method: "Post",
+          data: payload,
+        };
+        const data = await makeApiRequest(`${apiUrls.InsertReportcount}`, options);
+        store.dispatch(setLoading(false));
+        return data;
+      } catch (error) {
+        store.dispatch(setLoading(false));
+        console.error("Error Found", error); 
+      }
+    };
+ 
