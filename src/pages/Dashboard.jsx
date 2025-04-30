@@ -20,7 +20,6 @@ import Marque from "../components/UI/Marque";
 import NewsDataDashboard from "../components/modalComponent/Utils/NewsDataDashboard";
 import { useCommonDropdownsCenter } from "../utils/hooks/useCommonDropdownsCenter";
 import { useDispatch } from "react-redux";
-import { getCentreNameAction } from "../store/reducers/CentreName/getCentreName";
 Chart.register(...registerables);
 
 const Dashboard = () => {
@@ -415,331 +414,329 @@ const Dashboard = () => {
         );
       default:
         return (
-          // <div className="container-fluid">
-          //   <div className="row">
-          //     <div className="col-md-6">
-          //       <Welcome />
-          //       {/* <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
-          //         {headSetName?.length > 0 &&
-          //           headSetName?.map((head, index) => {
-          //             if (apiData[head?.name]?.length > 0) {
-          //               return (
-          //                 <GraphBox
-          //                   data={createGraphData(
-          //                     apiData[head?.name],
-          //                     "TextField",
-          //                     ["ValueField"],
-          //                     head?.defaultChart
-          //                   )}
-          //                   component={getGraphComponent(head?.defaultChart)}
-          //                   options={{
-          //                     ...head?.options,
-          //                     ...dynamicOptions(head?.defaultChart),
-          //                   }}
-          //                   width={"100%"}
-          //                   headName={head?.name}
-          //                   handleGraphChange={(e) =>
-          //                     handleGraphChange(e, index, apiData[head?.name])
-          //                   }
-          //                   value={head?.defaultChart}
-          //                 />
-          //               );
-          //             }
-          //           })}
-          //       </div> */}
-          //     </div>
-          //     {/* graph end */}
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-6">
+                {/* <Welcome /> */}
+                {/* <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
+                  {headSetName?.length > 0 &&
+                    headSetName?.map((head, index) => {
+                      if (apiData[head?.name]?.length > 0) {
+                        return (
+                          <GraphBox
+                            data={createGraphData(
+                              apiData[head?.name],
+                              "TextField",
+                              ["ValueField"],
+                              head?.defaultChart
+                            )}
+                            component={getGraphComponent(head?.defaultChart)}
+                            options={{
+                              ...head?.options,
+                              ...dynamicOptions(head?.defaultChart),
+                            }}
+                            width={"100%"}
+                            headName={head?.name}
+                            handleGraphChange={(e) =>
+                              handleGraphChange(e, index, apiData[head?.name])
+                            }
+                            value={head?.defaultChart}
+                          />
+                        );
+                      }
+                    })}
+                </div> */}
+              </div>
+              {/* graph end */}
 
-          //     <div className="col-md-6">
-          //       <div className="row">
-          //         {/* <div className="col-md-6">
-          //           <div className="birthDay-Box">
-          //             <div
-          //               className="birthdayHead d-flex justify-content-between"
-          //               id="birthdayHead"
-          //             >
-          //               <span style={{ fontWeight: 700, color: "#fb5353" }}>
-          //                 BirthDay List{" "}
-          //               </span>
-          //               ({moment().format("dddd, MMMM Do YYYY")})
-          //             </div>
-          //             <div
-          //               style={{
-          //                 padding: "2px",
-          //               }}
-          //             >
-          //               <Marque height={handleHeightOfBirthDaycard()}>
-          //                 {birthDayData?.map((item, index) => (
-          //                   <div className="birthdayBody mt-2" key={index}>
-          //                     <div
-          //                       className="thread"
-          //                       style={{
-          //                         backgroundColor: generateRandomColor(),
-          //                         fontSize: "10px",
-          //                         padding: "2px 5px",
-          //                         borderRadius: "0px 5px 5px 0px",
-          //                         display: "inline",
-          //                         color: "black",
-          //                         fontWeight: "600",
-          //                       }}
-          //                     >
-          //                       {item?.Department}
-          //                     </div>
-          //                     <div className="d-flex justify-content-between p-2">
-          //                       <div className="deatils">
-          //                         <div style={{ fontWeight: 800 }}>
-          //                           {item?.EmployeeName}
-          //                         </div>
-          //                         <div>
-          //                           {item?.EmployeeAge}
-          //                           <svg
-          //                             xmlns="http://www.w3.org/2000/svg"
-          //                             viewBox="0 0 64 64"
-          //                             width="20"
-          //                             height="20"
-          //                           >
-          //                             <rect
-          //                               x="10"
-          //                               y="30"
-          //                               width="44"
-          //                               height="20"
-          //                               rx="4"
-          //                               ry="4"
-          //                               fill="#FFB74D"
-          //                             />
+              {/* <div className="col-md-6">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="birthDay-Box">
+                      <div
+                        className="birthdayHead d-flex justify-content-between"
+                        id="birthdayHead"
+                      >
+                        <span style={{ fontWeight: 700, color: "#fb5353" }}>
+                          BirthDay List{" "}
+                        </span>
+                        ({moment().format("dddd, MMMM Do YYYY")})
+                      </div>
+                      <div
+                        style={{
+                          padding: "2px",
+                        }}
+                      >
+                        <Marque height={handleHeightOfBirthDaycard()}>
+                          {birthDayData?.map((item, index) => (
+                            <div className="birthdayBody mt-2" key={index}>
+                              <div
+                                className="thread"
+                                style={{
+                                  backgroundColor: generateRandomColor(),
+                                  fontSize: "10px",
+                                  padding: "2px 5px",
+                                  borderRadius: "0px 5px 5px 0px",
+                                  display: "inline",
+                                  color: "black",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {item?.Department}
+                              </div>
+                              <div className="d-flex justify-content-between p-2">
+                                <div className="deatils">
+                                  <div style={{ fontWeight: 800 }}>
+                                    {item?.EmployeeName}
+                                  </div>
+                                  <div>
+                                    {item?.EmployeeAge}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 64 64"
+                                      width="20"
+                                      height="20"
+                                    >
+                                      <rect
+                                        x="10"
+                                        y="30"
+                                        width="44"
+                                        height="20"
+                                        rx="4"
+                                        ry="4"
+                                        fill="#FFB74D"
+                                      />
 
-          //                             <path
-          //                               d="M10 30 Q16 24, 22 30 T32 30 T42 30 T54 30"
-          //                               fill="#FFCC80"
-          //                             />
+                                      <path
+                                        d="M10 30 Q16 24, 22 30 T32 30 T42 30 T54 30"
+                                        fill="#FFCC80"
+                                      />
 
-          //                             <rect
-          //                               x="18"
-          //                               y="16"
-          //                               width="4"
-          //                               height="14"
-          //                               fill="#90CAF9"
-          //                             />
-          //                             <rect
-          //                               x="30"
-          //                               y="16"
-          //                               width="4"
-          //                               height="14"
-          //                               fill="#90CAF9"
-          //                             />
-          //                             <rect
-          //                               x="42"
-          //                               y="16"
-          //                               width="4"
-          //                               height="14"
-          //                               fill="#90CAF9"
-          //                             />
+                                      <rect
+                                        x="18"
+                                        y="16"
+                                        width="4"
+                                        height="14"
+                                        fill="#90CAF9"
+                                      />
+                                      <rect
+                                        x="30"
+                                        y="16"
+                                        width="4"
+                                        height="14"
+                                        fill="#90CAF9"
+                                      />
+                                      <rect
+                                        x="42"
+                                        y="16"
+                                        width="4"
+                                        height="14"
+                                        fill="#90CAF9"
+                                      />
 
-          //                             <circle
-          //                               cx="20"
-          //                               cy="14"
-          //                               r="2"
-          //                               fill="#FFEB3B"
-          //                             />
-          //                             <circle
-          //                               cx="32"
-          //                               cy="14"
-          //                               r="2"
-          //                               fill="#FFEB3B"
-          //                             />
-          //                             <circle
-          //                               cx="44"
-          //                               cy="14"
-          //                               r="2"
-          //                               fill="#FFEB3B"
-          //                             />
+                                      <circle
+                                        cx="20"
+                                        cy="14"
+                                        r="2"
+                                        fill="#FFEB3B"
+                                      />
+                                      <circle
+                                        cx="32"
+                                        cy="14"
+                                        r="2"
+                                        fill="#FFEB3B"
+                                      />
+                                      <circle
+                                        cx="44"
+                                        cy="14"
+                                        r="2"
+                                        fill="#FFEB3B"
+                                      />
 
-          //                             <rect
-          //                               x="10"
-          //                               y="40"
-          //                               width="44"
-          //                               height="4"
-          //                               fill="#F57C00"
-          //                             />
-          //                             <rect
-          //                               x="10"
-          //                               y="44"
-          //                               width="44"
-          //                               height="6"
-          //                               fill="#EF6C00"
-          //                             />
+                                      <rect
+                                        x="10"
+                                        y="40"
+                                        width="44"
+                                        height="4"
+                                        fill="#F57C00"
+                                      />
+                                      <rect
+                                        x="10"
+                                        y="44"
+                                        width="44"
+                                        height="6"
+                                        fill="#EF6C00"
+                                      />
 
-          //                             <rect
-          //                               x="8"
-          //                               y="50"
-          //                               width="48"
-          //                               height="4"
-          //                               rx="2"
-          //                               ry="2"
-          //                               fill="#BDBDBD"
-          //                             />
-          //                           </svg>
-          //                         </div>
-          //                       </div>
-          //                       <div>
-          //                         <img
-          //                           src={item?.EmployeePhoto}
-          //                           className="img-holder"
-          //                         />
-          //                       </div>
-          //                     </div>
-          //                   </div>
-          //                 ))}
-          //               </Marque>
-          //             </div>
-          //           </div>
-          //         </div> */}
+                                      <rect
+                                        x="8"
+                                        y="50"
+                                        width="48"
+                                        height="4"
+                                        rx="2"
+                                        ry="2"
+                                        fill="#BDBDBD"
+                                      />
+                                    </svg>
+                                  </div>
+                                </div>
+                                <div>
+                                  <img
+                                    src={item?.EmployeePhoto}
+                                    className="img-holder"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </Marque>
+                      </div>
+                    </div>
+                  </div>
 
-          //         {/* <div className="col-md-6">
-          //           <div className="birthDay-Box">
-          //             <div
-          //               className="birthdayHead d-flex justify-content-between"
-          //               id="birthdayHead"
-          //             >
-          //               <span style={{ fontWeight: 700, color: "blue" }}>
-          //                 News
-          //               </span>
-          //               ({moment(payloadData?.fromDate).format("DD-MMM-YYYY")} -{" "}
-          //               {moment(payloadData?.toDate).format("DD-MMM-YYYY")} )
-          //             </div>
-          //             <div
-          //               style={{
-          //                 padding: "2px",
-          //               }}
-          //             >
-          //               <Marque height={handleHeightOfBirthDaycard()}>
-          //                 {newsLetter?.map((item, index) => (
-          //                   <div
-          //                     className="birthdayBody mt-2"
-          //                     key={index}
-          //                     onClick={() => handleNewsModal(item)}
-          //                   >
-          //                     <div
-          //                       className="thread"
-          //                       style={{
-          //                         backgroundColor: generateRandomColor(),
-          //                         fontSize: "10px",
-          //                         padding: "2px 5px",
-          //                         borderRadius: "0px 5px 5px 0px",
-          //                         display: "inline",
-          //                         color: "black",
-          //                         fontWeight: "600",
-          //                       }}
-          //                     >
-          //                       {item?.Subject}
-          //                     </div>
-          //                     <div className="d-flex justify-content-between p-2">
-          //                       <div className="deatils">
-          //                         <div style={{ fontWeight: 800 }}>
-          //                           <svg
-          //                             width="20"
-          //                             height="15"
-          //                             viewBox="0 0 24 24"
-          //                             fill="none"
-          //                             xmlns="http://www.w3.org/2000/svg"
-          //                           >
-          //                             <circle
-          //                               cx="12"
-          //                               cy="8"
-          //                               r="4"
-          //                               stroke="currentColor"
-          //                               strokeWidth="2"
-          //                               fill="none"
-          //                             />
-          //                             <path
-          //                               d="M4 20C4 15.5817 7.58172 12 12 12C16.4183 12 20 15.5817 20 20"
-          //                               stroke="currentColor"
-          //                               strokeWidth="2"
-          //                               fill="none"
-          //                             />
-          //                           </svg>{" "}
-          //                           {item?.RaisedBy}
-          //                         </div>
-          //                         <div style={{ color: "green" }}>
-          //                           <svg
-          //                             width="24"
-          //                             height="15"
-          //                             viewBox="0 0 24 24"
-          //                             fill="none"
-          //                             xmlns="http://www.w3.org/2000/svg"
-          //                           >
-          //                             <path
-          //                               d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13h-1v6h6v-1h-5z"
-          //                               fill="currentColor"
-          //                             />
-          //                           </svg>
-          //                           {item?.NewsDates}
-          //                         </div>
-          //                       </div>
-          //                       <div>
-          //                         <div style={{ color: "blue" }}>
-          //                           <svg
-          //                             width="24"
-          //                             height="15"
-          //                             viewBox="0 0 24 24"
-          //                             fill="none"
-          //                             xmlns="http://www.w3.org/2000/svg"
-          //                           >
-          //                             <path
-          //                               d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13h-1v6h6v-1h-5z"
-          //                               fill="currentColor"
-          //                             />
-          //                           </svg>{" "}
-          //                           {item?.EntryDate}
-          //                         </div>
-          //                         <div style={{ color: "red" }}>
-          //                           <svg
-          //                             width="24"
-          //                             height="15"
-          //                             viewBox="0 0 24 24"
-          //                             fill="none"
-          //                             xmlns="http://www.w3.org/2000/svg"
-          //                           >
-          //                             <path
-          //                               d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13h-1v6h6v-1h-5z"
-          //                               fill="currentColor"
-          //                             />
-          //                           </svg>
-          //                           {item?.NewsExpiryDate}
-          //                         </div>
-          //                       </div>
-          //                     </div>
-          //                   </div>
-          //                 ))}
-          //               </Marque>
-          //             </div>
-          //           </div>
-          //         </div> */}
-          //       </div>
-          //       {apiData?.firstAPIData &&
-          //         Object.keys(apiData?.firstAPIData)?.map((item, index) => {
-          //           return cardDataPrint(Number(item), apiData?.firstAPIData);
-          //         })}
-          //     </div>
-          //   </div>
-          // </div>
-          <div>
-            <h1>Dashboard</h1>
+                  <div className="col-md-6">
+                    <div className="birthDay-Box">
+                      <div
+                        className="birthdayHead d-flex justify-content-between"
+                        id="birthdayHead"
+                      >
+                        <span style={{ fontWeight: 700, color: "blue" }}>
+                          News
+                        </span>
+                        ({moment(payloadData?.fromDate).format("DD-MMM-YYYY")} -{" "}
+                        {moment(payloadData?.toDate).format("DD-MMM-YYYY")} )
+                      </div>
+                      <div
+                        style={{
+                          padding: "2px",
+                        }}
+                      >
+                        <Marque height={handleHeightOfBirthDaycard()}>
+                          {newsLetter?.map((item, index) => (
+                            <div
+                              className="birthdayBody mt-2"
+                              key={index}
+                              onClick={() => handleNewsModal(item)}
+                            >
+                              <div
+                                className="thread"
+                                style={{
+                                  backgroundColor: generateRandomColor(),
+                                  fontSize: "10px",
+                                  padding: "2px 5px",
+                                  borderRadius: "0px 5px 5px 0px",
+                                  display: "inline",
+                                  color: "black",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {item?.Subject}
+                              </div>
+                              <div className="d-flex justify-content-between p-2">
+                                <div className="deatils">
+                                  <div style={{ fontWeight: 800 }}>
+                                    <svg
+                                      width="20"
+                                      height="15"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <circle
+                                        cx="12"
+                                        cy="8"
+                                        r="4"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        fill="none"
+                                      />
+                                      <path
+                                        d="M4 20C4 15.5817 7.58172 12 12 12C16.4183 12 20 15.5817 20 20"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        fill="none"
+                                      />
+                                    </svg>{" "}
+                                    {item?.RaisedBy}
+                                  </div>
+                                  <div style={{ color: "green" }}>
+                                    <svg
+                                      width="24"
+                                      height="15"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13h-1v6h6v-1h-5z"
+                                        fill="currentColor"
+                                      />
+                                    </svg>
+                                    {item?.NewsDates}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div style={{ color: "blue" }}>
+                                    <svg
+                                      width="24"
+                                      height="15"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13h-1v6h6v-1h-5z"
+                                        fill="currentColor"
+                                      />
+                                    </svg>{" "}
+                                    {item?.EntryDate}
+                                  </div>
+                                  <div style={{ color: "red" }}>
+                                    <svg
+                                      width="24"
+                                      height="15"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13h-1v6h6v-1h-5z"
+                                        fill="currentColor"
+                                      />
+                                    </svg>
+                                    {item?.NewsExpiryDate}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </Marque>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {apiData?.firstAPIData &&
+                  Object.keys(apiData?.firstAPIData)?.map((item, index) => {
+                    return cardDataPrint(Number(item), apiData?.firstAPIData);
+                  })}
+              </div> */}
+            </div>
           </div>
+          // <div>
+          //   <h1>Dashboard</h1>
+          // </div>
         );
     }
   };
-  useEffect(() => {
-    dispatch(getCentreNameAction());
-  }, []);
-
   
   return (
     <div>
       <div className="mainDashboardwrp">
-        {/* <div
+        <div
           className="card patient_registration border"
         >
+
+          {/* start this code */}
           <div className="row g-4 m-2">
             <ReactSelect
               respclass={"col-xl-4 col-md-8 col-sm-12 col-12"}
@@ -751,7 +748,7 @@ const Dashboard = () => {
             />
 
           </div>
-        </div> */}
+        </div>
         <ScrollComponent viewPort={0.7}>
           {handleRenderDashboard(selectedButton)}
         </ScrollComponent>

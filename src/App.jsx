@@ -16,6 +16,7 @@ import {
 } from "./store/reducers/common/CommonExportFunction";
 import { setMenuBasedOnRole } from "./store/reducers/common/CommonSlice";
 import { useLocalStorage } from "./utils/hooks/useLocalStorage";
+import { getCentreNameAction } from "./store/reducers/CentreName/getCentreName";
 
 const { VITE_NODE_ENV } = import.meta.env;
 
@@ -59,6 +60,9 @@ const roleFlag = Number(user?.flag); // Or however you're getting the role
     }
   }, [location]);
 
+  useEffect(() => {
+    dispatch(getCentreNameAction());
+  }, [dispatch]);
   return (
     <>
       {loading && <Loading />}
