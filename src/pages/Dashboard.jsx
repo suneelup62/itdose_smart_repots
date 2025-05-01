@@ -175,9 +175,6 @@ const ShowAllCentre= async(id)=>{
     }
       }, [values?.centreName]);
 
-
-
-    console.log("values data",values)
   return (
     <div>
       <div className="mainDashboardwrp">

@@ -13,6 +13,7 @@ const DashboardData = ({ tableData, onEdit}) => {
 
   const THEAD = [
     t("S.No"),
+    t("Centre Id"),
     t("Center Name"),
     t("TotalReportCount"),
     t("GeneratedReportCount"),
@@ -31,15 +32,16 @@ const [isUploadSuccess, setIsUploadSuccess] = useState(false);
   };
 
   const handleTableData = (tableData) => {
-    console.log("ddddd",tableData)
     return tableData?.map((row, index) => {
-      const { centrename, TotalReportCount, GeneratedReportCount,RemainingReportCount } = row;
+      const { centreid,centrename, TotalReportCount, GeneratedReportCount,RemainingReportCount } = row;
       return {
         SNo: <div className="p-1">{index + 1}</div>,
+        centreid:centreid,
         centre: centrename,
         TotalReportCount: TotalReportCount,
         GeneratedReportCount: GeneratedReportCount,
-        RemainingReportCount:RemainingReportCount
+        RemainingReportCount:RemainingReportCount,
+        // RemainingReportCount:(<div style={{color:"green", fontWeight:"bold"}}>{RemainingReportCount}</div>)
         // Modify: (
         //   <i
         //     className="fa fa-edit"
