@@ -28,7 +28,7 @@ import Input from "../components/formComponent/Input";
 Chart.register(...registerables);
 
 const Dashboard = () => {
-  const localdata = useLocalStorage("userData", "get");
+  const localData = useLocalStorage("userDetails", "get");
    const [values, setValues] = useState({
       centreName: null,
       Reportcount:""
@@ -158,10 +158,9 @@ const ShowAllCentre= async(id)=>{
 }
   useEffect(() => {
       GetCentreName();
-      // if(localData?.flag == 1){
-      //   fetchTestGrid(localData?.centreId)
-      //   BindTestCode(localData?.centreId);       
-      // }
+      if(localData?.flag == 1){
+        Getreportcount(localData?.centreId)      
+      }
      
     }, []);
 
@@ -184,8 +183,22 @@ const ShowAllCentre= async(id)=>{
 
           {/* start this code */}
           <div className="row g-4 m-2">
-            <ReactSelect
-                placeholderName={("Select centre name")}
+          {localData?.flag == 1 ? (
+              <Input
+                type="text"
+                className="form-control"
+                id="testName"
+                lable={t("Centre name")}
+                placeholder=" "
+                required={true}
+                value={localData?.centreName}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                name="testName"
+                disabled={true}
+              />
+            ) : (
+              <ReactSelect
+                placeholderName={t("Select centre name")}
                 searchable={true}
                 respclass="col-xl-3 col-md-4 col-sm-6 col-12"
                 id={"centreName"}
@@ -196,6 +209,19 @@ const ShowAllCentre= async(id)=>{
                 dynamicOptions={dropDownData?.getBindCentreName}
                 value={values?.centreName}
               />
+            )}
+            {/* <ReactSelect
+                placeholderName={("Select centre name")}
+                searchable={true}
+                respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                id={"centreName"}
+                name={"centreName"}
+                removeIsClearable={true}
+                handleChange={handleReactChange}
+                isDisabled={isEdit}
+                dynamicOptions={dropDownData?.getBindCentreName}
+                value={values?.centreName}
+              /> */}
               {isInsertReportcount? (<>
                 <Input
               type="text"
@@ -212,9 +238,9 @@ const ShowAllCentre= async(id)=>{
              <button className="btn btn-sm btn-primary" onClick={handleSubmit} style={{marginRight:"2px"}}>
                 {t("Add")}
               </button>
-              <button className="btn btn-sm btn-primary" onClick={ShowAllCentre}>
+              {localData?.flag==1?(<></>):(  <button className="btn btn-sm btn-primary" onClick={ShowAllCentre}>
                 {t("Show all centre")}
-              </button>
+              </button>)}
               </>):(<>
               </>)}
           </div>
