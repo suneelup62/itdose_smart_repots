@@ -15,9 +15,9 @@ const DashboardData = ({ tableData, onEdit}) => {
     t("S.No"),
     t("Centre Id"),
     t("Center Name"),
-    t("TotalReportCount"),
-    t("GeneratedReportCount"),
-    t("RemainingReportCount"),
+    t("Total Report Count"),
+    t("Generated Report Count"),
+    t("Remaining Report Count"),
   ];
 
   const [uploadFileData, setUploadFileData] = useState({
@@ -32,6 +32,10 @@ const [isUploadSuccess, setIsUploadSuccess] = useState(false);
   };
 
   const handleTableData = (tableData) => {
+    if (!Array.isArray(tableData)) {
+        console.error("handleTableData: 'tableData' is not an array", tableData);
+        return [];
+      }
     return tableData?.map((row, index) => {
       const { centreid,centrename, TotalReportCount, GeneratedReportCount,RemainingReportCount } = row;
       return {

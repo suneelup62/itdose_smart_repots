@@ -31,6 +31,10 @@ const [isUploadSuccess, setIsUploadSuccess] = useState(false);
   };
 
   const handleTableData = (tableData) => {
+    if (!Array.isArray(tableData)) {
+      console.error("handleTableData: 'tableData' is not an array", tableData);
+      return [];
+    }
     return tableData?.map((row, index) => {
       const { Centre, Test, Desription } = row;
       return {
