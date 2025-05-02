@@ -95,7 +95,7 @@ const handleChange = (e) => {
       debugger
       const requiredFields = [
         // { key: "centreName", message: "Centre Name is required" },
-        { key: "centreName", message: "Centre Name is required" },
+        // { key: "centreName", message: "Centre Name is required" },
         { key: "Reportcount", message: "Reportcount is required" },
       ];
   
