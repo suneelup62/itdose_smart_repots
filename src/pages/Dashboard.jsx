@@ -12,7 +12,10 @@ import DashboardTable from "../components/UI/customTable/DashboardTable/Dashboar
 import Modal from "../components/modalComponent/Modal";
 import BussinessDashboard from "./BussinessDashboard";
 import ScrollComponent from "../components/ScrollComponent";
-import { useCookiesStorage, useLocalStorage } from "../utils/hooks/useLocalStorage";
+import {
+  useCookiesStorage,
+  useLocalStorage,
+} from "../utils/hooks/useLocalStorage";
 import CardSection from "../components/DashboardUI/CardSection";
 import ReactSelect from "../components/formComponent/ReactSelect";
 import { notify } from "../utils/utils";
@@ -23,167 +26,146 @@ import { useDispatch } from "react-redux";
 import { useCommonDropdowns } from "../utils/hooks/useCommonDropdowns";
 import { useTranslation } from "react-i18next";
 import DashboardData from "./DashboardData";
-import { DashboardGetreportcount, DashboardInsertReportcount } from "../networkServices/smartReport";
+import {
+  DashboardGetreportcount,
+  DashboardInsertReportcount,
+} from "../networkServices/smartReport";
 import Input from "../components/formComponent/Input";
 Chart.register(...registerables);
 
 const Dashboard = () => {
   const localData = useLocalStorage("userDetails", "get");
-   const [values, setValues] = useState({
-      centreName: null,
-      Reportcount:""
-    });
-    const [t] = useTranslation();
-  const { dropDownData, GetCentreName, BindTestCode,} = useCommonDropdowns();
+  const [values, setValues] = useState({
+    centreName: null,
+    Reportcount: "",
+  });
+  const [t] = useTranslation();
+  const { dropDownData, GetCentreName, BindTestCode } = useCommonDropdowns();
   const [isEdit, setIsEdit] = useState(false);
-const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState([]);
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
   };
- 
-const [isInsertReportcount,setInsertReportcount]=useState(true)
- const prevCentreId = useRef(null);
+
+  const [isInsertReportcount, setInsertReportcount] = useState(true);
+  const prevCentreId = useRef(null);
   const testGridCacheRef = useRef({});
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  setValues((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-
-  //  const Getreportcount = async (id) => {   
-
-  //     try {
-  //       const response = await DashboardGetreportcount(id);
-  //       if (!response?.status || !response?.data?.length) {
-  //         notify("No Data Found", "error");
-  //         setTableData([]);
-  //         return;
-  //       }
-  //       // testGridCacheRef.current[id] = response.data;
-        
-  //       setTableData(response.data);
-  //     } catch (error) {
-  //       console.error("Something went wrong:", error);
-  //     }
-  //   };
-
-
-
-   const Getreportcount = async (id) => {
-      if (testGridCacheRef.current[id]) {
-        setTableData(testGridCacheRef.current[id]||"");
-        return;
-      }
-  
-      try {
-        const response = await DashboardGetreportcount({ centreid: String(id) });
-        if (!response?.status || !response?.data?.length) {
-          notify("No Data Found", "error");
-          setTableData([]);
-          return;
-        }
-        testGridCacheRef.current[id] = response.data;
-        setTableData(response.data);
-      } catch (error) {
-        console.error("Something went wrong:", error);
-      }
-    };
-    const handleSubmit = async () => {
-      debugger
-      const requiredFields = [
-        // { key: "centreName", message: "Centre Name is required" },
-        // { key: "centreName", message: "Centre Name is required" },
-        { key: "Reportcount", message: "Reportcount is required" },
-      ];
-  
-      for (let field of requiredFields) {
-        if (!values[field.key]) {
-          notify(field.message, "error");
-          return;
-        }
-      }
-  
-     
-  
-      const centreId = String(values.centreName.Centreid);
-      const payload = { Centreid: centreId, Totalreportcount: String(values.Reportcount) };
-      console.log("Inserting report count with payload:", payload);
-     console.log("payload",payload)
-      try {
-        const response = await DashboardInsertReportcount(payload);
-        if (response?.status) {
-          notify(response.message, "success");
-          testGridCacheRef.current[payload.Centreid] = null;
-          await Getreportcount(payload?.Centreid);
-          handleCancel();
-        } else {
-          notify(response.message, "error");
-        }
-      } catch (error) {
-        console.error("Something went wrong:", error);
-      }
-    };
-
-
-    const handleCancel = () => {
-      setValues((prev) => ({
-        ...prev,
-        Reportcount:""
-      }));
-      setIsEdit(false);
-    };
-
-
-const ShowAllCentre= async(id)=>{
-  if (testGridCacheRef.current[id]) {
-    setTableData(testGridCacheRef.current[id]||"");
-    return;
-  }
-
-  try {
-    const response = await DashboardGetreportcount({ centreid: String("") });
-    if (!response?.status || !response?.data?.length) {
-      notify("No Data Found", "error");
-      setTableData([]);
+  const Getreportcount = async (id) => {
+    if (testGridCacheRef.current[id]) {
+      setTableData(testGridCacheRef.current[id] || "");
       return;
     }
-    // testGridCacheRef.current[id] = response.data;
-    setTableData(response.data);
-  } catch (error) {
-    console.error("Something went wrong:", error);
-  }
-}
-  useEffect(() => {
-      GetCentreName();
-      if(localData?.flag == 1){
-        Getreportcount(localData?.centreId)      
-      }
-     
-    }, []);
 
-    useEffect(() => {
-      
-      const currentCentreId = values?.centreName?.Centreid;
+    try {
+      const response = await DashboardGetreportcount({ centreid: String(id) });
+      if (!response?.status || !response?.data?.length) {
+        notify("No Data Found", "error");
+        setTableData([]);
+        return;
+      }
+      testGridCacheRef.current[id] = response.data;
+      setTableData(response.data);
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
+
+  console.log("localData?.centreId)", localData?.centreId);
+  const handleSubmit = async () => {
+    const requiredFields = [
+      ...(String(localData?.flag) === "1"
+        ? []
+        : [{ key: "centreName", message: "Centre Name is required" }]),
+      { key: "Reportcount", message: "Reportcount is required" },
+    ];
+
+    for (let field of requiredFields) {
+      if (!values[field.key]) {
+        notify(field.message, "error");
+        return;
+      }
+    }
+
+    const centreId = String(
+      values?.centreName?.Centreid || localData?.centreId
+    );
+    const payload = {
+      Centreid: centreId,
+      Totalreportcount: String(values.Reportcount),
+    };
+    try {
+      const response = await DashboardInsertReportcount(payload);
+      if (response?.status) {
+        notify(response.message, "success");
+        testGridCacheRef.current[payload.Centreid] = null;
+        await Getreportcount(payload?.Centreid);
+        handleCancel();
+      } else {
+        notify(response.message, "error");
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setValues((prev) => ({
+      ...prev,
+      Reportcount: "",
+    }));
+    setIsEdit(false);
+  };
+
+  const ShowAllCentre = async (id) => {
+    if (testGridCacheRef.current[id]) {
+      setTableData(testGridCacheRef.current[id] || "");
+      return;
+    }
+
+    try {
+      const response = await DashboardGetreportcount({ centreid: String("") });
+      if (!response?.status || !response?.data?.length) {
+        notify("No Data Found", "error");
+        setTableData([]);
+        return;
+      }
+      // testGridCacheRef.current[id] = response.data;
+      setTableData(response.data);
+    } catch (error) {
+      console.error("Something went wrong:", error);
+    }
+  };
+  useEffect(() => {
+    GetCentreName();
+    if (localData?.flag == 1) {
+      Getreportcount(localData?.centreId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const currentCentreId = values?.centreName?.Centreid;
     if (currentCentreId && currentCentreId !== prevCentreId.current) {
       setValues((prev) => ({ ...prev, testCode: null }));
       Getreportcount(currentCentreId);
       prevCentreId.current = currentCentreId;
     }
-      }, [values?.centreName]);
+  }, [values?.centreName]);
 
   return (
     <div>
       <div className="mainDashboardwrp">
-        <div
-          className="card patient_registration border"
-        >
-
+        <div className="card patient_registration border">
           {/* start this code */}
           <div className="row g-4 m-2">
-          {localData?.flag == 1 ? (
+            {localData?.flag == 1 ? (
               <Input
                 type="text"
                 className="form-control"
@@ -222,30 +204,44 @@ const ShowAllCentre= async(id)=>{
                 dynamicOptions={dropDownData?.getBindCentreName}
                 value={values?.centreName}
               /> */}
-              {isInsertReportcount? (<>
+            {isInsertReportcount ? (
+              <>
                 <Input
-              type="text"
-              className="form-control"
-              id="Reportcount"
-              lable={t("Insert Reportcount")}
-              placeholder=" "
-              required={true}
-              value={values?.Reportcount}
-              respclass="col-xl-3 col-md-4 col-sm-6 col-12"
-              name="Reportcount"
-              onChange={handleChange}
-            /> 
-             <button className="btn btn-sm btn-primary" onClick={handleSubmit} style={{marginRight:"2px"}}>
-                {t("Add")}
-              </button>
-              {localData?.flag==1?(<></>):(  <button className="btn btn-sm btn-primary" onClick={ShowAllCentre}>
-                {t("Show all centre")}
-              </button>)}
-              </>):(<>
-              </>)}
+                  type="text"
+                  className="form-control"
+                  id="Reportcount"
+                  lable={t("Insert Reportcount")}
+                  placeholder=" "
+                  required={true}
+                  value={values?.Reportcount}
+                  respclass="col-xl-3 col-md-4 col-sm-6 col-12"
+                  name="Reportcount"
+                  onChange={handleChange}
+                />
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={handleSubmit}
+                  style={{ marginRight: "2px" }}
+                >
+                  {t("Add")}
+                </button>
+                {localData?.flag == 1 ? (
+                  <></>
+                ) : (
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={ShowAllCentre}
+                  >
+                    {t("Show all centre")}
+                  </button>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
-        <DashboardData tableData={tableData}/>
+        <DashboardData tableData={tableData} />
         {/* <div className="button-container-center mt-3">
             {isEdit ? (
               <>
@@ -294,7 +290,6 @@ const ShowAllCentre= async(id)=>{
         </Modal>
       )} */}
     </div>
-    
   );
 };
 
