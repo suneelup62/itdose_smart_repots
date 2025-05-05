@@ -101,8 +101,6 @@ const ReportHeader = () => {
   };
 
   const handleReactChange = (name, selectedOption) => {
-    console.log("Selected:", name, selectedOption);
-
     const updatedValues = { ...values, [name]: selectedOption };
     setValues(updatedValues);
   };
@@ -508,17 +506,21 @@ const ReportHeader = () => {
                 >
                   {t("Update")}
                 </button>
-                {localData?.flag==1?<button
-                  className="btn btn-sm btn-primary ml-2 btnDisplayNone"
-                  onClick={handleCencel}
-                >
-                  {t("Cancel")}
-                </button>:  <button
-                  className="btn btn-sm btn-primary ml-2"
-                  onClick={handleCencel}
-                >
-                  {t("Cancel")}
-                </button>}
+                {localData?.flag == 1 ? (
+                  <button
+                    className="btn btn-sm btn-primary ml-2 btnDisplayNone"
+                    onClick={handleCencel}
+                  >
+                    {t("Cancel")}
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-sm btn-primary ml-2"
+                    onClick={handleCencel}
+                  >
+                    {t("Cancel")}
+                  </button>
+                )}
                 {/* <button
                   className="btn btn-sm btn-primary ml-2"
                   onClick={handleCencel}
