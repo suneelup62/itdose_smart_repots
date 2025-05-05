@@ -31,6 +31,7 @@ import {
   DashboardInsertReportcount,
 } from "../networkServices/smartReport";
 import Input from "../components/formComponent/Input";
+import { getCentreNameAction } from "../store/reducers/CentreName/getCentreName";
 Chart.register(...registerables);
 
 const Dashboard = () => {
@@ -46,7 +47,7 @@ const Dashboard = () => {
   const handleReactChange = (name, selectedOption) => {
     setValues((prev) => ({ ...prev, [name]: selectedOption }));
   };
-
+  const dispatch = useDispatch();
   const [isInsertReportcount, setInsertReportcount] = useState(true);
   const prevCentreId = useRef(null);
   const testGridCacheRef = useRef({});
@@ -78,7 +79,6 @@ const Dashboard = () => {
     }
   };
 
-  console.log("localData?.centreId)", localData?.centreId);
   const handleSubmit = async () => {
     const requiredFields = [
       ...(String(localData?.flag) === "1"
@@ -159,6 +159,9 @@ const Dashboard = () => {
     }
   }, [values?.centreName]);
 
+  useEffect(() => {
+    dispatch(getCentreNameAction());
+  }, [dispatch]);
   return (
     <div>
       <div className="mainDashboardwrp">

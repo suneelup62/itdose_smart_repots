@@ -60,9 +60,10 @@ const roleFlag = Number(user?.flag); // Or however you're getting the role
     }
   }, [location]);
 
-  useEffect(() => {
-    dispatch(getCentreNameAction());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getCentreNameAction());
+  // }, [validUser]);
+ 
   return (
     <>
       {loading && <Loading />}

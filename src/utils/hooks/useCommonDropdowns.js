@@ -91,91 +91,205 @@
 
 
 // useCommonDropdowns CentreNameAndTest
-import { useState } from "react";
+// import { useEffect, useState } from "react";
+// import {
+//   BindInvestigationTestCode,
+//   GetCentreNameAPI,
+// } from "../../networkServices/smartReport";
+// import {
+//   handleReactSelectDropDownOptions,
+//   handleReactSelectDropDownOptionsTest,
+// } from "../utils";
+// import { useLocalStorage } from "../../utils/hooks/useLocalStorage";
+// import { useSelector } from "react-redux";
+// import { useDispatch } from "react-redux";
+// import { getCentreNameAction } from "../../store/reducers/CentreName/getCentreName";
+
+// export const useCommonDropdowns = () => {
+//   const localData = useLocalStorage("userDetails", "get");
+//   const { centres, loading, error } = useSelector((state) => state.CentreName);
+//   const dispatch = useDispatch();
+//   const [dropDownData, setDropDownData] = useState({
+//     getBindCentreName: [],
+//     getBindTestCode: [],
+//   });
+//   // const GetCentreName = async () => {
+//   //   try {
+//   //     const response = await GetCentreNameAPI();
+//   //     if (response?.status) {
+//   //       const data = handleReactSelectDropDownOptions(
+//   //         response?.data,
+//   //         "CentreName",
+//   //         "Centreid"
+//   //       );
+//   //       if(localData?.flag==1){
+//   //          const allCenterName=data
+//   //          const cenenterNameFlagOne=allCenterName.filter((e)=>{
+//   //           return e.Centreid == localData?.centreId
+//   //          })
+//   //         setDropDownData((prev) => ({
+//   //           ...prev,
+//   //           getBindCentreName: cenenterNameFlagOne,
+//   //         }));
+//   //       }
+//   //       else{
+//   //         setDropDownData((prev) => ({
+//   //           ...prev,
+//   //           getBindCentreName: data,
+//   //         }));
+//   //       }
+       
+//   //       return data;
+//   //     }
+//   //   } catch (error) {
+//   //     console.log(error, "GetCentreName Error");
+//   //   }
+//   // };
+
+//   const GetCentreName = async () => {
+//     try {
+//       // const response = await GetCentreNameAPI();
+//       if (!loading) {
+//         const data = await handleReactSelectDropDownOptions(
+//            centres,
+//           "CentreName",
+//           "Centreid"
+//         );
+//         if(localData?.flag==1){
+//            const allCenterName=data
+//            const cenenterNameFlagOne=allCenterName.filter((e)=>{
+//             return e.Centreid == localData?.centreId
+//            })
+//           setDropDownData((prev) => ({
+//             ...prev,
+//             getBindCentreName: cenenterNameFlagOne,
+//           }));
+//         }
+//         else{
+//           setDropDownData((prev) => ({
+//             ...prev,
+//             getBindCentreName: data,
+//           }));
+//         }
+       
+//         return data;
+//       }
+//     } catch (error) {
+//       console.log(error, "GetCentreName Error");
+//     }
+//   };
+//   const BindTestCode = async (clientId) => {
+//     try {
+//       const response = await BindInvestigationTestCode({
+//         clientid: String(clientId),
+//       });
+
+//       if (response?.data) {
+//         const testCodeOptions = handleReactSelectDropDownOptionsTest(
+//           response.data,
+//           "Test",
+//           "ID",
+//           "TestCode",
+//           "TestName"
+//         );
+
+//         setDropDownData((prev) => ({
+//           ...prev,
+//           getBindTestCode: testCodeOptions,
+//         }));
+//         return testCodeOptions;
+//       }
+//     } catch (error) {
+//       console.log(error, "BindTestCode Error");
+//     }
+//   };
+//   useEffect(() => {
+//     dispatch(getCentreNameAction());
+//   }, [dispatch]);
+//   return {
+//     dropDownData,
+//     GetCentreName,
+//     BindTestCode,
+//     centres
+//   };
+// };
+
+
+import { useEffect, useState } from "react";
 import {
   BindInvestigationTestCode,
-  GetCentreNameAPI,
 } from "../../networkServices/smartReport";
 import {
   handleReactSelectDropDownOptions,
   handleReactSelectDropDownOptionsTest,
 } from "../utils";
 import { useLocalStorage } from "../../utils/hooks/useLocalStorage";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getCentreNameAction } from "../../store/reducers/CentreName/getCentreName";
 
 export const useCommonDropdowns = () => {
   const localData = useLocalStorage("userDetails", "get");
-  const { centres, loading, error } = useSelector((state) => state.CentreName);
+  const dispatch = useDispatch();
+  const { centres, loading } = useSelector((state) => state.CentreName);
 
   const [dropDownData, setDropDownData] = useState({
     getBindCentreName: [],
     getBindTestCode: [],
   });
-  // const GetCentreName = async () => {
-  //   try {
-  //     const response = await GetCentreNameAPI();
-  //     if (response?.status) {
-  //       const data = handleReactSelectDropDownOptions(
-  //         response?.data,
-  //         "CentreName",
-  //         "Centreid"
-  //       );
-  //       if(localData?.flag==1){
-  //          const allCenterName=data
-  //          const cenenterNameFlagOne=allCenterName.filter((e)=>{
-  //           return e.Centreid == localData?.centreId
-  //          })
-  //         setDropDownData((prev) => ({
-  //           ...prev,
-  //           getBindCentreName: cenenterNameFlagOne,
-  //         }));
-  //       }
-  //       else{
-  //         setDropDownData((prev) => ({
-  //           ...prev,
-  //           getBindCentreName: data,
-  //         }));
-  //       }
-       
-  //       return data;
-  //     }
-  //   } catch (error) {
-  //     console.log(error, "GetCentreName Error");
-  //   }
-  // };
 
-  const GetCentreName = async () => {
-    try {
-      // const response = await GetCentreNameAPI();
-      if (!loading) {
+  // Dispatch Redux action to fetch CentreName list
+  useEffect(() => {
+    dispatch(getCentreNameAction());
+  }, [dispatch]);
+
+  // Auto-populate getBindCentreName once centres are fetched
+  useEffect(() => {
+    const populateCentreName = async () => {
+      if (!loading && centres.length > 0 && dropDownData.getBindCentreName.length === 0) {
         const data = await handleReactSelectDropDownOptions(
-           centres,
+          centres,
           "CentreName",
           "Centreid"
         );
-        if(localData?.flag==1){
-           const allCenterName=data
-           const cenenterNameFlagOne=allCenterName.filter((e)=>{
-            return e.Centreid == localData?.centreId
-           })
-          setDropDownData((prev) => ({
-            ...prev,
-            getBindCentreName: cenenterNameFlagOne,
-          }));
+
+        let filteredData = data;
+
+        if (localData?.flag == 1) {
+          filteredData = data.filter((e) => e.Centreid === localData?.centreId);
         }
-        else{
-          setDropDownData((prev) => ({
-            ...prev,
-            getBindCentreName: data,
-          }));
-        }
-       
-        return data;
+
+        setDropDownData((prev) => ({
+          ...prev,
+          getBindCentreName: filteredData,
+        }));
       }
-    } catch (error) {
-      console.log(error, "GetCentreName Error");
+    };
+
+    populateCentreName();
+  }, [centres, loading, localData, dropDownData.getBindCentreName.length]);
+
+  const GetCentreName = async () => {
+    // Manual trigger if needed
+    if (!loading && centres.length > 0) {
+      const data = await handleReactSelectDropDownOptions(
+        centres,
+        "CentreName",
+        "Centreid"
+      );
+
+      const filtered = localData?.flag == 1
+        ? data.filter((e) => e.Centreid === localData?.centreId)
+        : data;
+
+      setDropDownData((prev) => ({
+        ...prev,
+        getBindCentreName: filtered,
+      }));
+
+      return filtered;
     }
   };
+
   const BindTestCode = async (clientId) => {
     try {
       const response = await BindInvestigationTestCode({
@@ -195,6 +309,7 @@ export const useCommonDropdowns = () => {
           ...prev,
           getBindTestCode: testCodeOptions,
         }));
+
         return testCodeOptions;
       }
     } catch (error) {
@@ -206,6 +321,6 @@ export const useCommonDropdowns = () => {
     dropDownData,
     GetCentreName,
     BindTestCode,
-    centres
+    centres,
   };
 };
