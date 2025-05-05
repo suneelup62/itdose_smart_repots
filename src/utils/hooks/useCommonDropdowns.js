@@ -91,7 +91,7 @@
 
 
 // useCommonDropdowns CentreNameAndTest
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   BindInvestigationTestCode,
   GetCentreNameAPI,
@@ -145,6 +145,7 @@ export const useCommonDropdowns = () => {
   //     console.log(error, "GetCentreName Error");
   //   }
   // };
+
 
   const GetCentreName = async () => {
     try {
@@ -203,7 +204,7 @@ export const useCommonDropdowns = () => {
       console.log(error, "BindTestCode Error");
     }
   };
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(getCentreNameAction());
   }, [dispatch]);
   return {

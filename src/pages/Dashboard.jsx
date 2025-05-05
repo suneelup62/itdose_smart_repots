@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Line, Bar, Pie, PolarArea } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import {
@@ -159,7 +159,7 @@ const Dashboard = () => {
     }
   }, [values?.centreName]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(getCentreNameAction());
   }, [dispatch]);
   return (
