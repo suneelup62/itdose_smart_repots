@@ -94,7 +94,7 @@ const doctorSignature = () => {
 
     const payload = {
       Centreid: String(values?.centreid || localData?.centreId),
-      Alignment: String(values?.alignment?.value),
+      Alignment: String(values?.alignment?.value||values?.alignment),
     };
 
     try {

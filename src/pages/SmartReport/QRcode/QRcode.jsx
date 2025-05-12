@@ -52,26 +52,80 @@ const QRcode = () => {
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async () => {
+  //   debugger
+  //   const requiredFields = {
+  //     // centreName: "Centre name is Required",
+  //     height: "Height is Required",
+  //     alignment: "Alignment is Required",
+  //   };
+
+  //   for (const field in requiredFields) {
+  //     if (!values?.[field]) {
+  //       notify(requiredFields[field], "error");
+  //       return;
+  //     }
+  //   }
+
+  //   const payload = {
+  //     Centreid: String(values?.centreName?.Centreid || localData?.centreId),
+  //     Height: `${values?.height}px`,
+  //     Alignment: String(values?.alignment?.value || ""),
+  //   };
+
+  //   try {
+  //     const response = await CentreQRCode(payload);
+  //     if (response?.status) {
+  //       notify(response.message, "success");
+  //       fetchQRcodeDetails(payload?.Centreid);
+  //       setIsEdit(false);
+  //       handleCencel();
+  //     } else {
+  //       notify(response.message || "Submission failed", "error");
+  //     }
+  //   } catch (error) {
+  //     console.error("Something went wrong:", error);
+  //   }
+  // };
+
   const handleSubmit = async () => {
     const requiredFields = {
-      // centreName: "Centre name is Required",
-      height: "Height is Required",
-      alignment: "Alignment is Required",
+      centreName: "Centre name is required",
+      height: "Height is required",
+      alignment: "Alignment is required",
     };
-
+  
+    // Validate required fields
     for (const field in requiredFields) {
-      if (!values?.[field]) {
+      const value = values?.[field];
+      if (
+        value === null ||
+        value === undefined ||
+        (typeof value === "string" && value.trim() === "") ||
+        (typeof value === "object" && Object.keys(value).length === 0)
+      ) {
         notify(requiredFields[field], "error");
         return;
       }
     }
-
+  
+    // Further validation for nested values
+    if (!values?.centreName?.Centreid && !localData?.centreId) {
+      notify("Centre ID is missing", "error");
+      return;
+    }
+  
+    if (!values?.alignment?.value) {
+      notify("Alignment value is missing", "error");
+      return;
+    }
+  
     const payload = {
       Centreid: String(values?.centreName?.Centreid || localData?.centreId),
       Height: `${values?.height}px`,
       Alignment: String(values?.alignment?.value || ""),
     };
-
+  
     try {
       const response = await CentreQRCode(payload);
       if (response?.status) {
@@ -86,8 +140,11 @@ const QRcode = () => {
       console.error("Something went wrong:", error);
     }
   };
+  
 
+  console.log("valuse",values)
   const handleUpdate = async () => {
+    console.log("handleUpdate",values)
     const requiredFields = {
       // centreName: "Centre name is Required",
       height: "Height is Required",
@@ -107,7 +164,7 @@ const QRcode = () => {
         typeof values?.height === "string"
           ? `${values.height}`
           : `${values.height}px`,
-      Alignment: values?.alignment?.value || "",
+      Alignment: values?.alignment?.value||values?.alignment,
     };
 
     try {
