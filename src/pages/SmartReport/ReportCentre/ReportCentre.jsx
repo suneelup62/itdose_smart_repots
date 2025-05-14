@@ -1,4 +1,4 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import Heading from "../../../components/UI/Heading";
 import { useTranslation } from "react-i18next";
 import ReactSelect from "../../../components/formComponent/ReactSelect";
@@ -33,9 +33,10 @@ const ReportCenter = () => {
     centreid: "",
     LoginId: "",
     Password: "",
-    imageBase64: null,
-    frontPage:{},
-    historic:{}
+    logoImageBase64: null,
+    letterHeadImageBase64: null,
+    frontPage: {},
+    historic: {},
   });
   const [dropDownData, setDropDownState] = useState({
     GetBindState: [],
@@ -54,30 +55,32 @@ const ReportCenter = () => {
     },
   ];
 
-  const FRONT_PAGE_OPTION=[
-      {
+  const FRONT_PAGE_OPTION = [
+    {
       label: "Yes",
-      value: "1"
+      value: "1",
     },
     {
       label: "No",
-      value:"0"
+      value: "0",
     },
-  ]
+  ];
 
-  const HISTORIC_REPRESENT =[   
+  const HISTORIC_REPRESENT = [
     {
       label: "Yes",
-      value: "1"
+      value: "1",
     },
     {
       label: "No",
-      value:"0"
+      value: "0",
     },
-  ]
+  ];
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [previewLetterHead, setpreviewLetterHead] = useState(null);
+  const letterHeadInputRef = useRef(null); // ⬅️ New ref for letterhead
   const fileInputRef = useRef(null); // ⬅️ Ref for the file input
   const [isSubmitted, setIsSubmitted] = useState(false);
   const getReportCentreGetData = async () => {
@@ -158,24 +161,40 @@ const ReportCenter = () => {
     }));
   };
 
- 
   const handleSubmit = async () => {
     const requiredFields = [
       { key: "centreName", message: "Centre Name is required" },
+      { key: "LoginId", message: "LoginId is required" },
+      { key: "Password", message: "Password is required" },
       { key: "state", message: "State is required" },
       { key: "city", message: "City is required" },
       { key: "address", message: "Address is required" },
+      { key: "frontPage", message: "Front page selection is required." },
+      { key: "historic", message: "Historic report selection is required." },
+      { key: "logoImageBase64", message: "Please upload a logo image." },
+      { key: "letterHeadImageBase64", message: "Please upload a letterhead image." },    
     ];
     for (let field of requiredFields) {
-      if (!values[field.key]) {
+      const val = values[field.key];
+      const isObject = typeof val === "object" && val !== null && Object.keys(val).length === 0;
+      if (
+        val === null ||
+        val === undefined ||
+        (typeof val === "string" && val.trim() === "") ||
+        isObject
+      ) {
         notify(field.message, "error");
-        return false;
+        return;
       }
     }
-    if (!values.imageBase64) {
-          notify("Please upload a valid image file.", "error");
-          return;
-        }
+    // if (!values?.logoImageBase64) {
+    //   notify("Please upload a logo.", "error");
+    //   return;
+    // }
+    // if (!values?.letterHeadImageBase64) {
+    //   notify("Please upload a letter Head.", "error");
+    //   return;
+    // }
     setIsSubmitted(true);
     const payload = {
       txtcentrename: values?.centreName,
@@ -185,11 +204,12 @@ const ReportCenter = () => {
       chkactive: String(values?.isActive),
       LoginId: values?.LoginId,
       Password: values?.Password,
-      Logo_Img: values?.imageBase64, 
-      Frontpage:String(values?.frontPage?.value),
-      HistoricRepresent:String(values?.historic?.value)
+      Logo_Img: values?.logoImageBase64,
+      Letterhead: values?.letterHeadImageBase64,
+      Frontpage: String(values?.frontPage?.value),
+      HistoricRepresent: String(values?.historic?.value),
     };
-   
+
     try {
       const response = await smartReportNewAddCentre(payload);
       if (response?.status) {
@@ -221,12 +241,24 @@ const ReportCenter = () => {
         isActive: val.Isactive === "Active" ? 1 : 0,
         id: 1,
         centreid: val?.Centreid,
-        imageBase64:val?.Logo_Img,
-        frontPage:val?.Frontpage ==="Yes" ? FRONT_PAGE_OPTION[0]:FRONT_PAGE_OPTION[1],
-        historic:val?.Historicrepresnt ==="Yes" ? HISTORIC_REPRESENT[0]:HISTORIC_REPRESENT[1]
+        logoImageBase64: val?.Logo_Img,
+        letterHeadImageBase64: val?.Letterhead,
+        frontPage:
+          val?.Frontpage === "Yes"
+            ? FRONT_PAGE_OPTION[0]
+            : FRONT_PAGE_OPTION[1],
+        historic:
+          val?.Historicrepresnt === "Yes"
+            ? HISTORIC_REPRESENT[0]
+            : HISTORIC_REPRESENT[1],
       }));
       setPreview((prev) => {
         return val?.Logo_Img ? `data:image/png;base64,${val?.Logo_Img}` : null;
+      });
+      setpreviewLetterHead(() => {
+        return val?.Letterhead
+          ? `data:image/png;base64,${val?.Letterhead}`
+          : null;
       });
     } catch (error) {
       console.error("Error during edit:", error);
@@ -247,10 +279,10 @@ const ReportCenter = () => {
       }
     }
 
-    if (!values.imageBase64) {
-          notify("Please upload a valid image file.", "error");
-          return;
-        }
+    if (!values.logoImageBase64) {
+      notify("Please upload a valid image file.", "error");
+      return;
+    }
     const payload = {
       centreid: String(values?.centreid || ""),
       txtcentrename: values?.centreName || "",
@@ -266,9 +298,10 @@ const ReportCenter = () => {
       chkactive: String(values?.isActive),
       LoginId: values?.LoginId,
       Password: values?.Password,
-      Logo_Img: values?.imageBase64,
-      Frontpage:String(values?.frontPage?.value),
-      HistoricRepresent:String(values?.historic?.value)
+      Logo_Img: values?.logoImageBase64,
+      Letterhead: values?.letterHeadImageBase64,
+      Frontpage: String(values?.frontPage?.value),
+      HistoricRepresent: String(values?.historic?.value),
     };
 
     try {
@@ -296,18 +329,19 @@ const ReportCenter = () => {
       city: null,
       address: "",
       isActive: null,
-      imageBase64: null,
-      frontPage:null,
-      historic:null
+      logologoImageBase64: null,
+      letterHeadImageBase64: null,
+      frontPage: null,
+      historic: null,
     }));
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; 
+      fileInputRef.current.value = "";
     }
-    setImage(null);          
-    setPreview(null);        
-    setIsEdit(false);    
-  
-   
+    if (letterHeadInputRef.current) letterHeadInputRef.current.value = "";
+    setImage(null);
+    setPreview(null);
+    setpreviewLetterHead(null);
+    setIsEdit(false);
   };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -320,7 +354,7 @@ const ReportCenter = () => {
         setPreview(reader.result); // Set preview
         setValues((prev) => ({
           ...prev,
-          imageBase64: reader.result.split(",")[1],
+          logoImageBase64: reader.result.split(",")[1],
         })); // Save Base64 data
       };
 
@@ -330,6 +364,22 @@ const ReportCenter = () => {
     }
   };
 
+  const handleLetterHeadChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setpreviewLetterHead(reader.result);
+        setValues((prev) => ({
+          ...prev,
+          letterHeadImageBase64: reader.result.split(",")[1],
+        }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      notify("Please select a valid image file!", "error");
+    }
+  };
   useEffect(() => {
     bindCity(values?.state?.value || values?.state);
   }, [values?.state]);
@@ -338,8 +388,6 @@ const ReportCenter = () => {
     getState();
     getReportCentreGetData();
   }, []);
-
-
   return (
     <>
       <div className="mt-2 spatient_registration_card">
@@ -440,7 +488,7 @@ const ReportCenter = () => {
               />
               <label className="mt-2 ml-3">{t("IsActive")}</label>
             </div> */}
-              <ReactSelect
+            <ReactSelect
               placeholderName={t("Front page")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -452,7 +500,7 @@ const ReportCenter = () => {
               // requiredClassName="required-fields"
               value={values?.frontPage?.value}
             />
-              <ReactSelect
+            <ReactSelect
               placeholderName={t("Health analysis")}
               searchable={true}
               respclass="col-xl-3 col-md-4 col-sm-6 col-12"
@@ -476,7 +524,7 @@ const ReportCenter = () => {
               />
             </div>
             <div className="d-flex" style={{ marginLeft: "25px" }}>
-              <label className="mt-2 ml-3">{"Upload Image"}</label>
+              <label className="mt-2 ml-3">{"Upload logo"}</label>
               <input
                 type="file"
                 accept="image/*"
@@ -487,7 +535,32 @@ const ReportCenter = () => {
               {preview && (
                 <div>
                   {/* <h4>Image Preview:</h4> */}
-                  <img  className="zoomUploadImage" src={preview} alt="Preview" style={{ width: "50px" }} />
+                  <img
+                    className="zoomUploadImage"
+                    src={preview}
+                    alt="Preview"
+                    style={{ width: "50px" }}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="d-flex" style={{ marginLeft: "25px" }}>
+              <label className="mt-2 ml-3">{"Upload letter head"}</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="mt-2 ml-3"
+                onChange={handleLetterHeadChange}
+                ref={letterHeadInputRef}
+              />
+              {previewLetterHead && (
+                <div>
+                  <img
+                    className="zoomUploadImage"
+                    src={previewLetterHead}
+                    alt="previewLetterHead"
+                    style={{ width: "50px" }}
+                  />
                 </div>
               )}
             </div>
@@ -509,8 +582,12 @@ const ReportCenter = () => {
                 </button>
               </>
             ) : (
-              <button className="btn btn-sm btn-primary "  disabled={isSubmitted} onClick={handleSubmit}>
-                 {isSubmitted ? 'Submitting...' : 'Submit'}
+              <button
+                className="btn btn-sm btn-primary "
+                disabled={isSubmitted}
+                onClick={handleSubmit}
+              >
+                {isSubmitted ? "Submitting..." : "Submit"}
               </button>
             )}
           </div>
