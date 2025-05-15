@@ -172,11 +172,17 @@ const ReportCenter = () => {
       { key: "frontPage", message: "Front page selection is required." },
       { key: "historic", message: "Historic report selection is required." },
       { key: "logoImageBase64", message: "Please upload a logo image." },
-      { key: "letterHeadImageBase64", message: "Please upload a letterhead image." },    
+      {
+        key: "letterHeadImageBase64",
+        message: "Please upload a letterhead image.",
+      },
     ];
     for (let field of requiredFields) {
       const val = values[field.key];
-      const isObject = typeof val === "object" && val !== null && Object.keys(val).length === 0;
+      const isObject =
+        typeof val === "object" &&
+        val !== null &&
+        Object.keys(val).length === 0;
       if (
         val === null ||
         val === undefined ||
@@ -513,7 +519,7 @@ const ReportCenter = () => {
               value={values?.historic?.value}
             />
 
-            <div className="d-flex">
+            {/* <div className="">
               <label className="mt-2 ml-3">{"IsActive :"}</label>
               <input
                 type="checkbox"
@@ -523,7 +529,7 @@ const ReportCenter = () => {
                 checked={values.isActive === 1} // Ensure correct boolean conversion
               />
             </div>
-            <div className="d-flex" style={{ marginLeft: "25px" }}>
+            <div className="" style={{ marginLeft: "25px" }}>
               <label className="mt-2 ml-3">{"Upload logo"}</label>
               <input
                 type="file"
@@ -534,7 +540,6 @@ const ReportCenter = () => {
               />
               {preview && (
                 <div>
-                  {/* <h4>Image Preview:</h4> */}
                   <img
                     className="zoomUploadImage"
                     src={preview}
@@ -544,12 +549,12 @@ const ReportCenter = () => {
                 </div>
               )}
             </div>
-            <div className="d-flex" style={{ marginLeft: "25px" }}>
-              <label className="mt-2 ml-3">{"Upload letter head"}</label>
+            <div className="" style={{ marginLeft: "25px" }}>
+              <label className="">{"Upload letter head"}</label>
               <input
                 type="file"
                 accept="image/*"
-                className="mt-2 ml-3"
+                className=""
                 onChange={handleLetterHeadChange}
                 ref={letterHeadInputRef}
               />
@@ -562,6 +567,56 @@ const ReportCenter = () => {
                     style={{ width: "50px" }}
                   />
                 </div>
+              )}
+            </div> */}
+
+            {/* Checkbox Section */}
+            <div className="form-inline">
+              <label className="form-label">IsActive :</label>
+              <input
+                type="checkbox"
+                className="form-checkbox"
+                name="isActive"
+                onChange={handleChange}
+                checked={values.isActive === 1}
+              />
+            </div>
+
+            {/* Upload Logo Section */}
+            <div className="form-inline">
+              <label className="form-label">Upload logo</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="form-file"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+              />
+              {preview && (
+                <img
+                  className="zoom-upload-image"
+                  src={preview}
+                  alt="Preview"
+                />
+              )}
+            </div>
+
+            {/* Upload Letterhead Section */}
+            <div className="form-inline">
+              <label className="form-label">Upload letter head</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="form-file"
+                onChange={handleLetterHeadChange}
+                ref={letterHeadInputRef}
+              />
+              {previewLetterHead && (
+                <img
+                  className="zoom-upload-image"
+                  src={previewLetterHead}
+                  alt="previewLetterHead"
+                />
               )}
             </div>
           </div>

@@ -4825,13 +4825,29 @@ button.btn-success:hover {
   display: none !important;
 }
 
-.zoomUploadImage {
+/* .zoomUploadImage {
   transition: transform 0.3s ease;
   cursor: pointer;
 }
 
 .zoomUploadImage:hover {
-  transform: scale(2); /* Adjust the zoom level */
+  transform: scale(2); 
+  z-index: 10;
+  position: relative;
+} */
+
+
+.zoom-upload-image {
+  width: 50px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+
+.zoom-upload-image:hover {
+  transform: scale(2); /* Adjust scale as needed */
   z-index: 10;
   position: relative;
 }
@@ -4854,4 +4870,35 @@ button.btn-success:hover {
 
 .btnDisplayNone {
   display: none;
+}
+
+.form-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-left: 12px;
+}
+
+.form-label {
+  min-width: 70px;
+  font-weight: 500;
+}
+
+.form-checkbox {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.form-file {
+  width: 200px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.zoom-upload-image {
+  width: 50px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
