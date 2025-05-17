@@ -227,7 +227,7 @@ const Tables = ({
       {/* 🔄 Pagination Controls */}
       <div className="d-flex justify-content-center align-items-center gap-3 p-2">
         <button
-          className="btn btn-sm btn-primary"
+          className="btn btn-sm"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -239,7 +239,7 @@ const Tables = ({
         </span>
 
         <button
-          className="btn btn-sm btn-primary"
+          className="btn btn-sm"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages || totalPages === 0}
         >
