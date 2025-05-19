@@ -348,6 +348,7 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   border-radius: 15px;
+  color: #fff;
 }
 
 .person-walking-reverse {
