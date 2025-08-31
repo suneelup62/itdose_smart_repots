@@ -4,11 +4,8 @@ import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 const baseurl = import.meta.env.VITE_APP_REACT_APP_BASE_URL;
 
 const axiosInstance = axios.create({
-  baseURL: baseurl,
-  withCredentials: false,
-  // headers: {
-  //   "Content-Type": "application/json",
-  // },
+  baseURL: "",
+  withCredentials: true,
 });
 
 let globalErrorFlag = false;
@@ -34,14 +31,13 @@ const globalErrorNotifier = debounce((message) => {
 
 const logOut = () => {
   localStorage.clear();
-  window.localStorage.removeItem(key);
   window.location.href = "/login";
-  notify("Please authenticate", "error");
+  //notify("Please authenticate", "error");
 };
 
-const makeApiRequest = async (url, options, header='') => {
-  const localData = useLocalStorage("token", "get");
-  const validUser = useLocalStorage("userData", "get");
+const makeApiRequest = async (url, options, header = "") => {
+  const localData = useLocalStorage("authToken", "get");
+  const validUser = useLocalStorage("authToken", "get");
   const { method, data } = options;
   const lowerCaseMethod = method.toLowerCase();
 
@@ -55,10 +51,12 @@ const makeApiRequest = async (url, options, header='') => {
     return symbol;
   };
 
-  const finalUrl = validUser
-    ? `${url}${parameterChecker()}userValidateID=${validUser?.userValidateID}`
-    : url;
+  // Pass url token
+  // const finalUrl = validUser
+  //   ? `${url}${parameterChecker()}userValidateID=${validUser}`
+  //   : url;
 
+  const finalUrl = validUser ? `${url}${parameterChecker()}` : url;
   try {
     const response = await axiosInstance({
       method: lowerCaseMethod,
@@ -68,17 +66,19 @@ const makeApiRequest = async (url, options, header='') => {
     });
     return response.data;
   } catch (error) {
-    if (
-      (error.response && error.response.status === 401) ||
-      error.response.statusText === "Please authenticate"
-    ) {
+    const status = error?.response?.status;
+    const message =
+      error?.response?.data?.message || error?.response?.statusText || "Error";
+
+    if (status === 401) {
       if (!globalErrorFlag) {
         globalErrorFlag = true;
-        globalErrorNotifier(error.response.statusText);
+        globalErrorNotifier(message);
+        logOut();
       }
-      // logOut();
     }
-    notify(error?.response?.message,"error")
+
+    notify(message, "error");
     return error.response;
   }
 };

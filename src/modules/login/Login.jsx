@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import Cookies from "js-cookie";
 import axios from "axios";
 import "./Login.css";
+import { setMenuBasedOnRole } from "../../store/reducers/common/CommonSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -62,13 +63,15 @@ const Login = () => {
 
         try {
           axios
-            .post(apiUrls?.login, requestbody)
+            .post(apiUrls?.loginApi, requestbody)
             .then((response) => {
               navigate("/dashboard");
               Cookies.set("", response?.data?.token?.split(";")[0]);
               Cookies.set("user", JSON.stringify(response?.data?.user));
+              dispatch(setMenuBasedOnRole({ roleFlag: response?.data?.user?.userDetails?.flag }));
               useLocalStorage("theme", "set", "sky_blue_theme");
               // useLocalStorage("theme", "set", "purple_theme");
+              useLocalStorage("userDetails", "set", response?.data?.user?.userDetails);
               useLocalStorage(
                 "authToken",
                 "set",
@@ -161,7 +164,7 @@ const Login = () => {
                     padding: "3px 17px",
                     borderRadius: "3px",
                     backgroundColor: "#fff",
-                    color: "#6f42c1",
+                    color: "#103851",
                   }}
                 >
                   <a style={{ fontWeight: "bold" }}>Login</a>

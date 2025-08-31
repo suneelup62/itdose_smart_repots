@@ -5,6 +5,7 @@ import { default as logoutSlice } from "./AuthSlice/logoutSlice";
 import { default as TokenManagementSlice } from "./TokenManagementSlice/TokenManagementSlice";
 import { default as DashboardSlices } from "./dashboardSlice/DashboardSlices";
 import { default as vitalSignSlice } from "./DoctorModule/VitalSign";
+import { default as CentreName } from "./CentreName/getCentreName";
 
 export {
   authSlice,
@@ -13,5 +14,6 @@ export {
   logoutSlice,
   TokenManagementSlice,
   DashboardSlices,
-  vitalSignSlice
+  vitalSignSlice,
+  CentreName
 };

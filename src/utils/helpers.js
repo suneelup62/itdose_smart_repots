@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const sleep = (time) => new Promise((res) => setTimeout(res, time));
 
 export const calculateWindowSize = (windowWidth) => {
@@ -80,3 +82,14 @@ export const TruncatedLabel = (lable, length) => {
     }
   }
 };
+
+
+ const baseurl = import.meta.env.VITE_APP_REACT_APP_BASE_URL;
+
+ export const axiosInstance = axios.create({
+  baseURL: "",
+  withCredentials: true,
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
+});

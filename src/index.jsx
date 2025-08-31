@@ -18,20 +18,41 @@ import "rc-easyui/dist/themes/icon.css";
 import "rc-easyui/dist/themes/react.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-quill/dist/quill.snow.css";
+import ErrorBoundary from "../src/utils/hooks/ErrorBoundary"
 const { VITE_NODE_ENV, VITE_GA_ID } = import.meta.env;
 
-if (VITE_NODE_ENV === "production" && VITE_GA_ID) {
-  ReactGA.initialize(VITE_GA_ID);
+//  Disable console logs in production
+if (import.meta.env.PROD) {
+  console.log = () => {};
+  console.debug = () => {};
+  console.info = () => {};
+  // Optional: uncomment if you want to suppress these too
+  // console.warn = () => {};
+  // console.error = () => {};
 }
 
+if (import.meta.env.PROD && import.meta.env.VITE_GA_ID) {
+  ReactGA.initialize(import.meta.env.VITE_GA_ID);
+}
 const container = document.getElementById("root");
 const root = createRoot(container);
+// root.render(
+//   <PrimeReactProvider>
+//     <Provider store={store}>
+//       <BrowserRouter>
+//         <App />
+//         {/* <Confirmation  /> */}
+//       </BrowserRouter>
+//     </Provider>
+//   </PrimeReactProvider>
+// );
 root.render(
   <PrimeReactProvider>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
-        {/* <Confirmation  /> */}
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </BrowserRouter>
     </Provider>
   </PrimeReactProvider>

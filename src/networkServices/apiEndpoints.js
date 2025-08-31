@@ -1,117 +1,105 @@
-import { BindVendor } from "./InventoryApi";
 
-const environment = import.meta.env.VITE_APP_ENVIRONMENT;
-
-const allEnvApiUrls = {
-  production: {
-    baseUrl: import.meta.env.VITE_APP_REACT_APP_BASE_URL,
-  },
-  stagging: {
-    baseUrl: import.meta.env.VITE_APP_REACT_APP_PROD_URL,
-  },
-  development: {
-    baseUrl: import.meta.env.VITE_APP_REACT_APP_DEV_URL,
-  },
-};
-
-const envUrl = `${allEnvApiUrls[environment]?.baseUrl}/hpb2b/api`;
-
+//Api Endpoints urls
 export const apiUrls = {
   // Auth Apis
-  login: `/api/Login`,
+  loginApi: "/api/v1/SmartReport_Login/CheckLogin",
   logout: `/api/MasterPage/Logout`,
-  // GetRoleData: `/api/Global/GetRoleData`,
-  // GetCentreData: `/api/Global/GetCentreData`,
-  GetUserData: `/api/Global/GetUserData`,
+
+  //Smart Report Center
+  bindState: `/api/v1/CentreMaster/bindState`,
+  bindCity: `/api/v1/CentreMaster/bindcity`,
   
-  // RateListMaster Start
-  GetRateListData: `/api/RateListMaster/GetRateListData`,
-  // RateListMaster end
+  // Add Centre  
+  addCentre: `/api/v1/CentreMaster/AddCentre`,
   
-  // claim update
+  // Update Centre
+  updateCentre: `/api/v1/CentreMaster/UpdateCentre`,
+  
+  // Smart Report Centre GetData
+  CentreGetData: `/api/v1/CentreMaster/GetData`,
 
-  UpdateCliam: "Claims/UpdateCliam",
+  // Centre Master bindclient
+  GetCentreName: `/api/v1/CentreMaster/bindclient`,
 
-  // master api
-  UpdateUserTheme: "MasterPage/UpdateUserTheme",
-  ChangePassword: "MasterPage/ChangePassword",
-  UpdateEmployeeProfile: "MasterPage/UpdateEmployeeProfile",
-  getRoleList: "MasterPage/CentreWiseRoleList",
-  EmployeeWiseCentreList: "MasterPage/EmployeeWiseCentreList",
-  BindMenuList: "MasterPage/BindMenu",
-  getNotificationDetail: "MasterPage/Notification",
-  BindFrameMenuByRoleID: "MasterPage/BindFrameMenuByRoleID",
-  StoreState: "PatientControl/StateInsert",
-  StateInsert: "PatientControl/StateInsert",
-  DistrictInsert: "PatientControl/DistrictInsert",
-  CityInsert: "PatientControl/CityInsert",
-  CentreWiseCacheByCenterID: "PatientControl/CentreWiseCache",
-  CentreWiseCacheByCenterID: "PatientControl/CentreWiseCache",
+  // Centre Master Bind ReportDrop
+  ReportDrop: `/api/v1/CentreMaster/BindReportDrop`,
 
-  // DirectPatientReg Mayank START
-  CentreWisePanelControlCache: "PanelControl/CentreWisePanelControlCache",
-  GetPanelDocument: "PanelControl/GetPanelDocument",
-  GetPatientUploadDocument: "PatientControl/GetMasterDocuments",
-  CreateTypeOfReference: "PatientControl/CreateTypeOfReference",
-  BindSeeMoreList: "CommonAPI/BindSeeMoreList",
-  CommonAPIGetEmpBirthDay: "CommonAPI/GetEmpBirthDay",
-  ValidateDuplicatePatientEntry: "PatientControl/ValidateDuplicatePatientEntry",
-  GetAgeByDateOfBirth: "CommonAPI/GetAgeByDateOfBirth",
-  SaveReg: "Registration/SaveReg",
-  UpdateRegistration: "Registration/UpdateRegistration",
-  // DirectPatientReg Mayank END
+  // Add Investigation
+  addInvestigation: `/api/v1/InvestigationMaster/AddTest`,
+  
+  // InvestigationMaster BindTestgrid
+  
+  BindTestgrid: `/api/v1/InvestigationMaster/BindTestgrid`,
+  
+  // InvestigationMaster Updatetest
 
-  // payment control ----- Arshad Pathaan Khan-----
-  LoadCurrencyDetail: "PaymentControl/LoadCurrencyDetail",
-  PaymentControlBindPaymentModePanelWise:
-    "PaymentControl/BindPaymentModePanelWise",
-  GetSwipMachine: "PaymentControl/GetSwipMachine",
-  GetBankMaster: "PaymentControl/GetBankMaster",
-  getConvertCurrecncy: "PaymentControl/getConvertCurrecncy",
-  GetConversionFactor: "PaymentControl/GetConversionFactor",
-  // opdServiceBooking ----sahil--
-  Oldpatientsearch: "PatientControl/Oldpatientsearch",
-  PatientSearchbyBarcode: "PatientControl/PatientSearchbyBarcode",
-  BindReferDoctor: "PatientControl/BindReferDoctor",
-  bindPanelByPatientID: "CommonAPI/bindPanelByPatientID",
-  BindRefferalType: "CommonAPI/bindReferalType",
-  BindPRO: "PatientControl/bindPRO",
-  BindDepartment: "CommonAPI/bindDepartment",
-  BindDoctorDept: "CommonAPI/bindDoctorDept",
-  CommonAPIGetDoctorIDByEmployeeID: "CommonAPI/GetDoctorIDByEmployeeID",
-  bindHashCode: "CommonAPI/bindHashCode",
-  RoleWiseOPDServiceBookingControls:
-    "OPDServiceBooking/RoleWiseOPDServiceBookingControls",
-  LoadOPD_All_ItemsLabAutoComplete:
-    "CommonAPI/LoadOPD_All_ItemsLabAutoComplete",
-  PackageExpirayDate: "OPDServiceBooking/PackageExpirayDate",
-  ValidateDoctorMap: "OPDServiceBooking/ValidateDoctorMap",
-  ValidateDoctorLeave: "OPDServiceBooking/ValidateDoctorLeave",
-  GetDiscountWithCoPay: "CommonAPI/GetDiscountWithCoPay",
-  getAlreadyPrescribeItem: "OPDServiceBooking/getAlreadyPrescribeItem",
-  BindLabInvestigationRate: "PatientControl/BindLabInvestigationRate",
-  GetAuthorization: "CommonAPI/GetAuthorization",
-  BindResourceList: "CommonAPI/BindResourceList",
-  GetAppointmentCount: "OPDServiceBooking/GetAppointmentCount",
+  updatetest: `/api/v1/InvestigationMaster/Updatetest`,
+  
+  // /InvestigationMaster Bindsearchgrid
 
-  GetDoctorAppointmentTimeSlotConsecutive:
-    "OPDServiceBooking/GetDoctorAppointmentTimeSlotConsecutive",
+  Bindsearchgrid: `/api/v1/InvestigationMaster/Bindsearchgrid`,
 
-  BindPackageItemDetailsNew: "OPDServiceBooking/BindPackageItemDetailsNew",
-  checkblacklist: "PatientControl/Checkblacklist",
-  GetDiscReason: "PaymentControl/GetDiscReason",
-  BindDisApproval: "PaymentControl/BindDisApproval",
-  GetEligiableDiscountPercent: "PaymentControl/GetEligiableDiscountPercent",
-  GetInvestigationTimeSlot: "OPDServiceBooking/GetInvestigationTimeSlot",
-  BindModality: "CommonAPI/BindModality",
-  HoldTimeSlot: "OPDServiceBooking/HoldTimeSlot",
-  BindInvestigation: "OPDServiceBooking/BindInvestigation",
-  HoldTimeSlot: "OPDServiceBooking/HoldTimeSlot",
-  GetLastVisitDetail: "OPDServiceBooking/GetLastVisitDetail",
-  LastVisitDetails: "OPDServiceBooking/LastVisitDetails",
+   // Add Observation 
+   addObservation: `/api/v1/ObservationMaster/AddObservation`,
 
-  // Dashboard API
-  HIMSDashboard: "Dashboard/HIMSDashboard",
-  HIMSDashboardTYPEID: "Dashboard/HIMSDashboardDetail",
-  DashboardMISUserWiseGraphSetting: "Dashboard/MISUserWiseGraphSetting",
+   // ObservationMaster Add Observation
+   AddObservation: `/api/v1/ObservationMaster/AddObservation`,
+  
+   // ObservationMaster Update Observation
+   UpdateObservation: `/api/v1/ObservationMaster/UpdateObservation`,
+   
+   // ObservationMaster Remove Observation
+   RemoveObserv: `/api/v1/ObservationMaster/RemoveObserv`,
+
+   // ObservationMaster BindObservgrid
+   BindObservgrid: `/api/v1/ObservationMaster/BindObservgrid`,
+    
+   // InvestigationMaster BindInvestigation
+     InvestigationBindInvestigation: `/api/v1/InvestigationMaster/BindInvestigation`,
+   
+   // CentreMaster Investigation Description
+   InvestigationDescription: `/api/v1/SmartReportMaster/Investigation_Description`,
+
+    // CentreMaster Investigation Description
+    InvestigationRiskfactor: `/api/v1/SmartReportMaster/Investigation_Riskfactor`,
+   
+  // SmartReportMaster Centre QRCode
+     QRCode: `/api/v1/SmartReportMaster/Centre_QRCode`,
+  
+     // SmartReportMaster Centre QRCode
+     BindQRCodeGrid: `/api/v1/SmartReportMaster/BindQRCodeGrid`,
+
+  // SmartReportMaster Centre_DoctorSignature
+     DoctorSignature: `/api/v1/SmartReportMaster/Centre_DoctorSignature`,
+  
+     // SmartReportMaster Centre_DoctorSignature
+     BindDoctorSignature: `/api/v1/SmartReportMaster/BindDoctorSignature`,
+
+  // SmartReportMaster Investigation_Format
+     InvFormat: `/api/v1/SmartReportMaster/Investigation_Format`,
+  
+  // InvestigationMaster download
+  DownloadToExcel: `/api/v1/InvestigationMaster/download`,
+
+  // InvestigationMaster download
+  UploadToExcel: `/api/v1/InvestigationMaster/save`,
+ 
+   // InvestigationMaster BindGetDescription
+  
+   GetDescription: `/api/v1/SmartReportMaster/GetDescription`,
+  
+   // InvestigationMaster BindGetDescription
+   GetRiskFactor: `/api/v1/SmartReportMaster/GetRiskFactor`,
+   
+   // InvestigationMaster BindGetDescription
+   SmartreportHeader: `/api/v1/SmartReportMaster/Smartreport_header`,
+   
+   // InvestigationMaster BindGetDescription
+   GetReportHeader: `/api/v1/SmartReportMaster/GetReportHeader`,
+
+   // Dashboard Getreportcount 
+   Getreportcount: `/api/v1/SmartReportMaster/Getreportcount`,
+   
+   // Dashboard InsertReportcount
+   InsertReportcount: `/api/v1/SmartReportMaster/InsertReportcount`,
 };

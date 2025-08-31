@@ -184,7 +184,7 @@ function RenderRoute() {
       setWaitForRoute(false);
     }
   };
-
+  
   useEffect(() => {
     if (localData && GetMenuList?.length === 0) {
       fetchData();
@@ -328,11 +328,12 @@ const allRoutes = {
     // Smart Report
     {
       layout: Layout,
-      path: "/report-Center",
+      path: "/report-Centre",
       component: lazy(
-        () => import("@app/pages/SmartReport/ReportCenter/ReportCenter.jsx")
+        () => import("@app/pages/SmartReport/ReportCentre/ReportCentre.jsx")
       ),
       exact: true,
+      flag:1,
     },
     {
       layout: Layout,
@@ -347,6 +348,46 @@ const allRoutes = {
       path: "/observation",
       component: lazy(
         () => import("@app/pages/SmartReport/Observation/Observation.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/description",
+      component: lazy(
+        () => import("@app/pages/SmartReport/Description/Description.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/riskfactor",
+      component: lazy(
+        () => import("@app/pages/SmartReport/Riskfactor/Riskfactor.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/QRcode",
+      component: lazy(
+        () => import("@app/pages/SmartReport/QRcode/QRcode.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/doctor_signature",
+      component: lazy(
+        () => import("@app/pages/SmartReport/doctorSignature/doctorSignature.jsx")
+      ),
+      exact: true,
+    },
+    {
+      layout: Layout,
+      path: "/reportHeader",
+      component: lazy(
+        () => import("@app/pages/SmartReport/ReportHeader/ReportHeader.jsx")
       ),
       exact: true,
     },

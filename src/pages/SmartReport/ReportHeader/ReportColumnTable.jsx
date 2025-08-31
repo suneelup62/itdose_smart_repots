@@ -1,0 +1,102 @@
+import Table from 'react-bootstrap/Table';
+
+function ReportColumnTable() {
+  return (
+    <Table>
+      {/* <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Report Column</th>
+        </tr>
+      </thead> */}
+      <tbody>
+      <tr>
+          <td><b>S.No</b></td>
+          <td><b>Report Column</b></td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>subcategoryid</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>plostatus</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>MarkSign</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>LabNo</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>SRF_ID</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>PassportNo</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>PLOID</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>laboutsrcid</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>FieldExe</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>InterpretationID</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>InterpretationType</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>PName</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Mobile</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>paddress</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>Fasting</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>Age</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>BarcodeNo</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>Gender</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>ReportStatus</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>ReportStatus1</td>
+        </tr>
+      </tbody>
+    </Table>
+  );
+}
+
+export default ReportColumnTable;

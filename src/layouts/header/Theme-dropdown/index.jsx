@@ -169,7 +169,7 @@ const ThemeDropdown = () => {
 
 
   const handleSelect = (eventKey) => {
-    themeApiCall(eventKey)
+    // themeApiCall(eventKey)
     useLocalStorage("theme", 'set', eventKey)
     addWindowClass(eventKey);
 

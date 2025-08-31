@@ -18,6 +18,9 @@ import { apiUrls } from "../../networkServices/apiEndpoints";
 import { useFetchApi } from "../../networkServices/useFetch";
 import { notify } from "../../utils/utils";
 import HeaderInput from "../../components/formComponent/HeaderInput";
+
+import { useLocalStorage } from "../../utils/hooks/useLocalStorage";
+import { reset } from "../../store/reducers/common/CommonSlice";
 const Header = React.memo(() => {
   /**
    * Make an API request for MasterPage/EmployeeWiseCentreList.
@@ -54,6 +57,7 @@ const Header = React.memo(() => {
     Cookies.remove("authToken", { path: "" });
     Cookies.remove("user", { path: "" });
     localStorage.clear();
+    dispatch(reset())
     navigate("/login");
   };
 
@@ -111,6 +115,7 @@ const Header = React.memo(() => {
 
     }
   };
+  const localData_userName = useLocalStorage("userDetails", "get");
   return (
     <>
       <nav className={getContainerClasses()} style={{ position: "relative" }}>
@@ -247,17 +252,17 @@ const Header = React.memo(() => {
           {/* <li className="nav-item d-none d-md-flex ">
             <LanguagesDropdown />
           </li> */}
-
+            {/* user name and image  */}
           <li className="nav-item d-none d-md-flex">
-            <button type="button" className="nav-link d-flex">
+            {/* <button type="button" className="nav-link d-flex">
               <UserDropdown
                 setDropdownOpen={setDropdownOpen}
                 dropdownOpen={dropdownOpen}
               />
-              <label className="control-label ml-1 d-none d-lg-block text-white">
-                {/* {localData?.empName} */}
+              <label className="control-label ml-1 d-none d-lg-block text-white">             
+                {localData_userName}
               </label>
-            </button>
+            </button> */}
           </li>
           {/* <li className="nav-item">
           <button

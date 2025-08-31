@@ -14,7 +14,6 @@ import Cookies from "js-cookie";
 const Authenticated = ({ children }) => {
   // const token = Cookies.get("authToken");
   const token = localStorage.getItem('authToken');
-
   return token ? children : <Navigate to="/login" replace />;
 };
 

@@ -348,6 +348,7 @@ input[type="number"] {
   justify-content: center;
   text-align: center;
   border-radius: 15px;
+  color: #fff;
 }
 
 .person-walking-reverse {
@@ -884,14 +885,14 @@ button {
 ::-webkit-scrollbar {
   width: 5px;
   background-color: #f5f5f5;
-  height: 2px !important;
+  height: 5px !important;
   /* display: none; */
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #a1c6db;
   border-radius: 5px;
-  height: 2px !important;
+  height: 5px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -1974,7 +1975,7 @@ td {
   }
 } */
 .logoStyle {
-  width: 10%;
+  width: 40%;
 }
 
 .banner-img {
@@ -4807,4 +4808,98 @@ button.btn-success:hover {
 
 .labIcon {
   font-size: 38px !important;
+}
+
+
+/* button container center */
+
+.button-container-center{
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically (if needed) */
+  height: 50px; /* Adjust as needed */
+}
+
+
+/* cke_notification_warning  */
+.cke_notification_warning {
+  display: none !important;
+}
+
+/* .zoomUploadImage {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.zoomUploadImage:hover {
+  transform: scale(2); 
+  z-index: 10;
+  position: relative;
+} */
+
+
+.zoom-upload-image {
+  width: 50px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+
+.zoom-upload-image:hover {
+  transform: scale(2); /* Adjust scale as needed */
+  z-index: 10;
+  position: relative;
+}
+
+
+.table-active {
+  background-color: lightblue  !important;
+}
+
+
+.coutomTableThead{
+  color: #03a0e7;
+    background-color: #d9eef7;
+    white-space: nowrap;
+}
+
+.noDataFoun{
+  text-align: center;
+}
+
+.btnDisplayNone {
+  display: none;
+}
+
+.form-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-left: 5px;
+}
+
+.form-label {
+  min-width: 70px;
+  font-weight: 500;
+}
+
+.form-checkbox {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.form-file {
+  width: 200px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.zoom-upload-image {
+  width: 50px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
